@@ -10,8 +10,8 @@ public class MeshGenerator : MonoBehaviour
     Vector3[] vertices;
     int[] triangles;
 
-    public int xSize = 20;
-    public int zSize = 20;
+    public int xSize = 100;
+    public int zSize = 100;
 
     // Start is called before the first frame update
     void Start()
@@ -19,11 +19,11 @@ public class MeshGenerator : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        StartCoroutine(CreateShape());
-        //UpdateMesh();
+        CreateShape();
+        UpdateMesh();
     }
 
-    IEnumerator CreateShape()
+    void CreateShape()
     {
         vertices = new Vector3[(xSize + 1) * (zSize + 1)];
 
@@ -52,17 +52,10 @@ public class MeshGenerator : MonoBehaviour
 
                 vert++;
                 tris += 6;
-
-                yield return new WaitForSeconds(.02f);
             }
             vert++;
         }
 
-    }
-
-    private void Update()
-    {
-        UpdateMesh();
     }
 
     void UpdateMesh()
@@ -73,16 +66,5 @@ public class MeshGenerator : MonoBehaviour
         mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (vertices == null)
-            return;
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            Gizmos.DrawSphere(vertices[i], .1f);
-        }
     }
 }
