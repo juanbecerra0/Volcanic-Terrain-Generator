@@ -3,4 +3,4 @@ Terrain generation engine built in Unity. For Boise State CS 497 - Advanced Comp
 
 # Log
 ## 2/4/2020
-// TODO
+![1](images/1.PNG)
