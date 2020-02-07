@@ -121,7 +121,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &363187099
+--- !u!1001 &154957126
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -185,14 +185,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
-      propertyPath: prefab
-      value: 
-      objectReference: {fileID: 5691872202454981806, guid: 7927929229563924e9013560ef854c1c,
+      propertyPath: scale
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
+      propertyPath: vertexCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
+        type: 3}
+      propertyPath: blockCount
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5830571954608688143, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
       propertyPath: m_Name
-      value: TerrainPlacementGenerator
+      value: MeshPlacer
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 15e4722091aec72469d2c8be7b02f5e6, type: 3}

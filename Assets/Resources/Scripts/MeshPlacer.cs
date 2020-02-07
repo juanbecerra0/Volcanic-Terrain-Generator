@@ -4,25 +4,36 @@ using UnityEngine;
 
 public class MeshPlacer : MonoBehaviour
 {
-    public int scale = 20;
-    public int count = 10;
+    public int vertexCount = 20;
+    public int blockCount = 10;
 
     // Start is called before the first frame update
     void Start()
     {
-        GameObject prefab = (GameObject) Resources.Load("Prefabs/TerrainMeshGenerator");
+        GameObject prefab = (GameObject) Resources.Load("Prefabs/MeshGenerator");
 
         if (!prefab)
         {
-            Debug.Log("Prefab could not be found\n");
+            Debug.Log("Prefab could not be found");
             return;
         }
 
-        for (int i = 0; i < count; i++)
+        if (blockCount % 2 != 0)
         {
-            for (int j = 0; j < count; j++)
+            blockCount--;
+        }
+
+        for (int i = 0; i < blockCount; i++)
+        {
+            for (int j = 0; j < blockCount; j++)
             {
-                GameObject prefabInstance = Instantiate(prefab, new Vector3(i * scale - (scale * (count / 2)), 0, j * scale - (scale * (count / 2))), Quaternion.identity);
+                Vector3 position = new Vector3(i * vertexCount - (vertexCount * (blockCount / 2)), 0, j * vertexCount - (vertexCount * (blockCount / 2)));
+                Quaternion orientation = Quaternion.identity;
+
+                GameObject prefabInstance = (GameObject) GameObject.Instantiate(prefab, position, orientation);
+
+                MeshGenerator script = prefabInstance.GetComponent<MeshGenerator>();
+                script.GenerateMesh(vertexCount);
             }
         }
     }
