@@ -39,23 +39,29 @@ public class MeshPlacer : MonoBehaviour
                     {
                         xLocation = -(vertexCount * ((sequenceLength / 2) + 1)) + (k * vertexCount) + (vertexCount / 2);
                         zLocation =  (vertexCount * ((sequenceLength / 2) + 1)) - (vertexCount / 2);
-
-
+                        xIndex = -i + k;
+                        zIndex =  i;
                     }
                     else if (j == 1)  // Top-right shell
                     {
                         xLocation =  (vertexCount * ((sequenceLength / 2) + 1)) - (vertexCount / 2);
                         zLocation =  (vertexCount * ((sequenceLength / 2) + 1)) - (k * vertexCount) - (vertexCount / 2);
+                        xIndex = i - 1;
+                        zIndex = i - k;
                     }
                     else if (j == 2)  // Bottom-right shell
                     {
                         xLocation =  (vertexCount * ((sequenceLength / 2) + 1)) - (k * vertexCount) - (vertexCount / 2);
                         zLocation = -(vertexCount * ((sequenceLength / 2) + 1)) + (vertexCount / 2);
+                        xIndex =  i - 1 - k;
+                        zIndex = -i + 1;
                     }
                     else if (j == 3)    // Bottom-left shell
                     {
                         xLocation = -(vertexCount * ((sequenceLength / 2) + 1)) + (vertexCount / 2);
                         zLocation = -(vertexCount * ((sequenceLength / 2) + 1)) + (k * vertexCount) + (vertexCount / 2);
+                        xIndex = -i;
+                        zIndex = -i + 1 + k;
                     }
 
                     // Calculate location
@@ -66,7 +72,7 @@ public class MeshPlacer : MonoBehaviour
 
                     // Generate mesh for instance
                     MeshGenerator script = prefabInstance.GetComponent<MeshGenerator>();
-                    script.GenerateMesh(vertexCount);
+                    script.GenerateMesh(vertexCount, GenerateHeightmap(xIndex, zIndex));
                 }
             }
         }

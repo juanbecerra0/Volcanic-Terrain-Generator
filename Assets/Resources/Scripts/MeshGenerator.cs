@@ -11,24 +11,26 @@ public class MeshGenerator : MonoBehaviour
     int[] triangles;
     int dimensions;
 
-    public void GenerateMesh(int dimensions) {
+    public void GenerateMesh(int dimensions, Texture2D heightmap) {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        CreateShape(dimensions);
+        CreateShape(dimensions, heightmap);
         UpdateMesh();
     }
 
-    void CreateShape(int dimensions)
+    void CreateShape(int dimensions, Texture2D heightmap)
     {
         this.dimensions = dimensions + 1;
         vertices = new Vector3[(dimensions + 1) * (dimensions + 1)];
+        float heightmapSize = (float) heightmap.width;
 
         for (int i = 0, z = 0; z <= dimensions; z++)
         {
             for (int x = 0; x <= dimensions; x++, i++)
             {
-                float y = Mathf.PerlinNoise(x * 0.3f, z * 0.3f) * 3f;
+                Color pixelColor = heightmap.GetPixel(Mathf.FloorToInt(((float)x / (float)dimensions) * heightmapSize), Mathf.FloorToInt(((float)z / (float)dimensions) * heightmapSize));
+                float y = ((pixelColor.r + pixelColor.g + pixelColor.b) / 3) * 10;//Mathf.PerlinNoise(x * 0.3f, z * 0.3f) * 3f;
                 vertices[i] = new Vector3(x, y, z);
             }
         }
