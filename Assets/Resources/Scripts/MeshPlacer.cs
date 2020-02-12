@@ -8,6 +8,9 @@ public class MeshPlacer : MonoBehaviour
 {
     public int vertexCount = 20;
     public int initialBlockRadius = 2;
+    public int heightmapBaseN = 7;
+
+    private int heightmapDimensions;
     Dictionary<Tuple<int, int>, Texture2D> NoiseMap = new Dictionary<Tuple<int, int>, Texture2D>();
 
     // Start is called before the first frame update
@@ -15,11 +18,24 @@ public class MeshPlacer : MonoBehaviour
     {
         GameObject prefab = (GameObject) Resources.Load("Prefabs/MeshGenerator");
 
+        // Error checking
+        if (vertexCount < 2)
+            vertexCount = 2;
+
+        if (initialBlockRadius < 1)
+            initialBlockRadius = 1;
+
+        if (heightmapBaseN < 3)
+            heightmapBaseN = 3;
+
         if (!prefab)
         {
             Debug.Log("Prefab could not be found");
             return;
         }
+
+        // Calculate heightmap dimensions
+        heightmapDimensions = (2 ^ heightmapBaseN) + 1;
 
         Quaternion orientation = Quaternion.identity;
 
@@ -85,8 +101,15 @@ public class MeshPlacer : MonoBehaviour
     private Texture2D GenerateHeightmap(int x, int y)
     {
         // Create texture object
-        Texture2D heightmap = new Texture2D(512, 512);
+        Texture2D heightmap = new Texture2D(heightmapDimensions, heightmapDimensions);
 
+        // Set random color to each of the four corners of the heightmap
+        heightmap.SetPixel(0, 0, GetRandomGrayColor());
+        heightmap.SetPixel(heightmapDimensions - 1, 0, GetRandomGrayColor());
+        heightmap.SetPixel(0, heightmapDimensions - 1, GetRandomGrayColor());
+        heightmap.SetPixel(heightmapDimensions - 1, heightmapDimensions - 1, GetRandomGrayColor());
+
+        /*
         // Set random color to each RGB pixel
         for (int py = 0; py < heightmap.height; py++)
         {
@@ -96,11 +119,12 @@ public class MeshPlacer : MonoBehaviour
                 heightmap.SetPixel(px, py, new Color(value, value, value, 1.0f));
             }
         }
+        */
 
         // TODO use algorithms to create heightmap usign adjacent heightmaps
 
         // Check above
-        if(NoiseMap.ContainsKey(new Tuple<int, int>(x, y + 1)))
+        if (NoiseMap.ContainsKey(new Tuple<int, int>(x, y + 1)))
         {
 
         }
@@ -125,6 +149,12 @@ public class MeshPlacer : MonoBehaviour
 
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
+    }
+
+    private Color GetRandomGrayColor()
+    {
+        float value = UnityEngine.Random.Range(0.0f, 1.0f);
+        return new Color(value, value, value, 1.0f);
     }
 
     // Update is called once per frame
