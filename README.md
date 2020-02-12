@@ -11,6 +11,11 @@ The goal of this project is to develop a real-time procedural terrain generator 
 
 # Log
 
+### 2/11/2020 - Setup for Mesh Placement + Heightmap Generation Setup
+![2](Images/2.PNG)
+
+In this update, I created a new prefab object that generates MeshGenerator objects in a grid formation. In addition, the MeshPlacer generates indexed heightmaps that the MeshGenerators read in order to generate their geometry. Currently, only random RGB values are generated for the corners of the ((2^n) + 1)-sized heightmaps. However, inn future updates, I will be using the diamond-square algorithm and other permutations to generate smooth noise fields for each MeshGenerator object. In addition, I will set up the MeshPlacer script to add new MeshGenerator objects based on vicinity and the viewport of the player character. 
+
 ### 2/4/2020 - Basic Terrain Grid
 ![1](Images/1.PNG)
 
