@@ -11,7 +11,7 @@ public class MeshPlacer : MonoBehaviour
     public int heightmapBaseN = 7;
 
     private int heightmapDimensions;
-    Dictionary<Tuple<int, int>, Texture2D> NoiseMap = new Dictionary<Tuple<int, int>, Texture2D>();
+    Dictionary<Tuple<int, int>, float[,]> NoiseMap = new Dictionary<Tuple<int, int>, float[,]>();
 
     // Start is called before the first frame update
     void Start()
@@ -35,7 +35,8 @@ public class MeshPlacer : MonoBehaviour
         }
 
         // Calculate heightmap dimensions
-        heightmapDimensions = (2 ^ heightmapBaseN) + 1;
+        heightmapDimensions = (int) Mathf.Pow(2, heightmapBaseN) + 1;
+        Debug.Log(heightmapDimensions);
 
         Quaternion orientation = Quaternion.identity;
 
@@ -98,16 +99,16 @@ public class MeshPlacer : MonoBehaviour
      * Generates and adds heightmap to dictionary 
      * based on initial cartesian coordinates
      */
-    private Texture2D GenerateHeightmap(int x, int y)
+    private float[,] GenerateHeightmap(int x, int y)
     {
-        // Create texture object
-        Texture2D heightmap = new Texture2D(heightmapDimensions, heightmapDimensions);
+        // Create 2D array of noise values
+        float[,] heightmap = new float[heightmapDimensions, heightmapDimensions];
 
         // Set random color to each of the four corners of the heightmap
-        heightmap.SetPixel(0, 0, GetRandomGrayColor());
-        heightmap.SetPixel(heightmapDimensions - 1, 0, GetRandomGrayColor());
-        heightmap.SetPixel(0, heightmapDimensions - 1, GetRandomGrayColor());
-        heightmap.SetPixel(heightmapDimensions - 1, heightmapDimensions - 1, GetRandomGrayColor());
+        heightmap[0, 0] = UnityEngine.Random.Range(0.0f, 1.0f);
+        heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(0.0f, 1.0f);
+        heightmap[0, heightmapDimensions - 1] = UnityEngine.Random.Range(0.0f, 1.0f);
+        heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(0.0f, 1.0f);
 
         /*
         // Set random color to each RGB pixel
@@ -149,12 +150,6 @@ public class MeshPlacer : MonoBehaviour
 
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
-    }
-
-    private Color GetRandomGrayColor()
-    {
-        float value = UnityEngine.Random.Range(0.0f, 1.0f);
-        return new Color(value, value, value, 1.0f);
     }
 
     // Update is called once per frame
