@@ -203,6 +203,11 @@ PrefabInstance:
       propertyPath: initialBlockRadius
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
+        type: 3}
+      propertyPath: heightmapBaseN
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5830571954608688143, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
       propertyPath: m_Name

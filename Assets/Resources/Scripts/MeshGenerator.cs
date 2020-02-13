@@ -32,8 +32,6 @@ public class MeshGenerator : MonoBehaviour
                 int xIndex = Mathf.FloorToInt(((float)x / (float)dimensions) * (heightmapSize - 0.01f));
                 int zIndex = Mathf.FloorToInt(((float)z / (float)dimensions) * (heightmapSize - 0.01f));
 
-                Debug.Log(xIndex + " " + zIndex);
-
                 float y = heightmap[xIndex, zIndex];
                 vertices[i] = new Vector3(x, y, z);
             }
@@ -58,18 +56,6 @@ public class MeshGenerator : MonoBehaviour
             }
             vert++;
         }
-    }
-
-    /**
-     * Returns the corresponding index of the 1 dimensional vertex array 
-     * given an x and y coordinate
-     */
-    int GetIndex(int x, int y)
-    {
-        if (String.IsNullOrEmpty(dimensions.ToString()) || x > dimensions - 1 || x < 0 || y > dimensions - 1 || y < 0)
-            return -1;
-        else
-            return ((dimensions * dimensions) - dimensions) + x - (y * dimensions);
     }
 
     void UpdateMesh()
