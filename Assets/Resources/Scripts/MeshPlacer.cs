@@ -36,7 +36,6 @@ public class MeshPlacer : MonoBehaviour
 
         // Calculate heightmap dimensions
         heightmapDimensions = (int) Mathf.Pow(2, heightmapBaseN) + 1;
-        Debug.Log(heightmapDimensions);
 
         Quaternion orientation = Quaternion.identity;
 
@@ -104,26 +103,17 @@ public class MeshPlacer : MonoBehaviour
         // Create 2D array of noise values
         float[,] heightmap = new float[heightmapDimensions, heightmapDimensions];
 
-        // Set random color to each of the four corners of the heightmap
+        // Set random value to each of the four corners of the heightmap
         heightmap[0, 0] = UnityEngine.Random.Range(0.0f, 1.0f);
         heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(0.0f, 1.0f);
         heightmap[0, heightmapDimensions - 1] = UnityEngine.Random.Range(0.0f, 1.0f);
         heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(0.0f, 1.0f);
 
+        // Recursive diamond-square terrain generation algorithm
+        DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1);
+
+        // TODO stitch adjacent heightmaps
         /*
-        // Set random color to each RGB pixel
-        for (int py = 0; py < heightmap.height; py++)
-        {
-            for (int px = 0; px < heightmap.width; px++)
-            {
-                float value = UnityEngine.Random.Range(0.0f, 1.0f);
-                heightmap.SetPixel(px, py, new Color(value, value, value, 1.0f));
-            }
-        }
-        */
-
-        // TODO use algorithms to create heightmap usign adjacent heightmaps
-
         // Check above
         if (NoiseMap.ContainsKey(new Tuple<int, int>(x, y + 1)))
         {
@@ -147,9 +137,56 @@ public class MeshPlacer : MonoBehaviour
         {
 
         }
+        */
 
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
+    }
+
+    private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax)
+    {
+        // Base case
+        if(xMin <= xMax || yMin <= yMax)
+            return;
+
+        // Diamond step
+        // TODO do something with these verticies
+        getDiamondIndices(xMin, xMax, yMin, yMax);
+
+        // Square step
+        // TODO do something with these verticies
+        getSquareIndices(xMin, xMax, yMin, yMax);
+
+        // Recursive calls on sub-problems
+        DiamondSquareGen(heightmap, xMin, xMax / 2, yMin, yMax / 2);    // Top-left
+        DiamondSquareGen(heightmap, xMax / 2, xMax, yMin, yMax / 2);    // Top-right
+        DiamondSquareGen(heightmap, xMax / 2, xMax, yMax / 2, yMax);    // Bottom-right
+        DiamondSquareGen(heightmap, xMin, xMax / 2, yMax / 2, yMax);    // Bottom-left
+    }
+
+    private static Tuple<int, int> getDiamondIndices(int xMin, int xMax, int yMin, int yMax)
+    {
+        return new Tuple<int, int>(
+            ((xMin) + (xMax - xMin + 1) / 2),
+            ((yMin) + (yMax - yMin + 1) / 2));
+    }
+
+    private static Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>> getSquareIndices(int xMin, int xMax, int yMin, int yMax)
+    {
+        // This is horrible. Everything is horrible.
+        return new Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>>(
+            new Tuple<int, int> (
+                (xMin + ((xMax - xMin + 1) / 2)),
+                (yMin)),
+            new Tuple<int, int> (
+                (xMax),
+                (yMin + ((yMax - yMin + 1) / 2))),
+            new Tuple<int, int> (
+                (xMin + ((xMax - xMin + 1) / 2)),
+                (yMax)),
+            new Tuple<int, int> (
+                (xMin),
+                (yMin + ((yMax - yMin + 1) / 2))));
     }
 
     // Update is called once per frame
