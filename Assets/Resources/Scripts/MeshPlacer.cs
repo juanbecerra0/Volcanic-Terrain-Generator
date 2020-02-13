@@ -10,6 +10,11 @@ public class MeshPlacer : MonoBehaviour
     public int initialBlockRadius = 2;
     public int heightmapBaseN = 7;
 
+    public static float peakMin = 0.0f;
+    public static float peakMax = 1.0f;
+    public static float displacementMin = -0.6f;
+    public static float displacementMax = 0.6f;
+
     private int heightmapDimensions;
     Dictionary<Tuple<int, int>, float[,]> NoiseMap = new Dictionary<Tuple<int, int>, float[,]>();
 
@@ -103,10 +108,10 @@ public class MeshPlacer : MonoBehaviour
         float[,] heightmap = new float[heightmapDimensions, heightmapDimensions];
 
         // Set random value to each of the four corners of the heightmap
-        heightmap[0, 0] = UnityEngine.Random.Range(0.0f, 1.0f);
-        heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(0.0f, 1.0f);
-        heightmap[0, heightmapDimensions - 1] = UnityEngine.Random.Range(0.0f, 1.0f);
-        heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(0.0f, 1.0f);
+        heightmap[0, 0] = UnityEngine.Random.Range(peakMin, peakMax);
+        heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(peakMin, peakMax);
+        heightmap[0, heightmapDimensions - 1] = UnityEngine.Random.Range(peakMin, peakMax);
+        heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(peakMin, peakMax);
 
         // Recursive diamond-square terrain generation algorithm
         DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1);
@@ -146,18 +151,28 @@ public class MeshPlacer : MonoBehaviour
     private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax)
     {
         // Diamond step
-        // TODO do something with these verticies
-        getDiamondIndices(xMin, xMax, yMin, yMax);
+        Tuple<int, int> diamondIndex = getDiamondIndex(xMin, xMax, yMin, yMax);
+        float cornerAverage = (heightmap[xMin, yMin] + heightmap[xMax, yMin] + heightmap[xMin, yMax] + heightmap[xMax, yMax]) / 4;
+
+        heightmap[diamondIndex.Item1, diamondIndex.Item2] = cornerAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
 
         // Square step
-        // TODO do something with these verticies
-        getSquareIndices(xMin, xMax, yMin, yMax);
+        Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>> squareIndicies = getSquareIndices(xMin, xMax, yMin, yMax);
+
+        float topAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMin]) / 3;
+        float rightAverage = (heightmap[xMax, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMax]) / 3; ;
+        float bottomAverage = (heightmap[xMin, yMax] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMax]) / 3; ;
+        float leftAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMin, yMax]) / 3; ;
+
+        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = topAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
+        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = rightAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
+        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = bottomAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
+        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = leftAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
 
         // Determine if recursive step is required
-        if(xMax - xMin <= 2 && yMax - yMin <= 2)
+        if (xMax - xMin <= 2 && yMax - yMin <= 2)
         {
-            // Base case
-            return;
+            return; // Base case
         } else
         {
             // Recursive calls on sub-problems
@@ -169,7 +184,7 @@ public class MeshPlacer : MonoBehaviour
     }
 
     // Returns the diamond index
-    private static Tuple<int, int> getDiamondIndices(int xMin, int xMax, int yMin, int yMax)
+    private static Tuple<int, int> getDiamondIndex(int xMin, int xMax, int yMin, int yMax)
     {
         return new Tuple<int, int>(
             (xMin + (xMax - xMin + 1) / 2),
