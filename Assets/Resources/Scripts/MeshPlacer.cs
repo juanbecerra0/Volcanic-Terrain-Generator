@@ -14,6 +14,7 @@ public class MeshPlacer : MonoBehaviour
     Dictionary<Tuple<int, int>, float[,]> NoiseMap = new Dictionary<Tuple<int, int>, float[,]>();
 
     // Start is called before the first frame update
+    // Initialize the map with several meshes based on input radius
     void Start()
     {
         GameObject prefab = (GameObject) Resources.Load("Prefabs/MeshGenerator");
@@ -94,10 +95,8 @@ public class MeshPlacer : MonoBehaviour
         }
     }
 
-    /**
-     * Generates and adds heightmap to dictionary 
-     * based on initial cartesian coordinates
-     */
+    // Generates and adds heightmap to dictionary 
+    // based on initial cartesian coordinates
     private float[,] GenerateHeightmap(int x, int y)
     {
         // Create 2D array of noise values
@@ -143,12 +142,9 @@ public class MeshPlacer : MonoBehaviour
         return heightmap;
     }
 
+    // Recursively performs the diamond-square algorithm to generate terrain
     private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax)
     {
-        // Base case
-        if(xMin <= xMax || yMin <= yMax)
-            return;
-
         // Diamond step
         // TODO do something with these verticies
         getDiamondIndices(xMin, xMax, yMin, yMax);
@@ -157,20 +153,30 @@ public class MeshPlacer : MonoBehaviour
         // TODO do something with these verticies
         getSquareIndices(xMin, xMax, yMin, yMax);
 
-        // Recursive calls on sub-problems
-        DiamondSquareGen(heightmap, xMin, xMax / 2, yMin, yMax / 2);    // Top-left
-        DiamondSquareGen(heightmap, xMax / 2, xMax, yMin, yMax / 2);    // Top-right
-        DiamondSquareGen(heightmap, xMax / 2, xMax, yMax / 2, yMax);    // Bottom-right
-        DiamondSquareGen(heightmap, xMin, xMax / 2, yMax / 2, yMax);    // Bottom-left
+        // Determine if recursive step is required
+        if(xMax - xMin <= 2 && yMax - yMin <= 2)
+        {
+            // Base case
+            return;
+        } else
+        {
+            // Recursive calls on sub-problems
+            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), yMin, (yMax / 2) + (yMin / 2));    // Top-left
+            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, yMin, (yMax / 2) + (yMin / 2));    // Top-right
+            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, (yMax / 2) + (yMin / 2), yMax);    // Bottom-right
+            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), (yMax / 2) + (yMin / 2), yMax);    // Bottom-left
+        }
     }
 
+    // Returns the diamond index
     private static Tuple<int, int> getDiamondIndices(int xMin, int xMax, int yMin, int yMax)
     {
         return new Tuple<int, int>(
-            ((xMin) + (xMax - xMin + 1) / 2),
-            ((yMin) + (yMax - yMin + 1) / 2));
+            (xMin + (xMax - xMin + 1) / 2),
+            (yMin + (yMax - yMin + 1) / 2));
     }
 
+    // Returns the square indicies
     private static Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>> getSquareIndices(int xMin, int xMax, int yMin, int yMax)
     {
         // This is horrible. Everything is horrible.

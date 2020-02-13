@@ -58,18 +58,6 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
-    /**
-     * Returns the corresponding index of the 1 dimensional vertex array 
-     * given an x and y coordinate
-     */
-    int GetIndex(int x, int y)
-    {
-        if (String.IsNullOrEmpty(dimensions.ToString()) || x > dimensions - 1 || x < 0 || y > dimensions - 1 || y < 0)
-            return -1;
-        else
-            return ((dimensions * dimensions) - dimensions) + x - (y * dimensions);
-    }
-
     void UpdateMesh()
     {
         mesh.Clear();
