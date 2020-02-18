@@ -60,29 +60,29 @@ public class MeshPlacer : MonoBehaviour
 
                     if (j == 0)  // Top-left shell
                     {
-                        xLocation = -(vertexCount * ((sequenceLength / 2) + 1)) + (k * vertexCount) + (vertexCount / 2);
-                        zLocation =  (vertexCount * ((sequenceLength / 2) + 1)) - (vertexCount / 2);
+                        xLocation = -(blockSize * ((sequenceLength / 2) + 1)) + (k * blockSize);
+                        zLocation =  (blockSize * ((sequenceLength / 2) + 1)) - (blockSize);
                         xIndex = -i + k;
                         zIndex =  i;
                     }
                     else if (j == 1)  // Top-right shell
                     {
-                        xLocation =  (vertexCount * ((sequenceLength / 2) + 1)) - (vertexCount / 2);
-                        zLocation =  (vertexCount * ((sequenceLength / 2) + 1)) - (k * vertexCount) - (vertexCount / 2);
+                        xLocation = (blockSize * ((sequenceLength / 2) + 1)) - (blockSize);
+                        zLocation = (blockSize * ((sequenceLength / 2) + 1)) - (k * blockSize) - (blockSize);
                         xIndex = i - 1;
                         zIndex = i - k;
                     }
                     else if (j == 2)  // Bottom-right shell
                     {
-                        xLocation =  (vertexCount * ((sequenceLength / 2) + 1)) - (k * vertexCount) - (vertexCount / 2);
-                        zLocation = -(vertexCount * ((sequenceLength / 2) + 1)) + (vertexCount / 2);
+                        xLocation = (blockSize * ((sequenceLength / 2) + 1)) - (k * blockSize) - (blockSize);
+                        zLocation = -(blockSize * ((sequenceLength / 2) + 1));
                         xIndex =  i - 1 - k;
                         zIndex = -i + 1;
                     }
                     else if (j == 3)    // Bottom-left shell
                     {
-                        xLocation = -(vertexCount * ((sequenceLength / 2) + 1)) + (vertexCount / 2);
-                        zLocation = -(vertexCount * ((sequenceLength / 2) + 1)) + (k * vertexCount) + (vertexCount / 2);
+                        xLocation = -(blockSize * ((sequenceLength / 2) + 1));
+                        zLocation = -(blockSize * ((sequenceLength / 2) + 1)) + (k * blockSize);
                         xIndex = -i;
                         zIndex = -i + 1 + k;
                     }

@@ -33,8 +33,11 @@ public class MeshGenerator : MonoBehaviour
                 int xIndex = Mathf.FloorToInt(((float)x / (float)vertexCount) * (heightmapSize - 0.01f));
                 int zIndex = Mathf.FloorToInt(((float)z / (float)vertexCount) * (heightmapSize - 0.01f));
 
-                float y = heightmap[xIndex, zIndex];
-                vertices[i] = new Vector3(x, y, z);
+                float xComp = (float)x * vertexSpacing;
+                float yComp = heightmap[xIndex, zIndex];
+                float zComp = (float)z * vertexSpacing;
+
+                vertices[i] = new Vector3(xComp, yComp, zComp);
             }
         }
 
