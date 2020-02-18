@@ -6,9 +6,10 @@ using UnityEngine;
 
 public class MeshPlacer : MonoBehaviour
 {
-    public int vertexCount = 20;
-    public int initialBlockRadius = 2;
-    public int heightmapBaseN = 7;
+    public int vertexCount = 20;        // Verticies in a MeshGen object
+    public int blockSize = 100;         // The dimensions of a MeshGen object
+    public int initialBlockRadius = 2;  // The initial radius from the origin of the scene
+    public int heightmapBaseN = 7;      // The dimensions of generated heightmaps (2^(n)+1)
 
     public static float peakMin = 0.0f;
     public static float peakMax = 1.0f;
@@ -94,7 +95,7 @@ public class MeshPlacer : MonoBehaviour
 
                     // Generate mesh for instance
                     MeshGenerator script = prefabInstance.GetComponent<MeshGenerator>();
-                    script.GenerateMesh(vertexCount, GenerateHeightmap(xIndex, zIndex));
+                    script.GenerateMesh(vertexCount, blockSize, GenerateHeightmap(xIndex, zIndex));
                 }
             }
         }

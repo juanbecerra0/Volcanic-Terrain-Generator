@@ -9,47 +9,48 @@ public class MeshGenerator : MonoBehaviour
     Mesh mesh;
     Vector3[] vertices;
     int[] triangles;
-    int dimensions;
 
-    public void GenerateMesh(int dimensions, float[,] heightmap) {
+    public void GenerateMesh(int vertexCount, int blockSize, float[,] heightmap) {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        CreateShape(dimensions, heightmap);
+        CreateShape(vertexCount, blockSize, heightmap);
         UpdateMesh();
     }
 
-    void CreateShape(int dimensions, float[,] heightmap)
+    void CreateShape(int vertexCount, int blockSize, float[,] heightmap)
     {
-        this.dimensions = dimensions + 1;
-        vertices = new Vector3[(dimensions + 1) * (dimensions + 1)];
-        float heightmapSize = (float) heightmap.GetLength(0);
+        vertexCount += vertexCount; // Need one more vertex on each dimension in order to make (n + 1) by (n + 1) mesh
+        vertices = new Vector3[(vertexCount + 1) * (vertexCount + 1)];
 
-        for (int i = 0, z = 0; z <= dimensions; z++)
+        float heightmapSize = heightmap.GetLength(0);
+        float vertexSpacing = (float)blockSize / (float)vertexCount;
+
+        for (int i = 0, z = 0; z <= vertexCount; z++)
         {
-            for (int x = 0; x <= dimensions; x++, i++)
+            for (int x = 0; x <= vertexCount; x++, i++)
             {
-                int xIndex = Mathf.FloorToInt(((float)x / (float)dimensions) * (heightmapSize - 0.01f));
-                int zIndex = Mathf.FloorToInt(((float)z / (float)dimensions) * (heightmapSize - 0.01f));
+                int xIndex = Mathf.FloorToInt(((float)x / (float)vertexCount) * (heightmapSize - 0.01f));
+                int zIndex = Mathf.FloorToInt(((float)z / (float)vertexCount) * (heightmapSize - 0.01f));
 
                 float y = heightmap[xIndex, zIndex];
                 vertices[i] = new Vector3(x, y, z);
             }
         }
 
-        triangles = new int[dimensions * dimensions * 6];
+        triangles = new int[vertexCount * vertexCount * 6];
         int vert = 0, tris = 0;
 
-        for (int z = 0; z < dimensions; z++)
+        for (int z = 0; z < vertexCount; z++)
         {
-            for (int x = 0; x < dimensions; x++)
+            for (int x = 0; x < vertexCount; x++)
             {
                 triangles[tris + 0] = vert + 0;
-                triangles[tris + 1] = vert + dimensions + 1;
+                triangles[tris + 1] = vert + vertexCount + 1;
                 triangles[tris + 2] = vert + 1;
                 triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + dimensions + 1;
-                triangles[tris + 5] = vert + dimensions + 2;
+                triangles[tris + 4] = vert + vertexCount + 1;
+                triangles[tris + 5] = vert + vertexCount + 2;
 
                 vert++;
                 tris += 6;
