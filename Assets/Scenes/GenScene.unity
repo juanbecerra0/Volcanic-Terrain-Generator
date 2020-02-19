@@ -191,7 +191,7 @@ PrefabInstance:
     - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
       propertyPath: vertexCount
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
@@ -201,12 +201,12 @@ PrefabInstance:
     - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
       propertyPath: initialBlockRadius
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
       propertyPath: heightmapBaseN
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5830571954608688143, guid: 15e4722091aec72469d2c8be7b02f5e6,
         type: 3}
