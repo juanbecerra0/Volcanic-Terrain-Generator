@@ -173,6 +173,22 @@ public class MeshPlacer : MonoBehaviour
         // Recursive diamond-square terrain generation algorithm
         DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1, adjacentTruthTable);
 
+        // Debug TODO DELETE
+        if(adjacentTruthTable.Item1 && adjacentTruthTable.Item2)
+        {
+                float[,] hm = NoiseMap[new Tuple<int, int>(x, y + 1)];
+                for (int i = 0; i < heightmapDimensions; i++)
+                {
+                    Debug.Log(heightmap[0, i] + " : " + hm[0, i]);
+                }
+
+                hm = NoiseMap[new Tuple<int, int>(x + 1, y)];
+                for (int i = 0; i < heightmapDimensions; i++)
+                {
+                    Debug.Log(heightmap[i, heightmapDimensions - 1] + " : " + hm[i, heightmapDimensions - 1]);
+                }
+        }
+
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
     }
