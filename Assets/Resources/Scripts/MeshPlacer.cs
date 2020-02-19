@@ -123,7 +123,7 @@ public class MeshPlacer : MonoBehaviour
             float[,] hm = NoiseMap[new Tuple<int, int>(x, y + 1)];
             for(int i = 0; i < heightmapDimensions; i++)
             {
-                heightmap[0, i] = hm[0, i];
+                heightmap[0, i] = hm[heightmapDimensions - 1, i];
             }
         }
 
@@ -133,7 +133,7 @@ public class MeshPlacer : MonoBehaviour
             float[,] hm = NoiseMap[new Tuple<int, int>(x + 1, y)];
             for (int i = 0; i < heightmapDimensions; i++)
             {
-                heightmap[i, heightmapDimensions - 1] = hm[i, heightmapDimensions - 1];
+                heightmap[i, heightmapDimensions - 1] = hm[i, 0];
             }
         }
 
@@ -143,7 +143,7 @@ public class MeshPlacer : MonoBehaviour
             float[,] hm = NoiseMap[new Tuple<int, int>(x, y - 1)];
             for (int i = 0; i < heightmapDimensions; i++)
             {
-                heightmap[heightmapDimensions - 1, i] = hm[heightmapDimensions - 1, i];
+                heightmap[heightmapDimensions - 1, i] = hm[0, i];
             }
         }
 
@@ -153,7 +153,7 @@ public class MeshPlacer : MonoBehaviour
             float[,] hm = NoiseMap[new Tuple<int, int>(x - 1, y)];
             for (int i = 0; i < heightmapDimensions; i++)
             {
-                heightmap[i, 0] = hm[i, 0];
+                heightmap[i, 0] = hm[i, heightmapDimensions - 1];
             }
         }
 
@@ -173,23 +173,25 @@ public class MeshPlacer : MonoBehaviour
         // Recursive diamond-square terrain generation algorithm
         DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1, adjacentTruthTable);
 
+        /*
         // Debug TODO DELETE
         if(adjacentTruthTable.Item1 && adjacentTruthTable.Item2)
         {
                 float[,] hm = NoiseMap[new Tuple<int, int>(x, y + 1)];
                 for (int i = 0; i < heightmapDimensions; i++)
                 {
-                    if (heightmap[0, i] != hm[0, i])
-                        Debug.Log(heightmap[0, i] + " : " + hm[0, i] + " :a " + i);
+                    if (heightmap[0, i] != hm[heightmapDimensions - 1, i])
+                        Debug.Log(heightmap[0, i] + " : " + hm[heightmapDimensions - 1, i] + " :a " + i);
                 }
 
                 hm = NoiseMap[new Tuple<int, int>(x + 1, y)];
                 for (int i = 0; i < heightmapDimensions; i++)
                 {
-                    if(heightmap[i, heightmapDimensions - 1] != hm[i, heightmapDimensions - 1])
-                        Debug.Log(heightmap[i, heightmapDimensions - 1] + " :b " + hm[i, heightmapDimensions - 1] + " : " + i);
+                    if(heightmap[i, heightmapDimensions - 1] != hm[i, 0])
+                        Debug.Log(heightmap[i, heightmapDimensions - 1] + " :b " + hm[i, 0] + " : " + i);
                 }
         }
+        */
 
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
