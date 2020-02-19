@@ -240,8 +240,9 @@ public class MeshPlacer : MonoBehaviour
     private static Tuple<int, int> getDiamondIndex(int xMin, int xMax, int yMin, int yMax)
     {
         return new Tuple<int, int>(
-            (xMin + (xMax - xMin + 1) / 2),
-            (yMin + (yMax - yMin + 1) / 2));
+            (xMin + (xMax - xMin) / 2),
+            (yMin + (yMax - yMin) / 2)
+        );
     }
 
     // Returns the square indicies
@@ -251,16 +252,21 @@ public class MeshPlacer : MonoBehaviour
         return new Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>>(
             new Tuple<int, int> (
                 (xMin + ((xMax - xMin + 1) / 2)),
-                (yMin)),
+                (yMin)
+            ),
             new Tuple<int, int> (
                 (xMax),
-                (yMin + ((yMax - yMin + 1) / 2))),
+                (yMin + ((yMax - yMin + 1) / 2))
+            ),
             new Tuple<int, int> (
                 (xMin + ((xMax - xMin + 1) / 2)),
-                (yMax)),
+                (yMax)
+            ),
             new Tuple<int, int> (
                 (xMin),
-                (yMin + ((yMax - yMin + 1) / 2))));
+                (yMin + ((yMax - yMin + 1) / 2))
+            )
+        );
     }
 
     private static float getRandomDisplacement()
