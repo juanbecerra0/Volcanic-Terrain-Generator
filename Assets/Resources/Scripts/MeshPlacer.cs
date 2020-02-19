@@ -11,10 +11,11 @@ public class MeshPlacer : MonoBehaviour
     public int initialBlockRadius = 2;  // The initial radius from the origin of the scene
     public int heightmapBaseN = 7;      // The dimensions of generated heightmaps (2^(n)+1)
 
-    public static float peakMin = 0.0f;
-    public static float peakMax = 1.0f;
-    public static float displacementMin = -0.6f;
-    public static float displacementMax = 0.6f;
+    public float heightmapCornerMin = 0.0f;
+    public float heightmapCornerMax = 1.0f;
+
+    public static float heightmapDisplacementMin = -0.5f;
+    public static float heightmapDisplacementMax = 0.5f;
 
     private int heightmapDimensions;
     Dictionary<Tuple<int, int>, float[,]> NoiseMap = new Dictionary<Tuple<int, int>, float[,]>();
@@ -109,10 +110,10 @@ public class MeshPlacer : MonoBehaviour
         float[,] heightmap = new float[heightmapDimensions, heightmapDimensions];
 
         // Set random value to each of the four corners of the heightmap
-        heightmap[0, 0] = UnityEngine.Random.Range(peakMin, peakMax);
-        heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(peakMin, peakMax);
-        heightmap[0, heightmapDimensions - 1] = UnityEngine.Random.Range(peakMin, peakMax);
-        heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(peakMin, peakMax);
+        heightmap[0, 0] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
+        heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
+        heightmap[0, heightmapDimensions - 1] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
+        heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
 
         // Recursive diamond-square terrain generation algorithm
         DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1);
@@ -155,7 +156,7 @@ public class MeshPlacer : MonoBehaviour
         Tuple<int, int> diamondIndex = getDiamondIndex(xMin, xMax, yMin, yMax);
         float cornerAverage = (heightmap[xMin, yMin] + heightmap[xMax, yMin] + heightmap[xMin, yMax] + heightmap[xMax, yMax]) / 4;
 
-        heightmap[diamondIndex.Item1, diamondIndex.Item2] = cornerAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
+        heightmap[diamondIndex.Item1, diamondIndex.Item2] = cornerAverage + getRandomDisplacement();
 
         // Square step
         Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>> squareIndicies = getSquareIndices(xMin, xMax, yMin, yMax);
@@ -165,10 +166,10 @@ public class MeshPlacer : MonoBehaviour
         float bottomAverage = (heightmap[xMin, yMax] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMax]) / 3; ;
         float leftAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMin, yMax]) / 3; ;
 
-        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = topAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
-        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = rightAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
-        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = bottomAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
-        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = leftAverage + UnityEngine.Random.Range(displacementMin, displacementMax);
+        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = topAverage + getRandomDisplacement();
+        heightmap[squareIndicies.Item2.Item1, squareIndicies.Item2.Item2] = rightAverage + getRandomDisplacement();
+        heightmap[squareIndicies.Item3.Item1, squareIndicies.Item3.Item2] = bottomAverage + getRandomDisplacement();
+        heightmap[squareIndicies.Item4.Item1, squareIndicies.Item4.Item2] = leftAverage + getRandomDisplacement();
 
         // Determine if recursive step is required
         if (xMax - xMin <= 2 && yMax - yMin <= 2)
@@ -209,6 +210,11 @@ public class MeshPlacer : MonoBehaviour
             new Tuple<int, int> (
                 (xMin),
                 (yMin + ((yMax - yMin + 1) / 2))));
+    }
+
+    private static float getRandomDisplacement()
+    {
+        return UnityEngine.Random.Range(heightmapDisplacementMin, heightmapDisplacementMax);
     }
 
     // Update is called once per frame
