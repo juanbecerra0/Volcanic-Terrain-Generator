@@ -157,18 +157,18 @@ public class MeshPlacer : MonoBehaviour
             }
         }
 
-        /* Check if a direction has a heightmap. If so...
-         * 
-         * Grab that heightmap's adjacent values and copy into this heightmap
-         * Prevent random values from being set at corresponding corners
-         * Prevent diamond-square algorithm from setting values from that point
-         */
-
         // Set random value to each of the four corners of the heightmap
-        heightmap[0, 0] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
-        heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
-        heightmap[0, heightmapDimensions - 1] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
-        heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
+        if(!adjacentTruthTable.Item1 && !adjacentTruthTable.Item4)
+            heightmap[0, 0] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
+
+        if (!adjacentTruthTable.Item3 && !adjacentTruthTable.Item4)
+            heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
+
+        if (!adjacentTruthTable.Item1 && !adjacentTruthTable.Item2)
+            heightmap[0, heightmapDimensions - 1] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
+
+        if (!adjacentTruthTable.Item2 && !adjacentTruthTable.Item3)
+            heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
 
         // Recursive diamond-square terrain generation algorithm
         DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1);
