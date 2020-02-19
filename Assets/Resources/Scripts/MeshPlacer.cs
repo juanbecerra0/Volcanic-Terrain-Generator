@@ -171,14 +171,14 @@ public class MeshPlacer : MonoBehaviour
             heightmap[heightmapDimensions - 1, heightmapDimensions - 1] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
 
         // Recursive diamond-square terrain generation algorithm
-        DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1);
+        DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1, adjacentTruthTable);
 
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
     }
 
     // Recursively performs the diamond-square algorithm to generate terrain
-    private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax)
+    private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax, Tuple<bool, bool, bool, bool> adjacentTruthTable)
     {
         // Diamond step
         Tuple<int, int> diamondIndex = getDiamondIndex(xMin, xMax, yMin, yMax);
@@ -194,10 +194,17 @@ public class MeshPlacer : MonoBehaviour
         float bottomAverage = (heightmap[xMin, yMax] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMax]) / 3; ;
         float leftAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMin, yMax]) / 3; ;
 
-        heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = topAverage + getRandomDisplacement();
-        heightmap[squareIndicies.Item2.Item1, squareIndicies.Item2.Item2] = rightAverage + getRandomDisplacement();
-        heightmap[squareIndicies.Item3.Item1, squareIndicies.Item3.Item2] = bottomAverage + getRandomDisplacement();
-        heightmap[squareIndicies.Item4.Item1, squareIndicies.Item4.Item2] = leftAverage + getRandomDisplacement();
+        if (!adjacentTruthTable.Item1 || squareIndicies.Item1.Item1 != 0)
+            heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = topAverage + getRandomDisplacement();
+
+        if (!adjacentTruthTable.Item2 || squareIndicies.Item2.Item2 != heightmap.GetLength(0) - 1)
+            heightmap[squareIndicies.Item2.Item1, squareIndicies.Item2.Item2] = rightAverage + getRandomDisplacement();
+
+        if (!adjacentTruthTable.Item3 || squareIndicies.Item3.Item1 != heightmap.GetLength(0) - 1)
+            heightmap[squareIndicies.Item3.Item1, squareIndicies.Item3.Item2] = bottomAverage + getRandomDisplacement();
+
+        if (!adjacentTruthTable.Item4 || squareIndicies.Item4.Item2 != 0)
+            heightmap[squareIndicies.Item4.Item1, squareIndicies.Item4.Item2] = leftAverage + getRandomDisplacement();
 
         // Determine if recursive step is required
         if (xMax - xMin <= 2 && yMax - yMin <= 2)
@@ -206,10 +213,10 @@ public class MeshPlacer : MonoBehaviour
         } else
         {
             // Recursive calls on sub-problems
-            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), yMin, (yMax / 2) + (yMin / 2));    // Top-left
-            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, yMin, (yMax / 2) + (yMin / 2));    // Top-right
-            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, (yMax / 2) + (yMin / 2), yMax);    // Bottom-right
-            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), (yMax / 2) + (yMin / 2), yMax);    // Bottom-left
+            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), yMin, (yMax / 2) + (yMin / 2), adjacentTruthTable);    // Top-left
+            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, yMin, (yMax / 2) + (yMin / 2), adjacentTruthTable);    // Top-right
+            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, (yMax / 2) + (yMin / 2), yMax, adjacentTruthTable);    // Bottom-right
+            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), (yMax / 2) + (yMin / 2), yMax, adjacentTruthTable);    // Bottom-left
         }
     }
 
