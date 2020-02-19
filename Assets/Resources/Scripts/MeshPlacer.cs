@@ -109,6 +109,61 @@ public class MeshPlacer : MonoBehaviour
         // Create 2D array of noise values
         float[,] heightmap = new float[heightmapDimensions, heightmapDimensions];
 
+        // Check for adjacent heightmaps
+        Tuple<bool, bool, bool, bool> adjacentTruthTable = new Tuple<bool, bool, bool, bool>(
+            NoiseMap.ContainsKey(new Tuple<int, int>(x, y + 1)),
+            NoiseMap.ContainsKey(new Tuple<int, int>(x + 1, y)),
+            NoiseMap.ContainsKey(new Tuple<int, int>(x, y - 1)),
+            NoiseMap.ContainsKey(new Tuple<int, int>(x - 1, y))
+        );
+
+        // Copy over top values
+        if (adjacentTruthTable.Item1)
+        {
+            float[,] hm = NoiseMap[new Tuple<int, int>(x, y + 1)];
+            for(int i = 0; i < heightmapDimensions; i++)
+            {
+                heightmap[0, i] = hm[0, i];
+            }
+        }
+
+        // Copy over right values
+        if (adjacentTruthTable.Item2)
+        {
+            float[,] hm = NoiseMap[new Tuple<int, int>(x + 1, y)];
+            for (int i = 0; i < heightmapDimensions; i++)
+            {
+                heightmap[i, heightmapDimensions - 1] = hm[i, heightmapDimensions - 1];
+            }
+        }
+
+        // Copy over bottom values
+        if (adjacentTruthTable.Item3)
+        {
+            float[,] hm = NoiseMap[new Tuple<int, int>(x, y - 1)];
+            for (int i = 0; i < heightmapDimensions; i++)
+            {
+                heightmap[heightmapDimensions - 1, i] = hm[heightmapDimensions - 1, i];
+            }
+        }
+
+        // Copy over left values
+        if (adjacentTruthTable.Item4)
+        {
+            float[,] hm = NoiseMap[new Tuple<int, int>(x - 1, y)];
+            for (int i = 0; i < heightmapDimensions; i++)
+            {
+                heightmap[i, 0] = hm[i, 0];
+            }
+        }
+
+        /* Check if a direction has a heightmap. If so...
+         * 
+         * Grab that heightmap's adjacent values and copy into this heightmap
+         * Prevent random values from being set at corresponding corners
+         * Prevent diamond-square algorithm from setting values from that point
+         */
+
         // Set random value to each of the four corners of the heightmap
         heightmap[0, 0] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
         heightmap[heightmapDimensions - 1, 0] = UnityEngine.Random.Range(heightmapCornerMin, heightmapCornerMax);
@@ -117,33 +172,6 @@ public class MeshPlacer : MonoBehaviour
 
         // Recursive diamond-square terrain generation algorithm
         DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1);
-
-        // TODO stitch adjacent heightmaps
-        /*
-        // Check above
-        if (NoiseMap.ContainsKey(new Tuple<int, int>(x, y + 1)))
-        {
-
-        }
-
-        // Check right
-        if (NoiseMap.ContainsKey(new Tuple<int, int>(x + 1, y)))
-        {
-
-        }
-
-        // Check bottom
-        if (NoiseMap.ContainsKey(new Tuple<int, int>(x, y - 1)))
-        {
-
-        }
-
-        // Check left
-        if (NoiseMap.ContainsKey(new Tuple<int, int>(x - 1, y)))
-        {
-
-        }
-        */
 
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
