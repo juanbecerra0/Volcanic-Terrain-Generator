@@ -1,6 +1,8 @@
 # TerrainEngine
 Terrain generation engine built in Unity. For Boise State CS 497 - Advanced Computer Graphics.
 
+A Trello task list can be found here: https://trello.com/b/A6eJpKhz/terrain-engine
+
 # Goals
 
 ### Overview
