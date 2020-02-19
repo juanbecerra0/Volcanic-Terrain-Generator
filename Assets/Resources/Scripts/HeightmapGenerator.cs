@@ -6,17 +6,23 @@ using UnityEngine;
 public class HeightmapGenerator : MonoBehaviour
 {
     private int heightmapDimensions;
-    private Dictionary<Tuple<int, int>, float[,]> NoiseMap = new Dictionary<Tuple<int, int>, float[,]>();
+    private Dictionary<Tuple<int, int>, float[,]> NoiseMap;
 
-    private float heightmapCornerMin = 0.0f;
-    private float heightmapCornerMax = 1.0f;
-    private static float heightmapDisplacementMin = -0.5f;
-    private static float heightmapDisplacementMax = 0.5f;
+    private float heightmapCornerMin;
+    private float heightmapCornerMax;
+    private static float heightmapDisplacementMin;
+    private static float heightmapDisplacementMax;
 
     public void Initialize(int heightmapDimensions)
     {
         this.heightmapDimensions = heightmapDimensions;
-    }
+        NoiseMap = new Dictionary<Tuple<int, int>, float[,]>();
+
+        heightmapCornerMin = 0.0f;
+        heightmapCornerMax = 1.0f;
+        heightmapDisplacementMin = -0.5f;
+        heightmapDisplacementMax = 0.5f;
+}
 
     // Generates and adds heightmap to dictionary 
     // based on initial cartesian coordinates

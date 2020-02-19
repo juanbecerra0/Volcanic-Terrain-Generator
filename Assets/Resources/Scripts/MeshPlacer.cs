@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class MeshPlacer : MonoBehaviour
 {
-    public int vertexCount = 20;        // Verticies in a MeshGen object
-    public int blockSize = 100;         // The dimensions of a MeshGen object
+    //public int vertexCount = 20;        // Verticies in a MeshGen object
     public int initialBlockRadius = 2;  // The initial radius from the origin of the scene
     public int heightmapBaseN = 7;      // The dimensions of generated heightmaps (2^(n)+1)
+    public int blockSize = 100;         // The dimensions of a MeshGen object
 
     // Start is called before the first frame update
     // Initialize the map with several meshes based on input radius
@@ -19,14 +19,12 @@ public class MeshPlacer : MonoBehaviour
         GameObject heightmapGeneratorPrefab = (GameObject)Resources.Load("Prefabs/HeightmapGenerator");
         GameObject heightmapGeneratorInstance = (GameObject)GameObject.Instantiate(heightmapGeneratorPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         HeightmapGenerator hmScript = heightmapGeneratorInstance.GetComponent<HeightmapGenerator>();
-        hmScript.Initialize((int)Mathf.Pow(2, heightmapBaseN) + 1);
+        
+        int dimensions = (int)Mathf.Pow(2, heightmapBaseN) + 1;
+        hmScript.Initialize(dimensions);
 
         // Initialize MeshGenerator prefab
         GameObject prefab = (GameObject) Resources.Load("Prefabs/MeshGenerator");
-
-        // Error checking
-        if (vertexCount < 2)
-            vertexCount = 2;
 
         if (initialBlockRadius < 1)
             initialBlockRadius = 1;
@@ -34,11 +32,8 @@ public class MeshPlacer : MonoBehaviour
         if (heightmapBaseN < 3)
             heightmapBaseN = 3;
 
-        if (!prefab)
-        {
-            Debug.Log("Prefab could not be found");
-            return;
-        }
+        if (blockSize < 1)
+            blockSize = 1;
 
         Quaternion orientation = Quaternion.identity;
 
@@ -91,7 +86,7 @@ public class MeshPlacer : MonoBehaviour
 
                     // Generate mesh for instance
                     MeshGenerator script = prefabInstance.GetComponent<MeshGenerator>();
-                    script.GenerateMesh(vertexCount, blockSize, hmScript.GenerateHeightmap(xIndex, zIndex));
+                    script.GenerateMesh(hmScript.GenerateHeightmap(xIndex, zIndex), blockSize);
                 }
             }
         }

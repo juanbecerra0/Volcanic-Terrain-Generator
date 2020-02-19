@@ -10,59 +10,60 @@ public class MeshGenerator : MonoBehaviour
     Vector3[] vertices;
     int[] triangles;
 
-    public void GenerateMesh(int vertexCount, int blockSize, float[,] heightmap) {
+    // Generates y coordinates based on heightmap data, then update the mesh
+    public void GenerateMesh(float[,] heightmap, int blockSize)
+    {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        CreateShape(vertexCount, blockSize, heightmap);
-        UpdateMesh();
-    }
+        int vertexWidth = heightmap.GetLength(1);
 
-    void CreateShape(int vertexCount, int blockSize, float[,] heightmap)
-    {
-        vertexCount += vertexCount; // Need one more vertex on each dimension in order to make (n + 1) by (n + 1) mesh
-        vertices = new Vector3[(vertexCount + 1) * (vertexCount + 1)];
+        vertices = new Vector3[(vertexWidth) * (vertexWidth)];
 
-        float heightmapSize = heightmap.GetLength(0);
-        float vertexSpacing = (float)blockSize / (float)vertexCount;
+        float vertexSpacing = (float) ((float)blockSize / (float)(vertexWidth - 1));
 
-        for (int i = 0, z = 0; z <= vertexCount; z++)
+        int xIndex = vertexWidth - 1;
+        int yIndex = 0;
+
+        for (int i = 0, z = 0; z < vertexWidth; z++)
         {
-            for (int x = 0; x <= vertexCount; x++, i++)
+            for (int x = 0; x < vertexWidth; x++, i++)
             {
-                int xIndex = Mathf.FloorToInt(((float)x / (float)vertexCount) * (heightmapSize - 0.01f));
-                int zIndex = Mathf.FloorToInt(((float)z / (float)vertexCount) * (heightmapSize - 0.01f));
-
                 float xComp = (float)x * vertexSpacing;
-                float yComp = heightmap[xIndex, zIndex];
+                float yComp = heightmap[xIndex, yIndex++];
                 float zComp = (float)z * vertexSpacing;
 
                 vertices[i] = new Vector3(xComp, yComp, zComp);
             }
+            xIndex--;
+            yIndex = 0;
         }
 
-        triangles = new int[vertexCount * vertexCount * 6];
+        triangles = new int[(vertexWidth - 1) * (vertexWidth - 1) * 6];
         int vert = 0, tris = 0;
 
-        for (int z = 0; z < vertexCount; z++)
+        for (int z = 0; z < vertexWidth - 1; z++)
         {
-            for (int x = 0; x < vertexCount; x++)
+            for (int x = 0; x < vertexWidth - 1; x++)
             {
                 triangles[tris + 0] = vert + 0;
-                triangles[tris + 1] = vert + vertexCount + 1;
+                triangles[tris + 1] = vert + (vertexWidth - 1) + 1;
                 triangles[tris + 2] = vert + 1;
                 triangles[tris + 3] = vert + 1;
-                triangles[tris + 4] = vert + vertexCount + 1;
-                triangles[tris + 5] = vert + vertexCount + 2;
+                triangles[tris + 4] = vert + (vertexWidth - 1) + 1;
+                triangles[tris + 5] = vert + (vertexWidth - 1) + 2;
 
                 vert++;
                 tris += 6;
             }
             vert++;
         }
+
+        UpdateMesh();
     }
 
-    void UpdateMesh()
+    // Updates mesh components and recalculates normals
+    private void UpdateMesh()
     {
         mesh.Clear();
 
