@@ -179,13 +179,15 @@ public class MeshPlacer : MonoBehaviour
                 float[,] hm = NoiseMap[new Tuple<int, int>(x, y + 1)];
                 for (int i = 0; i < heightmapDimensions; i++)
                 {
-                    Debug.Log(heightmap[0, i] + " : " + hm[0, i]);
+                    if (heightmap[0, i] != hm[0, i])
+                        Debug.Log(heightmap[0, i] + " : " + hm[0, i] + " :a " + i);
                 }
 
                 hm = NoiseMap[new Tuple<int, int>(x + 1, y)];
                 for (int i = 0; i < heightmapDimensions; i++)
                 {
-                    Debug.Log(heightmap[i, heightmapDimensions - 1] + " : " + hm[i, heightmapDimensions - 1]);
+                    if(heightmap[i, heightmapDimensions - 1] != hm[i, heightmapDimensions - 1])
+                        Debug.Log(heightmap[i, heightmapDimensions - 1] + " :b " + hm[i, heightmapDimensions - 1] + " : " + i);
                 }
         }
 
@@ -205,10 +207,10 @@ public class MeshPlacer : MonoBehaviour
         // Square step
         Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>> squareIndicies = getSquareIndices(xMin, xMax, yMin, yMax);
 
-        float topAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMin]) / 3;
-        float rightAverage = (heightmap[xMax, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMax]) / 3; ;
-        float bottomAverage = (heightmap[xMin, yMax] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMax]) / 3; ;
-        float leftAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMin, yMax]) / 3; ;
+        float topAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMin, yMax]) / 3;
+        float rightAverage = (heightmap[xMin, yMax] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMax]) / 3; ;
+        float bottomAverage = (heightmap[xMax, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMax]) / 3; ;
+        float leftAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMin]) / 3; ;
 
         if (!adjacentTruthTable.Item1 || squareIndicies.Item1.Item1 != 0)
             heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = topAverage + getRandomDisplacement();
@@ -240,8 +242,8 @@ public class MeshPlacer : MonoBehaviour
     private static Tuple<int, int> getDiamondIndex(int xMin, int xMax, int yMin, int yMax)
     {
         return new Tuple<int, int>(
-            (xMin + (xMax - xMin) / 2),
-            (yMin + (yMax - yMin) / 2)
+            (xMin + ((xMax - xMin) / 2)),
+            (yMin + ((yMax - yMin) / 2))
         );
     }
 
@@ -251,20 +253,20 @@ public class MeshPlacer : MonoBehaviour
         // This is horrible. Everything is horrible.
         return new Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>>(
             new Tuple<int, int> (
-                (xMin + ((xMax - xMin + 1) / 2)),
-                (yMin)
+                (xMin),
+                (yMin + ((yMax - yMin) / 2))
             ),
             new Tuple<int, int> (
-                (xMax),
-                (yMin + ((yMax - yMin + 1) / 2))
-            ),
-            new Tuple<int, int> (
-                (xMin + ((xMax - xMin + 1) / 2)),
+                (xMin + ((xMax - xMin) / 2)),
                 (yMax)
             ),
             new Tuple<int, int> (
-                (xMin),
-                (yMin + ((yMax - yMin + 1) / 2))
+                (xMax),
+                (yMin + ((yMax - yMin) / 2))
+            ),
+            new Tuple<int, int> (
+                (xMin + ((xMax - xMin) / 2)),
+                (yMin)
             )
         );
     }
