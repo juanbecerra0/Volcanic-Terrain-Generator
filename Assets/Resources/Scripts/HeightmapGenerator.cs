@@ -143,7 +143,8 @@ public class HeightmapGenerator : MonoBehaviour
         }
     }
 
-    // Returns the diamond index
+    // Returns the diamond index for DS-algorithm
+    // given min/max x and y index values
     private static Tuple<int, int> getDiamondIndex(int xMin, int xMax, int yMin, int yMax)
     {
         return new Tuple<int, int>(
@@ -152,7 +153,8 @@ public class HeightmapGenerator : MonoBehaviour
         );
     }
 
-    // Returns the square indicies
+    // Returns an ordered list of the square indicies for DS-algorithm
+    // given min/max x and y index values
     private static Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>> getSquareIndices(int xMin, int xMax, int yMin, int yMax)
     {
         // This is horrible. Everything is horrible.
@@ -176,6 +178,7 @@ public class HeightmapGenerator : MonoBehaviour
         );
     }
 
+    // Returns a random float between min and max displacement values (inclusive)
     private static float getRandomDisplacement()
     {
         return UnityEngine.Random.Range(heightmapDisplacementMin, heightmapDisplacementMax);
