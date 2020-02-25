@@ -15,7 +15,12 @@ public class MeshPlacer : MonoBehaviour
     // Initialize the map with several meshes based on input radius
     void Start()
     {
-        // Initialize HeightmapGenerator prefab, create instance, and attach init script
+        // Initialize master mesh prefab, create instance, and attatch script
+        GameObject masterTerrainPrefab = (GameObject)Resources.Load("Prefabs/MasterTerrain");
+        GameObject masterTerrainInstance = (GameObject)GameObject.Instantiate(masterTerrainPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        MasterTerrain mtScript = masterTerrainInstance.GetComponent<MasterTerrain>();
+
+        // Initialize HeightmapGenerator prefab, create instance, and attatch script
         GameObject heightmapGeneratorPrefab = (GameObject)Resources.Load("Prefabs/HeightmapGenerator");
         GameObject heightmapGeneratorInstance = (GameObject)GameObject.Instantiate(heightmapGeneratorPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         HeightmapGenerator hmScript = heightmapGeneratorInstance.GetComponent<HeightmapGenerator>();
@@ -87,6 +92,9 @@ public class MeshPlacer : MonoBehaviour
                     // Generate mesh for instance
                     MeshGenerator script = prefabInstance.GetComponent<MeshGenerator>();
                     script.GenerateMesh(hmScript.GenerateHeightmap(xIndex, zIndex), blockSize);
+
+                    // Send mesh to master component
+
                 }
             }
         }
