@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class MeshPlacer : MonoBehaviour
 {
-    //public int vertexCount = 20;        // Verticies in a MeshGen object
     public int initialBlockRadius = 2;  // The initial radius from the origin of the scene
     public int heightmapBaseN = 7;      // The dimensions of generated heightmaps (2^(n)+1)
     public int blockSize = 100;         // The dimensions of a MeshGen object
@@ -15,22 +14,7 @@ public class MeshPlacer : MonoBehaviour
     // Initialize the map with several meshes based on input radius
     void Start()
     {
-        // Initialize master mesh prefab, create instance, and attatch script
-        GameObject masterTerrainPrefab = (GameObject)Resources.Load("Prefabs/MasterTerrain");
-        GameObject masterTerrainInstance = (GameObject)GameObject.Instantiate(masterTerrainPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        MasterTerrain mtScript = masterTerrainInstance.GetComponent<MasterTerrain>();
-
-        // Initialize HeightmapGenerator prefab, create instance, and attatch script
-        GameObject heightmapGeneratorPrefab = (GameObject)Resources.Load("Prefabs/HeightmapGenerator");
-        GameObject heightmapGeneratorInstance = (GameObject)GameObject.Instantiate(heightmapGeneratorPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        HeightmapGenerator hmScript = heightmapGeneratorInstance.GetComponent<HeightmapGenerator>();
-        
-        int dimensions = (int)Mathf.Pow(2, heightmapBaseN) + 1;
-        hmScript.Initialize(dimensions);
-
-        // Initialize MeshGenerator prefab
-        GameObject prefab = (GameObject) Resources.Load("Prefabs/MeshGenerator");
-
+        // Error checking
         if (initialBlockRadius < 1)
             initialBlockRadius = 1;
 
@@ -40,7 +24,14 @@ public class MeshPlacer : MonoBehaviour
         if (blockSize < 1)
             blockSize = 1;
 
-        Quaternion orientation = Quaternion.identity;
+        // Initialize HeightmapGenerator prefab, create instance, and attatch script
+        GameObject heightmapGeneratorPrefab = (GameObject)Resources.Load("Prefabs/HeightmapGenerator");
+        GameObject heightmapGeneratorInstance = (GameObject)GameObject.Instantiate(heightmapGeneratorPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        HeightmapGenerator heightmapGeneratorScript = heightmapGeneratorInstance.GetComponent<HeightmapGenerator>();
+        heightmapGeneratorScript.Initialize((int)Mathf.Pow(2, heightmapBaseN) + 1);
+
+        // Initialize MeshGenerator prefab, create instance, and attach scriptb
+        GameObject meshGeneratorPrefab = (GameObject)Resources.Load("Prefabs/MeshGenerator");
 
         // Iterates through each sequence in the block radius
         for (int i = 1, sequenceLength = 1; i <= initialBlockRadius; i++, sequenceLength += 2)
@@ -51,58 +42,42 @@ public class MeshPlacer : MonoBehaviour
                 // Iterates through shell sequence lengths
                 for (int k = 0; k < sequenceLength; k++)
                 {
-                    float xLocation = 0, zLocation = 0;
                     int xIndex = 0, zIndex = 0;
 
                     if (j == 0)  // Top-left shell
                     {
-                        xLocation = -(blockSize * ((sequenceLength / 2) + 1)) + (k * blockSize);
-                        zLocation =  (blockSize * ((sequenceLength / 2) + 1)) - (blockSize);
                         xIndex = -i + k;
-                        zIndex =  i;
+                        zIndex = i - 1;
                     }
                     else if (j == 1)  // Top-right shell
                     {
-                        xLocation = (blockSize * ((sequenceLength / 2) + 1)) - (blockSize);
-                        zLocation = (blockSize * ((sequenceLength / 2) + 1)) - (k * blockSize) - (blockSize);
                         xIndex = i - 1;
-                        zIndex = i - k;
+                        zIndex = i - k - 1;
                     }
                     else if (j == 2)  // Bottom-right shell
                     {
-                        xLocation = (blockSize * ((sequenceLength / 2) + 1)) - (k * blockSize) - (blockSize);
-                        zLocation = -(blockSize * ((sequenceLength / 2) + 1));
-                        xIndex =  i - 1 - k;
-                        zIndex = -i + 1;
+                        xIndex = i - k - 1;
+                        zIndex = -i;
                     }
                     else if (j == 3)    // Bottom-left shell
                     {
-                        xLocation = -(blockSize * ((sequenceLength / 2) + 1));
-                        zLocation = -(blockSize * ((sequenceLength / 2) + 1)) + (k * blockSize);
                         xIndex = -i;
-                        zIndex = -i + 1 + k;
+                        zIndex = -i + k;
                     }
 
-                    // Calculate location
-                    Vector3 position = new Vector3(xLocation, 0, zLocation);
-
-                    // Generate instance of prefab
-                    GameObject prefabInstance = (GameObject)GameObject.Instantiate(prefab, position, orientation);
+                    // Generate instance of mesh generator prefab
+                    GameObject meshGeneratorPrefabInstance = (GameObject)GameObject.Instantiate(meshGeneratorPrefab, GetWorldCoordinates(xIndex, zIndex), Quaternion.identity);
 
                     // Generate mesh for instance
-                    MeshGenerator script = prefabInstance.GetComponent<MeshGenerator>();
-                    script.GenerateMesh(hmScript.GenerateHeightmap(xIndex, zIndex), blockSize);
-
-                    // Send mesh to master component
-
+                    MeshGenerator meshGeneratorScript = meshGeneratorPrefabInstance.GetComponent<MeshGenerator>();
+                    meshGeneratorScript.GenerateMesh(heightmapGeneratorScript.GenerateHeightmap(xIndex, zIndex), blockSize);
                 }
             }
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private Vector3 GetWorldCoordinates(float xIndex, float zIndex)
     {
-        
+        return new Vector3(xIndex * blockSize, 0, zIndex * blockSize);
     }
 }

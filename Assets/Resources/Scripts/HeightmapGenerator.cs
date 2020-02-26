@@ -21,7 +21,7 @@ public class HeightmapGenerator : MonoBehaviour
         heightmapCornerMin = 0.0f;
         heightmapCornerMax = 1.0f;
         heightmapDisplacementMin = -0.5f;
-        heightmapDisplacementMax = 0.5f;
+        heightmapDisplacementMax = 5.0f;
 }
 
     // Generates and adds heightmap to dictionary 

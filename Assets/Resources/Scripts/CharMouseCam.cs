@@ -24,6 +24,8 @@ public class CharMouseCam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+
         // Mouse delta
         var md = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
         md = Vector2.Scale(md, new Vector2(sensitivity * smoothing, sensitivity * smoothing));
