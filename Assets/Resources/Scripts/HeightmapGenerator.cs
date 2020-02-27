@@ -22,7 +22,7 @@ public class HeightmapGenerator : MonoBehaviour
         heightmapCornerMax = 1.0f;
         heightmapDisplacementMin = -0.5f;
         heightmapDisplacementMax = 5.0f;
-}
+    }
 
     // Generates and adds heightmap to dictionary 
     // based on initial cartesian coordinates
@@ -94,6 +94,9 @@ public class HeightmapGenerator : MonoBehaviour
 
         // Recursive diamond-square terrain generation algorithm
         DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1, adjacentTruthTable);
+
+        // Perform fractal brownian motion
+        FractalBrownianMotionGen(heightmap);
 
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
@@ -182,6 +185,18 @@ public class HeightmapGenerator : MonoBehaviour
     private static float getRandomDisplacement()
     {
         return UnityEngine.Random.Range(heightmapDisplacementMin, heightmapDisplacementMax);
+    }
+
+    // Distorts a generated noisemap to seem more organic
+    private static void FractalBrownianMotionGen(float[,] heightmap)
+    {
+        float value = 0.0f;
+        float amplitude = 5.0f;
+        int octaves = 10;
+
+        
+
+
     }
 
 }

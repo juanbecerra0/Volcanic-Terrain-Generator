@@ -24,6 +24,10 @@ public class MeshPlacer : MonoBehaviour
         if (blockSize < 1)
             blockSize = 1;
 
+        // Initialize MasterTerrain prefab and create instance
+        GameObject masterTerrainPrefab = (GameObject)Resources.Load("Prefabs/MasterTerrain");
+        GameObject masterTerrainInstance = (GameObject)GameObject.Instantiate(masterTerrainPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+
         // Initialize HeightmapGenerator prefab, create instance, and attatch script
         GameObject heightmapGeneratorPrefab = (GameObject)Resources.Load("Prefabs/HeightmapGenerator");
         GameObject heightmapGeneratorInstance = (GameObject)GameObject.Instantiate(heightmapGeneratorPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -67,6 +71,7 @@ public class MeshPlacer : MonoBehaviour
 
                     // Generate instance of mesh generator prefab
                     GameObject meshGeneratorPrefabInstance = (GameObject)GameObject.Instantiate(meshGeneratorPrefab, GetWorldCoordinates(xIndex, zIndex), Quaternion.identity);
+                    meshGeneratorPrefabInstance.transform.parent = masterTerrainInstance.transform;
 
                     // Generate mesh for instance
                     MeshGenerator meshGeneratorScript = meshGeneratorPrefabInstance.GetComponent<MeshGenerator>();
