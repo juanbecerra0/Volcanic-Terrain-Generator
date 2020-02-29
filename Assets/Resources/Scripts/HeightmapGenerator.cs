@@ -96,7 +96,7 @@ public class HeightmapGenerator : MonoBehaviour
         DiamondSquareGen(heightmap, 0, heightmapDimensions - 1, 0, heightmapDimensions - 1, adjacentTruthTable);
 
         // Perform fractal brownian motion
-        FractalBrownianMotionGen(heightmap);
+        DistortionGen(heightmap);
 
         NoiseMap.Add(new Tuple<int, int>(x, y), heightmap);
         return heightmap;
@@ -188,15 +188,23 @@ public class HeightmapGenerator : MonoBehaviour
     }
 
     // Distorts a generated noisemap to seem more organic
-    private static void FractalBrownianMotionGen(float[,] heightmap)
+    private static void DistortionGen(float[,] heightmap)
     {
-        float value = 0.0f;
-        float amplitude = 5.0f;
-        int octaves = 10;
+        float[,] originalHeightmapValues = (float[,])heightmap.Clone();
 
-        
+        for(int i = 0; i < heightmap.GetLength(0); i++)
+        {
+            for (int j = 0; j < heightmap.GetLength(1); j++)
+            {
+                heightmap[i, j] = GetDistortionValue(originalHeightmapValues, i, j);
+            }
+        }
+    }
 
-
+    // Given a 2D index of the heightmap, returns a new value of applied swirling
+    private static float GetDistortionValue(float[,] originalHeightmapValues, int x, int y)
+    {
+        return 0.0f;
     }
 
 }
