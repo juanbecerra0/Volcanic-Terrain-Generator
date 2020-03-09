@@ -38,6 +38,29 @@ As I work on this project, my tasks will likely be more complex, but I feel that
 
 
 # Log
+### 3/06/2020 - Off-Week
+![5](Images/5.PNG)
+
+Went to Vegas this week for the Mountain West Basketball Tournament. Didn't have much time to sit down and implement features.
+
+Go Broncos!
+
+### 2/28/2020 - Feature Planning
+![4](Images/4.PNG)
+
+In this update, I pushed a bit of a work, but I was primarily focused on planning out how I would develop the rest of the project beyond my initial brainstorming. I created a slideshow that I presented to the BSU Visual Lab which showed off some of my currently implemented ideas, as well as some ideas that I wanted to eventually implement.
+
+The slides can be found here: https://docs.google.com/presentation/d/1KS8lYTnNKSGSGAwerPso5T7KUpoCsoR7gVtVWvVw958/edit?usp=sharing
+
+In summary, I want to build off of my current work and implement some popular terrain generation algorithms/techniques. These techniques include:
+
+- Material Interpolation
+- Procedural Block Placement
+- Heightmap Displacement
+- Hydraulic Erosion Bumpmap Generation
+- Biome Mapping/Partitioning
+- Procedural Material Application
+- Procedural Model Placement
 
 ### 2/21/2020 - Diamond Square and Heightmap Stitching
 ![3](Images/3.PNG)
