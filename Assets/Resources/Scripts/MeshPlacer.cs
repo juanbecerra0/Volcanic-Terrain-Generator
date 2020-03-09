@@ -10,32 +10,50 @@ public class MeshPlacer : MonoBehaviour
     public int heightmapBaseN = 7;      // The dimensions of generated heightmaps (2^(n)+1)
     public int blockSize = 100;         // The dimensions of a MeshGen object
 
+    // Used in applying materials and shaders to all terrain
+    private GameObject masterTerrainPrefab;
+    private GameObject masterTerrainInstance;
+    private MasterTerrain masterTerrainScript;
+    private int childIndex;
+
+    // Used in generating heightmaps -> generating geometry
+    private GameObject heightmapGeneratorPrefab;
+    private GameObject heightmapGeneratorInstance;
+    private HeightmapGenerator heightmapGeneratorScript;
+
+    // Prefab that all terrain block objects instantiate from
+    private GameObject meshGeneratorPrefab;
+
+    private bool CheckErrors()
+    {
+        if (initialBlockRadius < 1 || heightmapBaseN < 3 || blockSize < 1)
+            return false;
+        else
+            return true;
+    }
+
     // Start is called before the first frame update
     // Initialize the map with several meshes based on input radius
     void Start()
     {
         // Error checking
-        if (initialBlockRadius < 1)
-            initialBlockRadius = 1;
+        if (!CheckErrors())
+            Debug.Log("Mesh Placer Error!");
 
-        if (heightmapBaseN < 3)
-            heightmapBaseN = 3;
-
-        if (blockSize < 1)
-            blockSize = 1;
-
-        // Initialize MasterTerrain prefab and create instance
-        GameObject masterTerrainPrefab = (GameObject)Resources.Load("Prefabs/MasterTerrain");
-        GameObject masterTerrainInstance = (GameObject)GameObject.Instantiate(masterTerrainPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        // Initialize MasterTerrain prefab and create instance, and attach script
+        masterTerrainPrefab = (GameObject)Resources.Load("Prefabs/MasterTerrain");
+        masterTerrainInstance = (GameObject)GameObject.Instantiate(masterTerrainPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        masterTerrainScript = masterTerrainInstance.GetComponent<MasterTerrain>();
+        childIndex = 0;
 
         // Initialize HeightmapGenerator prefab, create instance, and attatch script
-        GameObject heightmapGeneratorPrefab = (GameObject)Resources.Load("Prefabs/HeightmapGenerator");
-        GameObject heightmapGeneratorInstance = (GameObject)GameObject.Instantiate(heightmapGeneratorPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        HeightmapGenerator heightmapGeneratorScript = heightmapGeneratorInstance.GetComponent<HeightmapGenerator>();
+        heightmapGeneratorPrefab = (GameObject)Resources.Load("Prefabs/HeightmapGenerator");
+        heightmapGeneratorInstance = (GameObject)GameObject.Instantiate(heightmapGeneratorPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        heightmapGeneratorScript = heightmapGeneratorInstance.GetComponent<HeightmapGenerator>();
         heightmapGeneratorScript.Initialize((int)Mathf.Pow(2, heightmapBaseN) + 1);
 
-        // Initialize MeshGenerator prefab, create instance, and attach scriptb
-        GameObject meshGeneratorPrefab = (GameObject)Resources.Load("Prefabs/MeshGenerator");
+        // Initialize MeshGenerator prefab
+        meshGeneratorPrefab = (GameObject)Resources.Load("Prefabs/MeshGenerator");
 
         // Iterates through each sequence in the block radius
         for (int i = 1, sequenceLength = 1; i <= initialBlockRadius; i++, sequenceLength += 2)
@@ -69,16 +87,26 @@ public class MeshPlacer : MonoBehaviour
                         zIndex = -i + k;
                     }
 
-                    // Generate instance of mesh generator prefab
-                    GameObject meshGeneratorPrefabInstance = (GameObject)GameObject.Instantiate(meshGeneratorPrefab, GetWorldCoordinates(xIndex, zIndex), Quaternion.identity);
-                    meshGeneratorPrefabInstance.transform.parent = masterTerrainInstance.transform;
-
-                    // Generate mesh for instance
-                    MeshGenerator meshGeneratorScript = meshGeneratorPrefabInstance.GetComponent<MeshGenerator>();
-                    meshGeneratorScript.GenerateMesh(heightmapGeneratorScript.GenerateHeightmap(xIndex, zIndex), blockSize);
+                    // Generate block instance
+                    GenerateBlockInstance(xIndex, zIndex);
                 }
             }
         }
+    }
+
+    private void GenerateBlockInstance(int xIndex, int zIndex)
+    {
+        // Generate instance of mesh generator prefab
+        GameObject meshGeneratorPrefabInstance = (GameObject)GameObject.Instantiate(meshGeneratorPrefab, GetWorldCoordinates(xIndex, zIndex), Quaternion.identity);
+
+        // Generate mesh for instance
+        MeshGenerator meshGeneratorScript = meshGeneratorPrefabInstance.GetComponent<MeshGenerator>();
+        meshGeneratorScript.GenerateMesh(heightmapGeneratorScript.GenerateHeightmap(xIndex, zIndex), blockSize);
+
+        // Add mesh generator instance transform as child object to master terrain transform
+        // Then, update this child's material/shader
+        meshGeneratorPrefabInstance.transform.parent = masterTerrainInstance.transform;
+        masterTerrainScript.UpdateMaterial(childIndex++);
     }
 
     private Vector3 GetWorldCoordinates(float xIndex, float zIndex)

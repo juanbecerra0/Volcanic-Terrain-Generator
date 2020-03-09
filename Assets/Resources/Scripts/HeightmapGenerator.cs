@@ -204,7 +204,7 @@ public class HeightmapGenerator : MonoBehaviour
     // Given a 2D index of the heightmap, returns a new value of applied swirling
     private static float GetDistortionValue(float[,] originalHeightmapValues, int x, int y)
     {
-        return 0.0f;
+        return originalHeightmapValues[x,y];
     }
 
 }
