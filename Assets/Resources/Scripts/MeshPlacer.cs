@@ -14,7 +14,6 @@ public class MeshPlacer : MonoBehaviour
     private GameObject masterTerrainPrefab;
     private GameObject masterTerrainInstance;
     private MasterTerrain masterTerrainScript;
-    private int childIndex;
 
     // Used in generating heightmaps -> generating geometry
     private GameObject heightmapGeneratorPrefab;
@@ -44,7 +43,6 @@ public class MeshPlacer : MonoBehaviour
         masterTerrainPrefab = (GameObject)Resources.Load("Prefabs/MasterTerrain");
         masterTerrainInstance = (GameObject)GameObject.Instantiate(masterTerrainPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         masterTerrainScript = masterTerrainInstance.GetComponent<MasterTerrain>();
-        childIndex = 0;
 
         // Initialize HeightmapGenerator prefab, create instance, and attatch script
         heightmapGeneratorPrefab = (GameObject)Resources.Load("Prefabs/HeightmapGenerator");
@@ -112,7 +110,6 @@ public class MeshPlacer : MonoBehaviour
         // Add mesh generator instance transform as child object to master terrain transform
         // Then, update this child's material/shader
         meshGeneratorPrefabInstance.transform.parent = masterTerrainInstance.transform;
-        masterTerrainScript.UpdateMaterial(childIndex++);
     }
 
     private Vector3 GetWorldCoordinates(float xIndex, float zIndex)
