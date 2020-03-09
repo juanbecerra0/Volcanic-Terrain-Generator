@@ -55,11 +55,17 @@ public class MeshPlacer : MonoBehaviour
         // Initialize MeshGenerator prefab
         meshGeneratorPrefab = (GameObject)Resources.Load("Prefabs/MeshGenerator");
 
+        // Initiate the initial shell sequence
+        DoShellSequence();
+    }
+
+    private void DoShellSequence()
+    {
         // Iterates through each sequence in the block radius
         for (int i = 1, sequenceLength = 1; i <= initialBlockRadius; i++, sequenceLength += 2)
         {
             // Iterates through each shell sequence
-            for(int j = 0; j < 4; j++)
+            for (int j = 0; j < 4; j++)
             {
                 // Iterates through shell sequence lengths
                 for (int k = 0; k < sequenceLength; k++)
