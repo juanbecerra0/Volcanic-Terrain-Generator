@@ -101,14 +101,18 @@ public class MeshPlacer : MonoBehaviour
     private void GenerateBlockInstance(int xIndex, int zIndex)
     {
         // Generate instance of mesh generator prefab
-        GameObject meshGeneratorPrefabInstance = (GameObject)GameObject.Instantiate(meshGeneratorPrefab, GetWorldCoordinates(xIndex, zIndex), Quaternion.identity);
+        GameObject meshGeneratorPrefabInstance = (GameObject)GameObject.Instantiate(
+            meshGeneratorPrefab,
+            GetWorldCoordinates(xIndex, zIndex),
+            Quaternion.identity);
 
         // Generate mesh for instance
         MeshGenerator meshGeneratorScript = meshGeneratorPrefabInstance.GetComponent<MeshGenerator>();
-        meshGeneratorScript.GenerateMesh(heightmapGeneratorScript.GenerateHeightmap(xIndex, zIndex), blockSize);
+        meshGeneratorScript.GenerateMesh(
+            heightmapGeneratorScript.GenerateHeightmap(xIndex, zIndex),
+            blockSize);
 
         // Add mesh generator instance transform as child object to master terrain transform
-        // Then, update this child's material/shader
         meshGeneratorPrefabInstance.transform.parent = masterTerrainInstance.transform;
     }
 
