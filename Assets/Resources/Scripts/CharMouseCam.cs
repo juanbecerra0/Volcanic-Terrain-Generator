@@ -13,6 +13,7 @@ public class CharMouseCam : MonoBehaviour
     public GameObject character;
     private Camera charCamera;
     private Camera overviewCamera;
+    private LineRenderer line;
 
     // Get incremental value of mouse moving
     private Vector2 mouseLook;
@@ -28,6 +29,7 @@ public class CharMouseCam : MonoBehaviour
         character = this.transform.parent.gameObject;
         charCamera = this.GetComponentsInChildren<Camera>()[0];
         overviewCamera = this.GetComponentsInChildren<Camera>()[1];
+        line = new LineRenderer();
 
         canTransformYView = true;
     }
@@ -81,9 +83,31 @@ public class CharMouseCam : MonoBehaviour
             }
         }
 
+        // Toggle overview camera
         if (Input.GetKeyDown("tab"))
         {
             ToggleCamera();
+        }
+
+        // Zoom overview camera in or out
+        if (!canTransformYView)
+        {
+            if (Input.GetAxis("Mouse ScrollWheel") > 0.0f)
+            {
+                overviewCamera.transform.localPosition = new Vector3(
+                    overviewCamera.transform.localPosition.x,
+                    overviewCamera.transform.localPosition.y + 5.0f,
+                    overviewCamera.transform.localPosition.z
+                );
+            }
+            else if (Input.GetAxis("Mouse ScrollWheel") < 0.0f)
+            {
+                overviewCamera.transform.localPosition = new Vector3(
+                    overviewCamera.transform.localPosition.x,
+                    overviewCamera.transform.localPosition.y - 5.0f,
+                    overviewCamera.transform.localPosition.z
+                );
+            }
         }
     }
 
@@ -97,6 +121,7 @@ public class CharMouseCam : MonoBehaviour
         Ray topRight = charCamera.ViewportPointToRay(new Vector3(1, 1, 0));
         Ray bottomRight = charCamera.ViewportPointToRay(new Vector3(1, 0, 0));
 
-        
+        Debug.Log(transform.position + " " + bottomLeft.GetPoint(1000.0f));
+        Debug.DrawRay(transform.position, bottomLeft.GetPoint(1000.0f), Color.red, 2, true);
     }
 }
