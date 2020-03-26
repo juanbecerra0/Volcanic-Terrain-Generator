@@ -13,7 +13,12 @@ public class CharMouseCam : MonoBehaviour
     public GameObject character;
     private Camera charCamera;
     private Camera overviewCamera;
-    private LineRenderer line;
+
+    // Line rendering
+    private static GameObject bottomLeftLine;
+    private static GameObject topLeftLine;
+    private static GameObject topRightLine;
+    private static GameObject bottomRightLine;
 
     // Get incremental value of mouse moving
     private Vector2 mouseLook;
@@ -29,7 +34,28 @@ public class CharMouseCam : MonoBehaviour
         character = this.transform.parent.gameObject;
         charCamera = this.GetComponentsInChildren<Camera>()[0];
         overviewCamera = this.GetComponentsInChildren<Camera>()[1];
-        line = new LineRenderer();
+
+        void SetupLine(GameObject line)
+        {
+            line.AddComponent<LineRenderer>();
+
+            LineRenderer render = line.GetComponent<LineRenderer>();
+
+            render.startColor = Color.blue;
+            render.endColor = Color.blue;
+            render.startWidth = 0.2f;
+            render.endWidth = 0.2f;
+        }
+
+        bottomLeftLine = new GameObject();
+        topLeftLine = new GameObject();
+        topRightLine = new GameObject();
+        bottomRightLine = new GameObject();
+
+        SetupLine(bottomLeftLine);
+        SetupLine(topLeftLine);
+        SetupLine(topRightLine);
+        SetupLine(bottomRightLine);
 
         canTransformYView = true;
     }
@@ -96,7 +122,7 @@ public class CharMouseCam : MonoBehaviour
             {
                 overviewCamera.transform.localPosition = new Vector3(
                     overviewCamera.transform.localPosition.x,
-                    overviewCamera.transform.localPosition.y + 5.0f,
+                    overviewCamera.transform.localPosition.y - 5.0f,
                     overviewCamera.transform.localPosition.z
                 );
             }
@@ -104,7 +130,7 @@ public class CharMouseCam : MonoBehaviour
             {
                 overviewCamera.transform.localPosition = new Vector3(
                     overviewCamera.transform.localPosition.x,
-                    overviewCamera.transform.localPosition.y - 5.0f,
+                    overviewCamera.transform.localPosition.y + 5.0f,
                     overviewCamera.transform.localPosition.z
                 );
             }
@@ -115,13 +141,26 @@ public class CharMouseCam : MonoBehaviour
     // TODO may be used to optimize culled geometry rendering
     private void CastCameraRay()
     {
+        void RenderLine(Vector3 endPoint, GameObject line)
+        {
+            line.transform.position = transform.position;
+
+            line.GetComponent<LineRenderer>().SetPositions(new Vector3[] {
+                transform.position,
+                endPoint
+            });
+        }
+
+
         // Get frustrum rays
         Ray bottomLeft = charCamera.ViewportPointToRay(new Vector3(0, 0, 0));
         Ray topLeft = charCamera.ViewportPointToRay(new Vector3(0, 1, 0));
         Ray topRight = charCamera.ViewportPointToRay(new Vector3(1, 1, 0));
         Ray bottomRight = charCamera.ViewportPointToRay(new Vector3(1, 0, 0));
 
-        Debug.Log(transform.position + " " + bottomLeft.GetPoint(1000.0f));
-        Debug.DrawRay(transform.position, bottomLeft.GetPoint(1000.0f), Color.red, 2, true);
+        RenderLine(bottomLeft.GetPoint(500.0f), bottomLeftLine);
+        RenderLine(topLeft.GetPoint(500.0f), topLeftLine);
+        RenderLine(topRight.GetPoint(500.0f), topRightLine);
+        RenderLine(bottomRight.GetPoint(500.0f), bottomRightLine);
     }
 }
