@@ -6,25 +6,31 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter))]
 public class MeshGenerator : MonoBehaviour
 {
-    Mesh mesh;
-    Vector3[] vertices;
-    int[] triangles;
-
+    private Mesh mesh;
+    
     // Generates y coordinates based on heightmap data, then update the mesh
     public void GenerateMesh(float[,] heightmap, int blockSize)
     {
+        // Set up mesh
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
+        // Get width of vertices map and the uv scale
         int vertexWidth = heightmap.GetLength(1);
 
-        vertices = new Vector3[(vertexWidth) * (vertexWidth)];
+        // Set up vertex and uv arrays
+        Vector3[] vertices = new Vector3[(vertexWidth) * (vertexWidth)];
+        Vector2[] uvs = new Vector2[vertices.Length];
 
+        // Calculate the space between vertices and uv scale
         float vertexSpacing = (float) ((float)blockSize / (float)(vertexWidth - 1));
+        float uvScale = 1.0f / (float)vertexWidth;
 
+        // Set up index mapping for vertices
         int xIndex = vertexWidth - 1;
         int yIndex = 0;
 
+        // Calculate 
         for (int i = 0, z = 0; z < vertexWidth; z++)
         {
             for (int x = 0; x < vertexWidth; x++, i++)
@@ -33,15 +39,19 @@ public class MeshGenerator : MonoBehaviour
                 float yComp = heightmap[xIndex, yIndex++];
                 float zComp = (float)z * vertexSpacing;
 
+                // Assign vertex and UV coordinate
                 vertices[i] = new Vector3(xComp, yComp, zComp);
+                uvs[i] = new Vector2(x * uvScale, z * uvScale);
             }
             xIndex--;
             yIndex = 0;
         }
 
-        triangles = new int[(vertexWidth - 1) * (vertexWidth - 1) * 6];
+        // Set up vertex index buffer
+        int[] triangles = new int[(vertexWidth - 1) * (vertexWidth - 1) * 6];
         int vert = 0, tris = 0;
 
+        // Calculate vertex indicies
         for (int z = 0; z < vertexWidth - 1; z++)
         {
             for (int x = 0; x < vertexWidth - 1; x++)
@@ -59,17 +69,22 @@ public class MeshGenerator : MonoBehaviour
             vert++;
         }
 
-        UpdateMesh();
+        // Update this mesh object
+        UpdateMesh(vertices, uvs, triangles);
     }
 
     // Updates mesh components and recalculates normals
-    private void UpdateMesh()
+    private void UpdateMesh(Vector3[] vertices, Vector2[] uvs, int[] triangles)
     {
+        // Clear previous changes to mesh
         mesh.Clear();
 
+        // Assign new vertices, uvs, and index buffer
         mesh.vertices = vertices;
+        mesh.uv = uvs;
         mesh.triangles = triangles;
 
+        // Recalculate normals
         mesh.RecalculateNormals();
     }
 }

@@ -4,18 +4,15 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour
 {
-    public float speed = 10.0f;
+    public float speed = 100.0f;
     public float height = 40.0f;
 
     private float translation;
     private float straffe;
-    private bool canMove;
 
     // Start is called before the first frame update
     void Start()
     {
-        canMove = true;
-
         // Turn off cursor
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -35,6 +32,14 @@ public class CharController : MonoBehaviour
 
     private void UpdateKeys()
     {
+        void ToggleMouseMode()
+        {
+            if (Cursor.lockState.ToString() == "Locked")
+                Cursor.lockState = CursorLockMode.None;
+            else
+                Cursor.lockState = CursorLockMode.Locked;
+        }
+
         if (Input.GetKeyDown("escape"))
         {
             ToggleMouseMode();
@@ -59,18 +64,5 @@ public class CharController : MonoBehaviour
         {
             height -= 5.0f;
         }
-    }
-
-    private void ToggleMouseMode()
-    {
-        if(Cursor.lockState.ToString() == "Locked")
-            Cursor.lockState = CursorLockMode.None;
-        else
-            Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    public bool getCanMove()
-    {
-        return canMove;
     }
 }
