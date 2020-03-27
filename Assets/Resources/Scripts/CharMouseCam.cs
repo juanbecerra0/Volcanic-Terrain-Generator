@@ -39,7 +39,6 @@ public class CharMouseCam : MonoBehaviour
     // Procedural generation scripts/variables
     HeightmapGenerator hgScript;
     MeshPlacer mpScript;
-    private int linePoints;
     private int circlePoints;
     private int blockSize;
 
@@ -53,7 +52,6 @@ public class CharMouseCam : MonoBehaviour
         
         hgScript = GameObject.FindObjectOfType(typeof(HeightmapGenerator)) as HeightmapGenerator;
         mpScript = GameObject.FindObjectOfType(typeof(MeshPlacer)) as MeshPlacer;
-        linePoints = 3;
         circlePoints = 8;
         blockSize = mpScript.blockSize;
 
@@ -89,9 +87,9 @@ public class CharMouseCam : MonoBehaviour
         }
 
         // Set up line variables
-        lineWidth = 1.0f;
+        lineWidth = overviewCamera.transform.position.y / 50f;
         lineColor = Color.red;
-        frustDist = 200.0f;
+        frustDist = 400.0f;
         segments = 180;
         radius = 150.0f;
 
@@ -169,6 +167,21 @@ public class CharMouseCam : MonoBehaviour
             }
         }
 
+        void UpdateLineWidth()
+        {
+            float newLineWidth = overviewCamera.transform.position.y / 50f;
+            Debug.Log(newLineWidth);
+
+            leftLine.GetComponent<LineRenderer>().startWidth = newLineWidth;
+            leftLine.GetComponent<LineRenderer>().endWidth = newLineWidth;
+            rightLine.GetComponent<LineRenderer>().startWidth = newLineWidth;
+            rightLine.GetComponent<LineRenderer>().endWidth = newLineWidth;
+            centerLine.GetComponent<LineRenderer>().startWidth = newLineWidth;
+            centerLine.GetComponent<LineRenderer>().endWidth = newLineWidth;
+            radialLine.GetComponent<LineRenderer>().startWidth = newLineWidth;
+            radialLine.GetComponent<LineRenderer>().endWidth = newLineWidth;
+        }
+
         // Toggle overview camera
         if (Input.GetKeyDown("tab"))
         {
@@ -185,6 +198,7 @@ public class CharMouseCam : MonoBehaviour
                     overviewCamera.transform.localPosition.y - 5.0f,
                     overviewCamera.transform.localPosition.z
                 );
+                UpdateLineWidth();
             }
             else if (Input.GetAxis("Mouse ScrollWheel") < 0.0f)
             {
@@ -193,6 +207,7 @@ public class CharMouseCam : MonoBehaviour
                     overviewCamera.transform.localPosition.y + 5.0f,
                     overviewCamera.transform.localPosition.z
                 );
+                UpdateLineWidth();
             }
         }
     }
