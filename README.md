@@ -44,6 +44,7 @@ As I work on this project, my tasks will likely be more complex, but I feel that
 In this update, I implemented procedural block generation. This is accomplished using two different components:
 -	The player’s view frustum
 -	The player’s position/vicinity
+
 Using a few view raycasts, circle intersection points, local-to-world point calculations, and cartesian-coordinate block querying, we are now able to generate new blocks of terrain that didn’t previously exist. This is significant as this modular approach sets this project up for procedural biome partitioning and material/shader generation (per block). 
 
 ### 3/13/2020 - Procedural UV Mapping Setup and HM Placement Setup
