@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,6 +41,7 @@ public class CharMouseCam : MonoBehaviour
     MeshPlacer mpScript;
     private int linePoints;
     private int circlePoints;
+    private int blockSize;
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +55,7 @@ public class CharMouseCam : MonoBehaviour
         mpScript = GameObject.FindObjectOfType(typeof(MeshPlacer)) as MeshPlacer;
         linePoints = 3;
         circlePoints = 8;
+        blockSize = mpScript.blockSize;
 
         canTransformYView = true;
 
@@ -209,6 +212,16 @@ public class CharMouseCam : MonoBehaviour
                 transform.position,
                 endPoint
             });
+
+            // Translate coordinate into simplified integer coordinate system
+            Tuple<int, int> coordinate = new Tuple<int, int>(
+                Convert.ToInt32((endPoint.x - (blockSize / 2)) / blockSize),
+                Convert.ToInt32((endPoint.z - (blockSize / 2)) / blockSize)
+            );
+
+            // Enqueue coordinate into list if it does not contain it
+            if (!coordList.Contains((coordinate.Item1, coordinate.Item2)))
+                coordList.Add((coordinate.Item1, coordinate.Item2));
         }
 
         void RenderCircle(GameObject line)
@@ -224,7 +237,6 @@ public class CharMouseCam : MonoBehaviour
                     Mathf.Cos(rad) * radius
                 ));
             }
-
         }
 
         // Calculate rays
@@ -254,7 +266,6 @@ public class CharMouseCam : MonoBehaviour
 
     private void ProjectAndFillBlocks(List<(int, int)> coordList)
     {
-        // TODO hgScript.IsEmpty(0,0)
         for(int i = 0; i < coordList.Count; i++)
         {
             // If cartesian coordinate space is empty, generate new block instance
