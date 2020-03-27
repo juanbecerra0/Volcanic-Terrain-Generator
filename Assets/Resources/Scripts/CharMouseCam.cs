@@ -22,10 +22,9 @@ public class CharMouseCam : MonoBehaviour
     private float radius;
 
     // Line objects
-    private GameObject bottomLeftLine;
-    private GameObject topLeftLine;
-    private GameObject topRightLine;
-    private GameObject bottomRightLine;
+    private GameObject leftLine;
+    private GameObject rightLine;
+    private GameObject centerLine;
     private GameObject radialLine;
 
     // Get incremental value of mouse moving
@@ -36,17 +35,25 @@ public class CharMouseCam : MonoBehaviour
     // Flags
     private bool canTransformYView;
 
-    // Adjacency cartesian coordinate system
+    // Procedural generation scripts/variables
     HeightmapGenerator hgScript;
+    MeshPlacer mpScript;
+    private int linePoints;
+    private int circlePoints;
 
     // Start is called before the first frame update
     void Start()
     {
-        // Setup up container and camera components
+        // Setup up variables
         character = this.transform.parent.gameObject;
         charCamera = this.GetComponentsInChildren<Camera>()[0];
         overviewCamera = this.GetComponentsInChildren<Camera>()[1];
+        
         hgScript = GameObject.FindObjectOfType(typeof(HeightmapGenerator)) as HeightmapGenerator;
+        mpScript = GameObject.FindObjectOfType(typeof(MeshPlacer)) as MeshPlacer;
+        linePoints = 3;
+        circlePoints = 8;
+
         canTransformYView = true;
 
         // Sets up camera line renderers
@@ -86,16 +93,14 @@ public class CharMouseCam : MonoBehaviour
         radius = 150.0f;
 
         // Create and setup camera lines
-        bottomLeftLine = new GameObject("Bottom-Left Frust Line");
-        topLeftLine = new GameObject("Top-Left Frust Line");
-        topRightLine = new GameObject("Top-Right Frust Line");
-        bottomRightLine = new GameObject("Bottom-Right Frust Line");
+        leftLine = new GameObject("Left Line");
+        rightLine = new GameObject("Right Line");
+        centerLine = new GameObject("Center Line");
         radialLine = new GameObject("Radial Line");
 
-        SetupLine(bottomLeftLine);
-        SetupLine(topLeftLine);
-        SetupLine(topRightLine);
-        SetupLine(bottomRightLine);
+        SetupLine(leftLine);
+        SetupLine(rightLine);
+        SetupLine(centerLine);
         SetupRadialLine(radialLine);
     }
 
@@ -141,10 +146,9 @@ public class CharMouseCam : MonoBehaviour
                 charCamera.depth = 0;
                 overviewCamera.depth = 1;
 
-                bottomLeftLine.GetComponent<LineRenderer>().enabled = true;
-                topLeftLine.GetComponent<LineRenderer>().enabled = true;
-                topRightLine.GetComponent<LineRenderer>().enabled = true;
-                bottomRightLine.GetComponent<LineRenderer>().enabled = true;
+                leftLine.GetComponent<LineRenderer>().enabled = true;
+                rightLine.GetComponent<LineRenderer>().enabled = true;
+                centerLine.GetComponent<LineRenderer>().enabled = true;
                 radialLine.GetComponent<LineRenderer>().enabled = true;
 
                 canTransformYView = false;
@@ -153,10 +157,9 @@ public class CharMouseCam : MonoBehaviour
                 charCamera.depth = 1;
                 overviewCamera.depth = 0;
 
-                bottomLeftLine.GetComponent<LineRenderer>().enabled = false;
-                topLeftLine.GetComponent<LineRenderer>().enabled = false;
-                topRightLine.GetComponent<LineRenderer>().enabled = false;
-                bottomRightLine.GetComponent<LineRenderer>().enabled = false;
+                leftLine.GetComponent<LineRenderer>().enabled = false;
+                rightLine.GetComponent<LineRenderer>().enabled = false;
+                centerLine.GetComponent<LineRenderer>().enabled = false;
                 radialLine.GetComponent<LineRenderer>().enabled = false;
 
                 canTransformYView = true;
@@ -194,6 +197,9 @@ public class CharMouseCam : MonoBehaviour
     // Casts out camera frustum rays. Used in generating new blocks
     private void CastCameraRays()
     {
+        // Running list of cartesian coordinate spaces to possibly render
+        List<(int, int)> coordList = new List<(int, int)>();
+
         // Renders a single line from the character origin to the specified end point
         void RenderLine(GameObject line, Vector3 endPoint)
         {
@@ -221,21 +227,39 @@ public class CharMouseCam : MonoBehaviour
 
         }
 
+        // Calculate rays
+        Ray leftRay = new Ray(transform.position, (charCamera.ViewportPointToRay(new Vector3(0, 0, 0)).direction + charCamera.ViewportPointToRay(new Vector3(0, 1, 0)).direction) / 2);
+        Ray rightRay = new Ray(transform.position, (charCamera.ViewportPointToRay(new Vector3(1, 1, 0)).direction + charCamera.ViewportPointToRay(new Vector3(1, 0, 0)).direction) / 2);
+        Ray centerRay = new Ray(transform.position, (leftRay.direction + rightRay.direction) / 2);
+
         // Render lines based of the four frustum rays
         // Also render circle around player
-        RenderLine(bottomLeftLine, charCamera.ViewportPointToRay(new Vector3(0, 0, 0)).GetPoint(frustDist));
-        RenderLine(topLeftLine, charCamera.ViewportPointToRay(new Vector3(0, 1, 0)).GetPoint(frustDist));
-        RenderLine(topRightLine, charCamera.ViewportPointToRay(new Vector3(1, 1, 0)).GetPoint(frustDist));
-        RenderLine(bottomRightLine, charCamera.ViewportPointToRay(new Vector3(1, 0, 0)).GetPoint(frustDist));
+        RenderLine(
+            leftLine, 
+            leftRay.GetPoint(frustDist)
+        );
+        RenderLine(
+            rightLine, 
+            rightRay.GetPoint(frustDist)
+        );
+        RenderLine(
+            centerLine, 
+            centerRay.GetPoint(frustDist)
+        );
         RenderCircle(radialLine);
 
         // Finally, use current line renders to detect if new blocks must be generated
-        ProjectAndFillBlocks();
+        ProjectAndFillBlocks(coordList);
     }
 
-    private void ProjectAndFillBlocks()
+    private void ProjectAndFillBlocks(List<(int, int)> coordList)
     {
         // TODO hgScript.IsEmpty(0,0)
-        
+        for(int i = 0; i < coordList.Count; i++)
+        {
+            // If cartesian coordinate space is empty, generate new block instance
+            if (hgScript.IsEmpty(coordList[i].Item1, coordList[i].Item2))
+                mpScript.GenerateBlockInstance(coordList[i].Item1, coordList[i].Item2);
+        }
     }
 }

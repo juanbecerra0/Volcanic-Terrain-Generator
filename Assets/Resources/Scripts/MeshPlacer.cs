@@ -98,7 +98,7 @@ public class MeshPlacer : MonoBehaviour
         }
     }
 
-    private void GenerateBlockInstance(int xIndex, int zIndex)
+    public void GenerateBlockInstance(int xIndex, int zIndex)
     {
         // Generate instance of mesh generator prefab
         GameObject meshGeneratorPrefabInstance = (GameObject)GameObject.Instantiate(
