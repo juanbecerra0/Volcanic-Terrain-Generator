@@ -38,7 +38,15 @@ As I work on this project, my tasks will likely be more complex, but I feel that
 
 
 # Log
-### 3/13/2020 - Procedural UV Mapping and HM Placement
+### 3/20/2020 - Procedural Block Generation
+![7](Images/7.PNG)
+
+In this update, I implemented procedural block generation. This is accomplished using two different components:
+-	The player’s view frustum
+-	The player’s position/vicinity
+Using a few view raycasts, circle intersection points, local-to-world point calculations, and cartesian-coordinate block querying, we are now able to generate new blocks of terrain that didn’t previously exist. This is significant as this modular approach sets this project up for procedural biome partitioning and material/shader generation (per block). 
+
+### 3/13/2020 - Procedural UV Mapping Setup and HM Placement Setup
 ![6](Images/6.PNG)
 
 In this update, I set up procedural UV mapping for generated blocks of terrain. This will allow me to utilize Unity's shaders to create procedural materials (textures, normal maps, etc…). This depends on the biome mapping, which I will focus on in a future update. Currently, the generated terrain is covered using a default diffuse tile texture. In addition, I’ve implemented frame-by-frame calculations for rays casted by the player’s frustum and a circle generated around the player’s position. Using these components, I’ll be able to set up procedural placement.
