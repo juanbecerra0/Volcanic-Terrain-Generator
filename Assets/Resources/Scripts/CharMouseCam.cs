@@ -15,6 +15,8 @@ public class CharMouseCam : MonoBehaviour
     private Camera overviewCamera;
 
     // Line rendering variables
+    private float lineWidth;
+    private Color lineColor;
     private float frustDist;
     private int segments;
     private float radius;
@@ -34,6 +36,9 @@ public class CharMouseCam : MonoBehaviour
     // Flags
     private bool canTransformYView;
 
+    // Adjacency cartesian coordinate system
+    HeightmapGenerator hgScript;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +46,7 @@ public class CharMouseCam : MonoBehaviour
         character = this.transform.parent.gameObject;
         charCamera = this.GetComponentsInChildren<Camera>()[0];
         overviewCamera = this.GetComponentsInChildren<Camera>()[1];
+        hgScript = GameObject.FindObjectOfType(typeof(HeightmapGenerator)) as HeightmapGenerator;
         canTransformYView = true;
 
         // Sets up camera line renderers
@@ -50,10 +56,11 @@ public class CharMouseCam : MonoBehaviour
 
             LineRenderer render = line.GetComponent<LineRenderer>();
 
-            render.startColor = Color.blue;
-            render.endColor = Color.blue;
-            render.startWidth = 0.2f;
-            render.endWidth = 0.2f;
+            render.startColor = lineColor;
+            render.endColor = lineColor;
+            render.startWidth = lineWidth;
+            render.endWidth = lineWidth;
+            render.enabled = false;
         }
 
         void SetupRadialLine(GameObject line)
@@ -64,13 +71,16 @@ public class CharMouseCam : MonoBehaviour
 
             render.positionCount = segments + 1;
             render.useWorldSpace = false;
-            render.startColor = Color.blue;
-            render.endColor = Color.blue;
-            render.startWidth = 0.2f;
-            render.endWidth = 0.2f;
+            render.startColor = lineColor;
+            render.endColor = lineColor;
+            render.startWidth = lineWidth;
+            render.endWidth = lineWidth;
+            render.enabled = false;
         }
 
         // Set up line variables
+        lineWidth = 1.0f;
+        lineColor = Color.red;
         frustDist = 200.0f;
         segments = 180;
         radius = 150.0f;
@@ -114,7 +124,8 @@ public class CharMouseCam : MonoBehaviour
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
 
-        CastCameraRay();
+        CastCameraRays();
+
         UpdateKeys();
     }
 
@@ -129,11 +140,25 @@ public class CharMouseCam : MonoBehaviour
             {
                 charCamera.depth = 0;
                 overviewCamera.depth = 1;
+
+                bottomLeftLine.GetComponent<LineRenderer>().enabled = true;
+                topLeftLine.GetComponent<LineRenderer>().enabled = true;
+                topRightLine.GetComponent<LineRenderer>().enabled = true;
+                bottomRightLine.GetComponent<LineRenderer>().enabled = true;
+                radialLine.GetComponent<LineRenderer>().enabled = true;
+
                 canTransformYView = false;
             } else
             {
                 charCamera.depth = 1;
                 overviewCamera.depth = 0;
+
+                bottomLeftLine.GetComponent<LineRenderer>().enabled = false;
+                topLeftLine.GetComponent<LineRenderer>().enabled = false;
+                topRightLine.GetComponent<LineRenderer>().enabled = false;
+                bottomRightLine.GetComponent<LineRenderer>().enabled = false;
+                radialLine.GetComponent<LineRenderer>().enabled = false;
+
                 canTransformYView = true;
             }
         }
@@ -167,7 +192,7 @@ public class CharMouseCam : MonoBehaviour
     }
 
     // Casts out camera frustum rays. Used in generating new blocks
-    private void CastCameraRay()
+    private void CastCameraRays()
     {
         // Renders a single line from the character origin to the specified end point
         void RenderLine(GameObject line, Vector3 endPoint)
@@ -197,10 +222,20 @@ public class CharMouseCam : MonoBehaviour
         }
 
         // Render lines based of the four frustum rays
+        // Also render circle around player
         RenderLine(bottomLeftLine, charCamera.ViewportPointToRay(new Vector3(0, 0, 0)).GetPoint(frustDist));
         RenderLine(topLeftLine, charCamera.ViewportPointToRay(new Vector3(0, 1, 0)).GetPoint(frustDist));
         RenderLine(topRightLine, charCamera.ViewportPointToRay(new Vector3(1, 1, 0)).GetPoint(frustDist));
         RenderLine(bottomRightLine, charCamera.ViewportPointToRay(new Vector3(1, 0, 0)).GetPoint(frustDist));
         RenderCircle(radialLine);
+
+        // Finally, use current line renders to detect if new blocks must be generated
+        ProjectAndFillBlocks();
+    }
+
+    private void ProjectAndFillBlocks()
+    {
+        // TODO hgScript.IsEmpty(0,0)
+        
     }
 }

@@ -102,6 +102,13 @@ public class HeightmapGenerator : MonoBehaviour
         return heightmap;
     }
 
+    // Returns whether or not a space in the noisemap is empty
+    // Used in generating new adjacent blocks
+    public bool IsEmpty(int xIndex, int zIndex)
+    {
+        return !NoiseMap.ContainsKey(new Tuple<int, int>(xIndex, zIndex));
+    }
+
     // Recursively performs the diamond-square algorithm to generate terrain
     private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax, Tuple<bool, bool, bool, bool> adjacentTruthTable)
     {
