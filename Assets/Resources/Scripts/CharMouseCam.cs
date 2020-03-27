@@ -14,11 +14,17 @@ public class CharMouseCam : MonoBehaviour
     private Camera charCamera;
     private Camera overviewCamera;
 
-    // Line rendering
-    private static GameObject bottomLeftLine;
-    private static GameObject topLeftLine;
-    private static GameObject topRightLine;
-    private static GameObject bottomRightLine;
+    // Line rendering variables
+    private float frustDist;
+    private int segments;
+    private float radius;
+
+    // Line objects
+    private GameObject bottomLeftLine;
+    private GameObject topLeftLine;
+    private GameObject topRightLine;
+    private GameObject bottomRightLine;
+    private GameObject radialLine;
 
     // Get incremental value of mouse moving
     private Vector2 mouseLook;
@@ -31,10 +37,13 @@ public class CharMouseCam : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Setup up container and camera components
         character = this.transform.parent.gameObject;
         charCamera = this.GetComponentsInChildren<Camera>()[0];
         overviewCamera = this.GetComponentsInChildren<Camera>()[1];
+        canTransformYView = true;
 
+        // Sets up camera line renderers
         void SetupLine(GameObject line)
         {
             line.AddComponent<LineRenderer>();
@@ -47,17 +56,37 @@ public class CharMouseCam : MonoBehaviour
             render.endWidth = 0.2f;
         }
 
-        bottomLeftLine = new GameObject();
-        topLeftLine = new GameObject();
-        topRightLine = new GameObject();
-        bottomRightLine = new GameObject();
+        void SetupRadialLine(GameObject line)
+        {
+            line.AddComponent<LineRenderer>();
+
+            LineRenderer render = line.GetComponent<LineRenderer>();
+
+            render.positionCount = segments + 1;
+            render.useWorldSpace = false;
+            render.startColor = Color.blue;
+            render.endColor = Color.blue;
+            render.startWidth = 0.2f;
+            render.endWidth = 0.2f;
+        }
+
+        // Set up line variables
+        frustDist = 200.0f;
+        segments = 180;
+        radius = 150.0f;
+
+        // Create and setup camera lines
+        bottomLeftLine = new GameObject("Bottom-Left Frust Line");
+        topLeftLine = new GameObject("Top-Left Frust Line");
+        topRightLine = new GameObject("Top-Right Frust Line");
+        bottomRightLine = new GameObject("Bottom-Right Frust Line");
+        radialLine = new GameObject("Radial Line");
 
         SetupLine(bottomLeftLine);
         SetupLine(topLeftLine);
         SetupLine(topRightLine);
         SetupLine(bottomRightLine);
-
-        canTransformYView = true;
+        SetupRadialLine(radialLine);
     }
 
     // Update is called once per frame
@@ -138,10 +167,10 @@ public class CharMouseCam : MonoBehaviour
     }
 
     // Casts out camera frustum rays. Used in generating new blocks
-    // TODO may be used to optimize culled geometry rendering
     private void CastCameraRay()
     {
-        void RenderLine(Vector3 endPoint, GameObject line)
+        // Renders a single line from the character origin to the specified end point
+        void RenderLine(GameObject line, Vector3 endPoint)
         {
             line.transform.position = transform.position;
 
@@ -151,16 +180,27 @@ public class CharMouseCam : MonoBehaviour
             });
         }
 
+        void RenderCircle(GameObject line)
+        {
+            line.transform.position = transform.position;
 
-        // Get frustrum rays
-        Ray bottomLeft = charCamera.ViewportPointToRay(new Vector3(0, 0, 0));
-        Ray topLeft = charCamera.ViewportPointToRay(new Vector3(0, 1, 0));
-        Ray topRight = charCamera.ViewportPointToRay(new Vector3(1, 1, 0));
-        Ray bottomRight = charCamera.ViewportPointToRay(new Vector3(1, 0, 0));
+            for(int i = 0; i < segments + 1; i++)
+            {
+                float rad = Mathf.Deg2Rad * (i * 360f / segments);
+                line.GetComponent<LineRenderer>().SetPosition(i, new Vector3(
+                    Mathf.Sin(rad) * radius,
+                    0,
+                    Mathf.Cos(rad) * radius
+                ));
+            }
 
-        RenderLine(bottomLeft.GetPoint(500.0f), bottomLeftLine);
-        RenderLine(topLeft.GetPoint(500.0f), topLeftLine);
-        RenderLine(topRight.GetPoint(500.0f), topRightLine);
-        RenderLine(bottomRight.GetPoint(500.0f), bottomRightLine);
+        }
+
+        // Render lines based of the four frustum rays
+        RenderLine(bottomLeftLine, charCamera.ViewportPointToRay(new Vector3(0, 0, 0)).GetPoint(frustDist));
+        RenderLine(topLeftLine, charCamera.ViewportPointToRay(new Vector3(0, 1, 0)).GetPoint(frustDist));
+        RenderLine(topRightLine, charCamera.ViewportPointToRay(new Vector3(1, 1, 0)).GetPoint(frustDist));
+        RenderLine(bottomRightLine, charCamera.ViewportPointToRay(new Vector3(1, 0, 0)).GetPoint(frustDist));
+        RenderCircle(radialLine);
     }
 }
