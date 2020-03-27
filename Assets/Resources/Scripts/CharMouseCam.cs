@@ -17,7 +17,6 @@ public class CharMouseCam : MonoBehaviour
 
     // Line rendering variables
     private float lineWidth;
-    private Color lineColor;
     private float frustDist;
     private int segments;
     private float radius;
@@ -64,8 +63,6 @@ public class CharMouseCam : MonoBehaviour
 
             LineRenderer render = line.GetComponent<LineRenderer>();
 
-            render.startColor = lineColor;
-            render.endColor = lineColor;
             render.startWidth = lineWidth;
             render.endWidth = lineWidth;
             render.enabled = false;
@@ -79,8 +76,6 @@ public class CharMouseCam : MonoBehaviour
 
             render.positionCount = segments + 1;
             render.useWorldSpace = false;
-            render.startColor = lineColor;
-            render.endColor = lineColor;
             render.startWidth = lineWidth;
             render.endWidth = lineWidth;
             render.enabled = false;
@@ -88,7 +83,6 @@ public class CharMouseCam : MonoBehaviour
 
         // Set up line variables
         lineWidth = overviewCamera.transform.position.y / 50f;
-        lineColor = Color.red;
         frustDist = 400.0f;
         segments = 180;
         radius = 150.0f;
@@ -170,7 +164,6 @@ public class CharMouseCam : MonoBehaviour
         void UpdateLineWidth()
         {
             float newLineWidth = overviewCamera.transform.position.y / 50f;
-            Debug.Log(newLineWidth);
 
             leftLine.GetComponent<LineRenderer>().startWidth = newLineWidth;
             leftLine.GetComponent<LineRenderer>().endWidth = newLineWidth;
@@ -246,11 +239,32 @@ public class CharMouseCam : MonoBehaviour
             for(int i = 0; i < segments + 1; i++)
             {
                 float rad = Mathf.Deg2Rad * (i * 360f / segments);
+
+                float xPoint = Mathf.Sin(rad) * radius;
+                float zPoint = Mathf.Cos(rad) * radius;
+
                 line.GetComponent<LineRenderer>().SetPosition(i, new Vector3(
-                    Mathf.Sin(rad) * radius,
+                    xPoint,
                     0,
-                    Mathf.Cos(rad) * radius
+                    zPoint
                 ));
+
+                if (i % circlePoints == 0)
+                {
+                    // Translate this point in the radial line to world coordinates
+                    Vector3 worldPoint = transform.position + (new Vector3(xPoint, 0, zPoint));
+
+                    // Translate coordinate into simplified integer coordinate system
+                    Tuple<int, int> coordinate = new Tuple<int, int>(
+                        Convert.ToInt32((worldPoint.x - (blockSize / 2)) / blockSize),
+                        Convert.ToInt32((worldPoint.z - (blockSize / 2)) / blockSize)
+                    );
+
+                    // Enqueue coordinate into list if it does not contain it
+                    if (!coordList.Contains((coordinate.Item1, coordinate.Item2)))
+                        coordList.Add((coordinate.Item1, coordinate.Item2));
+                }
+
             }
         }
 
