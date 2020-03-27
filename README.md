@@ -38,6 +38,11 @@ As I work on this project, my tasks will likely be more complex, but I feel that
 
 
 # Log
+### 3/13/2020 - Procedural UV Mapping and HM Placement
+![6](Images/6.PNG)
+
+In this update, I set up procedural UV mapping for generated blocks of terrain. This will allow me to utilize Unity's shaders to create procedural materials (textures, normal maps, etc…). This depends on the biome mapping, which I will focus on in a future update. Currently, the generated terrain is covered using a default diffuse tile texture. In addition, I’ve implemented frame-by-frame calculations for rays casted by the player’s frustum and a circle generated around the player’s position. Using these components, I’ll be able to set up procedural placement.
+
 ### 3/06/2020 - Off-Week
 ![5](Images/5.PNG)
 
