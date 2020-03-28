@@ -38,6 +38,10 @@ As I work on this project, my tasks will likely be more complex, but I feel that
 
 
 # Log
+### 3/27/2020 - Procedural Texture Generation
+![8](Images/8.PNG)
+In this update, I utilized the UV mappings of individual blocks of geometry to experiment with procedural material generation. I want to eventually implement all sorts of great material shader techniques, like bump and specular maps, but I wanted to mainly focus on color at first. I made a rudimentary algorithm for generating textures based off of the height of a pixel’s heightmap value. I then interpolated between green, brown, and white colors to simulate grass, mountain, and snow respectively. This is still pretty basic as it does not read off of a master biome map, but it should give me a basic approach for crossing off future goals.
+
 ### 3/20/2020 - Procedural Block Generation
 ![7](Images/7.PNG)
 
