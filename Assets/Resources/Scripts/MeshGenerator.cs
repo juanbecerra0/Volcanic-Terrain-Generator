@@ -4,12 +4,13 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class MeshGenerator : MonoBehaviour
 {
     private Mesh mesh;
     
     // Generates y coordinates based on heightmap data, then update the mesh
-    public void GenerateMesh(float[,] heightmap, int blockSize)
+    public void GenerateMesh(float[,] heightmap, Texture2D texture, int blockSize)
     {
         // Set up mesh
         mesh = new Mesh();
@@ -70,11 +71,11 @@ public class MeshGenerator : MonoBehaviour
         }
 
         // Update this mesh object
-        UpdateMesh(vertices, uvs, triangles);
+        UpdateMesh(vertices, uvs, triangles, texture);
     }
 
     // Updates mesh components and recalculates normals
-    private void UpdateMesh(Vector3[] vertices, Vector2[] uvs, int[] triangles)
+    private void UpdateMesh(Vector3[] vertices, Vector2[] uvs, int[] triangles, Texture2D texture)
     {
         // Clear previous changes to mesh
         mesh.Clear();
@@ -83,6 +84,9 @@ public class MeshGenerator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.uv = uvs;
         mesh.triangles = triangles;
+
+        // Assign texture
+        GetComponent<MeshRenderer>().material.mainTexture = texture;
 
         // Recalculate normals
         mesh.RecalculateNormals();
