@@ -59,7 +59,7 @@ public class MeshPlacer : MonoBehaviour
         textureGeneratorPrefab = (GameObject)Resources.Load("Prefabs/TextureGenerator");
         textureGeneratorInstance = (GameObject)GameObject.Instantiate(textureGeneratorPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         textureGeneratorScript = textureGeneratorInstance.GetComponent<TextureGenerator>();
-        textureGeneratorScript.Initialize(textureResolution);
+        textureGeneratorScript.Initialize(textureResolution, (int)Mathf.Pow(2, heightmapBaseN) + 1);
 
         // Initialize MeshGenerator prefab
         meshGeneratorPrefab = (GameObject)Resources.Load("Prefabs/MeshGenerator");
