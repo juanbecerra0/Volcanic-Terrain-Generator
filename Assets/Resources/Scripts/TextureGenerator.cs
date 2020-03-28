@@ -13,6 +13,7 @@ public class TextureGenerator : MonoBehaviour
     private float grassMountainThres = 13.0f;
     private float mountainSnowThres = 20.0f;
 
+    private Color darkGrassColor = new Color(0.255f / 2, 0.573f / 2, 0.294f / 2);
     private Color grassColor = new Color(0.255f, 0.573f, 0.294f);
     private Color mountainColor = new Color(0.333f, 0.267f, 0.200f);
     private Color snowColor = new Color(0.900f, 0.900f, 0.900f);
@@ -110,15 +111,16 @@ public class TextureGenerator : MonoBehaviour
             // Calc average
             height /= 9;
 
+            // Finally, calculate interpolated color
             if (height <= grassMountainThres)
                 // Grass
-                return grassColor;
+                return Color.Lerp(darkGrassColor, grassColor, height / (grassMountainThres));
             else if (height <= mountainSnowThres)
                 // Mountain
-                return mountainColor;
+                return Color.Lerp(grassColor, mountainColor, height / (mountainSnowThres));
             else
                 // Snow
-                return snowColor;
+                return Color.Lerp(mountainColor, snowColor, height / (grassMountainThres + mountainSnowThres));
         }
 
         for (int i = 0; i < textureResolution; i++)

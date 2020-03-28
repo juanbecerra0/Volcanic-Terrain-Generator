@@ -17,9 +17,9 @@ public class CharMouseCam : MonoBehaviour
 
     // Line rendering variables
     private float lineWidth;
-    private float frustDist;
-    private int segments;
-    private float radius;
+    private float frustDist = 600.0f;
+    private int segments = 90;
+    private float radius = 300.0f;
 
     // Line objects
     private GameObject leftLine;
@@ -38,7 +38,7 @@ public class CharMouseCam : MonoBehaviour
     // Procedural generation scripts/variables
     HeightmapGenerator hgScript;
     MeshPlacer mpScript;
-    private int circlePoints;
+    private int circlePoints = 8;
     private int blockSize;
 
     // Start is called before the first frame update
@@ -51,7 +51,6 @@ public class CharMouseCam : MonoBehaviour
         
         hgScript = GameObject.FindObjectOfType(typeof(HeightmapGenerator)) as HeightmapGenerator;
         mpScript = GameObject.FindObjectOfType(typeof(MeshPlacer)) as MeshPlacer;
-        circlePoints = 8;
         blockSize = mpScript.blockSize;
 
         canTransformYView = true;
@@ -83,9 +82,6 @@ public class CharMouseCam : MonoBehaviour
 
         // Set up line variables
         lineWidth = overviewCamera.transform.position.y / 50f;
-        frustDist = 400.0f;
-        segments = 180;
-        radius = 150.0f;
 
         // Create and setup camera lines
         leftLine = new GameObject("Left Line");
