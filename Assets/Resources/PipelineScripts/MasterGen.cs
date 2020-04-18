@@ -15,6 +15,14 @@ public class MasterGen : MonoBehaviour
     public float heightmap_DisplacementMin = -0.5f;
     public float heightmap_DisplacementMax = 5.0f;
 
+    public int biome_HeightmapContentWidth = 10;
+    public int biome_Dimensions = 1024;
+    public uint biome_Water = 1;
+    public uint biome_Sand = 2;
+    public uint biome_Grass = 3;
+    public uint biome_Mountain = 4;
+    public uint biome_Snow = 5;
+
     public int material_Resolution = 512;
 
     public float texture_grassMountainThres = 13.0f;
@@ -52,7 +60,7 @@ public class MasterGen : MonoBehaviour
         GameObject MapDatabasePrefab = (GameObject)Resources.Load("PipelinePrefabs/MapDatabasePrefab");
         MapDatabaseInstance = (GameObject)GameObject.Instantiate(MapDatabasePrefab, new Vector3(0, 0, 0), Quaternion.identity);
         MapDatabaseScript = MapDatabaseInstance.GetComponent<MapDatabase>();
-        MapDatabaseScript.Init();
+        MapDatabaseScript.Init(biome_HeightmapContentWidth);
 
         // Heightmap gen
         GameObject HeightmapGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/HeightmapGenPrefab");
@@ -64,7 +72,7 @@ public class MasterGen : MonoBehaviour
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
         BiomeGenInstance = (GameObject)GameObject.Instantiate(BiomeGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         BiomeGenScript = BiomeGenInstance.GetComponent<BiomeGen>();
-        // TODO biome init
+        BiomeGenScript.Init(biome_Dimensions, biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
 
         // Material gen
         GameObject MaterialGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/MaterialGenPrefab");

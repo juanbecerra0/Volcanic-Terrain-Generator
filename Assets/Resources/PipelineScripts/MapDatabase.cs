@@ -7,9 +7,11 @@ public class MapDatabase : MonoBehaviour
     // Databases
     private Dictionary<Tuple<int, int>, float[,]> HeightmapDatabase;
     private Dictionary<Tuple<int, int>, Texture2D> BiomeDatabase;
+    private int BiomeHMContentsWidth;
 
-    public void Init()
+    public void Init(int biomeHMContentsWidth)
     {
+        BiomeHMContentsWidth = biomeHMContentsWidth;
         HeightmapDatabase = new Dictionary<Tuple<int, int>, float[,]>();
         BiomeDatabase = new Dictionary<Tuple<int, int>, Texture2D>();
     }
