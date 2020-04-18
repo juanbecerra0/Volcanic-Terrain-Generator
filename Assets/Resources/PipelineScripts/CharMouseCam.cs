@@ -36,8 +36,8 @@ public class CharMouseCam : MonoBehaviour
     private bool canTransformYView;
 
     // Procedural generation scripts/variables
-    HeightmapGenerator hgScript;
-    MeshPlacer mpScript;
+    MapDatabase MapDatabaseScript;
+    MasterGen MasterGenScript;
     private int circlePoints = 8;
     private int blockSize;
 
@@ -48,10 +48,10 @@ public class CharMouseCam : MonoBehaviour
         character = this.transform.parent.gameObject;
         charCamera = this.GetComponentsInChildren<Camera>()[0];
         overviewCamera = this.GetComponentsInChildren<Camera>()[1];
-        
-        hgScript = GameObject.FindObjectOfType(typeof(HeightmapGenerator)) as HeightmapGenerator;
-        mpScript = GameObject.FindObjectOfType(typeof(MeshPlacer)) as MeshPlacer;
-        blockSize = mpScript.blockSize;
+
+        MapDatabaseScript = GameObject.FindObjectOfType(typeof(MapDatabase)) as MapDatabase;
+        MasterGenScript = GameObject.FindObjectOfType(typeof(MasterGen)) as MasterGen;
+        blockSize = MasterGenScript.block_VertexWidth;
 
         canTransformYView = true;
 
@@ -294,8 +294,8 @@ public class CharMouseCam : MonoBehaviour
         for(int i = 0; i < coordList.Count; i++)
         {
             // If cartesian coordinate space is empty, generate new block instance
-            if (hgScript.IsEmpty(coordList[i].Item1, coordList[i].Item2))
-                mpScript.GenerateBlockInstance(coordList[i].Item1, coordList[i].Item2);
+            if (MapDatabaseScript.IsVacent(coordList[i].Item1, coordList[i].Item2))
+                MasterGenScript.GenerateBlockInstance(coordList[i].Item1, coordList[i].Item2);
         }
     }
 }
