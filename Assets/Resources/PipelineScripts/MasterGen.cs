@@ -6,8 +6,7 @@ using UnityEngine;
 public class MasterGen : MonoBehaviour
 {
     // Init variables
-    public int placement_BlockRadius = 2;
-
+    public int block_Radius = 2;
     public int block_VertexWidth = 256;
 
     public int heightmap_PowerN = 7;
@@ -17,6 +16,13 @@ public class MasterGen : MonoBehaviour
     public float heightmap_DisplacementMax = 5.0f;
 
     public int material_Resolution = 512;
+
+    public float texture_grassMountainThres = 13.0f;
+    public float texture_mountainSnowThres = 20.0f;
+    private Color texture_DarkGrassColor = new Color(0.255f / 2, 0.573f / 2, 0.294f / 2);
+    private Color texture_GrassColor = new Color(0.255f, 0.573f, 0.294f);
+    private Color texture_MountainColor = new Color(0.333f, 0.267f, 0.200f);
+    private Color texture_SnowColor = new Color(0.900f, 0.900f, 0.900f);
 
     // Map database
     private GameObject MapDatabaseInstance;
@@ -38,7 +44,7 @@ public class MasterGen : MonoBehaviour
     private GameObject ModelGenPrefab;
     private GameObject MasterTerrainInstance;
 
-    private bool CheckErrors() { return (placement_BlockRadius < 1 || heightmap_PowerN < 3 || block_VertexWidth < 1 || material_Resolution < 64); }
+    private bool CheckErrors() { return (block_Radius < 1 || heightmap_PowerN < 3 || block_VertexWidth < 1 || material_Resolution < 64); }
 
     private void InitPrefabsAndScripts()
     {
@@ -58,11 +64,14 @@ public class MasterGen : MonoBehaviour
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
         BiomeGenInstance = (GameObject)GameObject.Instantiate(BiomeGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         BiomeGenScript = BiomeGenInstance.GetComponent<BiomeGen>();
+        // TODO biome init
 
         // Material gen
         GameObject MaterialGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/MaterialGenPrefab");
         MaterialGenInstance = (GameObject)GameObject.Instantiate(MaterialGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         MaterialGenScript = MaterialGenInstance.GetComponent<MaterialGen>();
+        MaterialGenScript.InitTexture(material_Resolution, heightmap_PowerN, texture_grassMountainThres, texture_mountainSnowThres,
+            texture_DarkGrassColor, texture_GrassColor, texture_MountainColor, texture_SnowColor);
 
         // Model gen / master terrain
         ModelGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/ModelGenPrefab");
@@ -90,7 +99,7 @@ public class MasterGen : MonoBehaviour
     private void DoShellSequence()
     {
         // Iterates through each sequence in the block radius
-        for (int i = 1, sequenceLength = 1; i <= placement_BlockRadius; i++, sequenceLength += 2)
+        for (int i = 1, sequenceLength = 1; i <= block_Radius; i++, sequenceLength += 2)
         {
             // Iterates through each shell sequence
             for (int j = 0; j < 4; j++)
@@ -139,7 +148,9 @@ public class MasterGen : MonoBehaviour
         // Generate biome/heightmap
         float[,] Heightmap = HeightmapGenScript.GenerateHeightmap(x, z);
 
-        // TODO Generate material
+        // Generate material
+        Texture2D Texture = MaterialGenScript.GenerateTexture(Heightmap);
+        // TODO generate bumpmap and misc.
 
         // TODO Generate model
 
