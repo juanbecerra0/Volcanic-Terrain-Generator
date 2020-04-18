@@ -20,7 +20,7 @@ As I work on this project, my tasks will likely be more complex, but I feel that
 
 # Log
 ### 4/17/2020 - Refactoring and Biome Partitioning Prep
-![9](Images/9.PNG)
+![9](Images/9.jpg)
 After a bit of a break, I have decided to refactor my entire generation pipeline in preparation for some of the more advanced features coming up. The pipeline now takes into account a cartesian coordinate system that queries both a biome map and a heightmap map, which takes care of some of the dependencies issues I would have had with the old implementation. In addition, I’ve opened up the pipeline to allow for bump/normal maps in addition to the regular texture generation. My next feature will be the biome generation algorithm.
 
 ### 3/27/2020 - Procedural Texture Generation
