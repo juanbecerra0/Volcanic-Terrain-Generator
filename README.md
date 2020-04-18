@@ -19,6 +19,10 @@ I believe that achieving these effects will be most effective in parts. This is 
 As I work on this project, my tasks will likely be more complex, but I feel that this is a good set of goals to start off with.
 
 # Log
+### 4/17/2020 - Refactoring and Biome Partitioning Prep
+![9](Images/9.PNG)
+After a bit of a break, I have decided to refactor my entire generation pipeline in preparation for some of the more advanced features coming up. The pipeline now takes into account a cartesian coordinate system that queries both a biome map and a heightmap map, which takes care of some of the dependencies issues I would have had with the old implementation. In addition, I’ve opened up the pipeline to allow for bump/normal maps in addition to the regular texture generation. My next feature will be the biome generation algorithm.
+
 ### 3/27/2020 - Procedural Texture Generation
 ![8](Images/8.PNG)
 In this update, I utilized the UV mappings of individual blocks of geometry to experiment with procedural material generation. I want to eventually implement all sorts of great material shader techniques, like bump and specular maps, but I wanted to mainly focus on color at first. I made a rudimentary algorithm for generating textures based off of the height of a pixel’s heightmap value. I then interpolated between green, brown, and white colors to simulate grass, mountain, and snow respectively. This is still pretty basic as it does not read off of a master biome map, but it should give me a basic approach for crossing off future goals.
