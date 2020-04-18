@@ -139,6 +139,8 @@ public class MasterGen : MonoBehaviour
 
     public void GenerateBlockInstance(int x, int z)
     {
+        Vector3 GetWorldCoordinates(float xIndex, float zIndex) { return new Vector3(xIndex * block_VertexWidth, 0, zIndex * block_VertexWidth); }
+
         if (!MapDatabaseScript.IsVacent(x, z))
         {
             Debug.Log("Tried to generate block at (" + x + ", " + z + "). Aborted.");
@@ -152,14 +154,12 @@ public class MasterGen : MonoBehaviour
         Texture2D Texture = MaterialGenScript.GenerateTexture(Heightmap);
         // TODO generate bumpmap and misc.
 
-        // TODO Generate model
+        // Generate model
+        GameObject ModelGenInstance = (GameObject)GameObject.Instantiate(ModelGenPrefab, GetWorldCoordinates(x, z), Quaternion.identity);
+        ModelGen ModelGenScript = ModelGenInstance.GetComponent<ModelGen>();
+        ModelGenScript.GenerateMesh(Heightmap, Texture, block_VertexWidth);
 
-        // TODO Merge model to master mesh
-
-    }
-
-    private Vector3 GetWorldCoordinates(float xIndex, float zIndex)
-    {
-        return new Vector3(xIndex * block_VertexWidth, 0, zIndex * block_VertexWidth);
+        // Merge model to master mesh
+        ModelGenInstance.transform.parent = MasterTerrainInstance.transform;
     }
 }

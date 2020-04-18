@@ -121,110 +121,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &154957126
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2229974141850598420, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: scale
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: vertexCount
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: blockCount
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: initialBlockRadius
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: heightmapBaseN
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: blockSize
-      value: 256
-      objectReference: {fileID: 0}
-    - target: {fileID: 5041127232222149639, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: textureResolution
-      value: 512
-      objectReference: {fileID: 0}
-    - target: {fileID: 5830571954608688143, guid: 15e4722091aec72469d2c8be7b02f5e6,
-        type: 3}
-      propertyPath: m_Name
-      value: MeshPlacer
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 15e4722091aec72469d2c8be7b02f5e6, type: 3}
 --- !u!1 &307266049
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,7 +232,7 @@ Transform:
   m_Children:
   - {fileID: 1945565504}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &307266055
 MonoBehaviour:
@@ -352,6 +248,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 100
   height: 40
+  translation: 0
+  straffe: 0
 --- !u!1 &428368189
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,10 +445,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c928b7ee8bec5864997437e370ad62cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  init_BlockRadius: 2
+  block_Radius: 2
   block_VertexWidth: 256
   heightmap_PowerN: 7
+  heightmap_CornerInitMin: 0
+  heightmap_CornerInitMax: 1
+  heightmap_DisplacementMin: -0.5
+  heightmap_DisplacementMax: 5
   material_Resolution: 512
+  texture_grassMountainThres: 13
+  texture_mountainSnowThres: 20
 --- !u!4 &1401406874
 Transform:
   m_ObjectHideFlags: 0
@@ -563,7 +467,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1945565501
 GameObject:
@@ -665,3 +569,20 @@ MonoBehaviour:
   sensitivity: 5
   smoothing: 2
   character: {fileID: 0}
+  charCamera: {fileID: 0}
+  overviewCamera: {fileID: 0}
+  lineWidth: 0
+  frustDist: 600
+  segments: 90
+  radius: 300
+  leftLine: {fileID: 0}
+  rightLine: {fileID: 0}
+  centerLine: {fileID: 0}
+  radialLine: {fileID: 0}
+  mouseLook: {x: 0, y: 0}
+  smoothV: {x: 0, y: 0}
+  canTransformYView: 0
+  MapDatabaseScript: {fileID: 0}
+  MasterGenScript: {fileID: 0}
+  circlePoints: 8
+  blockSize: 0
