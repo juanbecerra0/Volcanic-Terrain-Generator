@@ -6,9 +6,16 @@ using UnityEngine;
 public class MasterGen : MonoBehaviour
 {
     // Init variables
-    public int init_BlockRadius = 2;
+    public int placement_BlockRadius = 2;
+
     public int block_VertexWidth = 256;
+
     public int heightmap_PowerN = 7;
+    public float heightmap_CornerInitMin = 0.0f;
+    public float heightmap_CornerInitMax = 1.0f;
+    public float heightmap_DisplacementMin = -0.5f;
+    public float heightmap_DisplacementMax = 5.0f;
+
     public int material_Resolution = 512;
 
     // Map database
@@ -31,7 +38,7 @@ public class MasterGen : MonoBehaviour
     private GameObject ModelGenPrefab;
     private GameObject MasterTerrainInstance;
 
-    private bool CheckErrors() { return (init_BlockRadius < 1 || heightmap_PowerN < 3 || block_VertexWidth < 1 || material_Resolution < 64); }
+    private bool CheckErrors() { return (placement_BlockRadius < 1 || heightmap_PowerN < 3 || block_VertexWidth < 1 || material_Resolution < 64); }
 
     private void InitPrefabsAndScripts()
     {
@@ -45,6 +52,7 @@ public class MasterGen : MonoBehaviour
         GameObject HeightmapGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/HeightmapGenPrefab");
         HeightmapGenInstance = (GameObject)GameObject.Instantiate(HeightmapGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         HeightmapGenScript = HeightmapGenInstance.GetComponent<HeightmapGen>();
+        HeightmapGenScript.Init(heightmap_PowerN, heightmap_CornerInitMin, heightmap_CornerInitMax, heightmap_DisplacementMin, heightmap_DisplacementMax);
 
         // Biome gen
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
@@ -82,7 +90,7 @@ public class MasterGen : MonoBehaviour
     private void DoShellSequence()
     {
         // Iterates through each sequence in the block radius
-        for (int i = 1, sequenceLength = 1; i <= init_BlockRadius; i++, sequenceLength += 2)
+        for (int i = 1, sequenceLength = 1; i <= placement_BlockRadius; i++, sequenceLength += 2)
         {
             // Iterates through each shell sequence
             for (int j = 0; j < 4; j++)
@@ -128,7 +136,8 @@ public class MasterGen : MonoBehaviour
             return;
         }
 
-        // TODO Generate biome/heightmap
+        // Generate biome/heightmap
+        float[,] Heightmap = HeightmapGenScript.GenerateHeightmap(x, z);
 
         // TODO Generate material
 
