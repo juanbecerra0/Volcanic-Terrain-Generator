@@ -37,6 +37,7 @@ public class BiomeGen : MonoBehaviour
         }
 
         System.IO.File.WriteAllText(filepath, sb.ToString());
+        Debug.Log("Text file saved to " + filepath);
     }
 
     public void WriteAsTexture(uint[,] Biome, String filepath)
@@ -58,11 +59,9 @@ public class BiomeGen : MonoBehaviour
             }
         }
 
-        byte[] _bytes = image.EncodeToPNG();
-        System.IO.File.WriteAllBytes(filepath, _bytes);
-        Debug.Log(_bytes.Length / 1024 + "Kb was saved as: " + filepath);
-
-        //GUI.DrawTexture(new Rect(0, 0, BiomeDimensions, BiomeDimensions), image);
+        byte[] bytes = image.EncodeToPNG();
+        System.IO.File.WriteAllBytes(filepath, bytes);
+        Debug.Log("Image saved to " + filepath);
     }
 
     private class SeedAgent
@@ -86,6 +85,20 @@ public class BiomeGen : MonoBehaviour
                 return new SeedAgent(BiomeType, X, Y);
             else
                 return null;
+        }
+
+        public bool IsViable()
+        {
+            return (
+                Biome[X - 1, Y] == 0 ||
+                Biome[X - 1, Y + 1] == 0 ||
+                Biome[X, Y + 1] == 0 ||
+                Biome[X + 1, Y + 1] == 0 ||
+                Biome[X + 1, Y] == 0 ||
+                Biome[X + 1, Y - 1] == 0 ||
+                Biome[X, Y - 1] == 0 ||
+                Biome[X - 1, Y - 1] == 0
+            );
         }
 
         public uint GetBiomeType() { return BiomeType; }
@@ -153,6 +166,11 @@ public class BiomeGen : MonoBehaviour
 
                 if (newAgent != null)
                 {
+                    /*  WHAT THE FUCK
+                    if (agent.IsViable())
+                        AgentQueue.Enqueue(agent);
+                        */
+
                     AgentQueue.Enqueue(newAgent);
                     break;
                 }

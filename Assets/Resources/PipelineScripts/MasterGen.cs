@@ -53,6 +53,9 @@ public class MasterGen : MonoBehaviour
     private GameObject ModelGenPrefab;
     private GameObject MasterTerrainInstance;
 
+    // Player controls prefab
+    private GameObject PlayerCharacterPrefab;
+
     private bool CheckErrors() { return (block_Radius < 1 || heightmap_PowerN < 3 || block_VertexWidth < 1 || material_Resolution < 64); }
 
     private void InitPrefabsAndScripts()
@@ -90,6 +93,14 @@ public class MasterGen : MonoBehaviour
         ModelGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/ModelGenPrefab");
         GameObject MasterTerrainPrefab = (GameObject) Resources.Load("PipelinePrefabs/MasterTerrainPrefab");
         MasterTerrainInstance = (GameObject)GameObject.Instantiate(MasterTerrainPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+        // Player character
+        PlayerCharacterPrefab = (GameObject)Resources.Load("PipelinePrefabs/PlayerCharacterPrefab");
+    }
+
+    private void InitPlayerCharacter()
+    {
+        GameObject PlayerCharacterInstance = (GameObject)GameObject.Instantiate(PlayerCharacterPrefab, new Vector3(0, 0, 0), Quaternion.identity);
     }
 
     // Start is called before the first frame update
@@ -107,6 +118,9 @@ public class MasterGen : MonoBehaviour
 
         // Initiate the shell sequence
         DoShellSequence();
+
+        // Activate player controls
+        InitPlayerCharacter();
     }
 
     private void DoShellSequence()

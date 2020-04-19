@@ -65,6 +65,8 @@ public class CharMouseCam : MonoBehaviour
             render.startWidth = lineWidth;
             render.endWidth = lineWidth;
             render.enabled = false;
+
+            line.transform.parent = this.transform;
         }
 
         void SetupRadialLine(GameObject line)
@@ -78,6 +80,8 @@ public class CharMouseCam : MonoBehaviour
             render.startWidth = lineWidth;
             render.endWidth = lineWidth;
             render.enabled = false;
+
+            line.transform.parent = this.transform;
         }
 
         // Set up line variables
