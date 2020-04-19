@@ -90,14 +90,14 @@ public class BiomeGen : MonoBehaviour
         public bool IsViable()
         {
             return (
-                Biome[X - 1, Y] == 0 ||
-                Biome[X - 1, Y + 1] == 0 ||
-                Biome[X, Y + 1] == 0 ||
-                Biome[X + 1, Y + 1] == 0 ||
-                Biome[X + 1, Y] == 0 ||
-                Biome[X + 1, Y - 1] == 0 ||
-                Biome[X, Y - 1] == 0 ||
-                Biome[X - 1, Y - 1] == 0
+                (X - 1 >= 0 && Biome[X - 1, Y] == 0) ||
+                (X - 1 >= 0 && Y + 1 < BiomeDimensions && Biome[X - 1, Y + 1] == 0) ||
+                (Y + 1 < BiomeDimensions && Biome[X, Y + 1] == 0) ||
+                (X + 1 < BiomeDimensions && Y + 1 < BiomeDimensions && Biome[X + 1, Y + 1] == 0) ||
+                (X + 1 < BiomeDimensions && Biome[X + 1, Y] == 0) ||
+                (X + 1 < BiomeDimensions && Y - 1 >= 0 && Biome[X + 1, Y - 1] == 0) ||
+                (Y - 1 >= 0 && Biome[X, Y - 1] == 0) ||
+                (X - 1 >= 0 && Y - 1 >= 0 && Biome[X - 1, Y - 1] == 0)
             );
         }
 
@@ -166,10 +166,8 @@ public class BiomeGen : MonoBehaviour
 
                 if (newAgent != null)
                 {
-                    /*  WHAT THE FUCK
                     if (agent.IsViable())
                         AgentQueue.Enqueue(agent);
-                        */
 
                     AgentQueue.Enqueue(newAgent);
                     break;
@@ -223,21 +221,21 @@ public class BiomeGen : MonoBehaviour
         if (mountainAgent2 != null)
         {
             AgentQueue.Enqueue(mountainAgent2);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent1.GetX() + SeedSpacing, mountainAgent1.GetY());
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent2.GetX() + SeedSpacing, mountainAgent2.GetY());
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
         if (mountainAgent3 != null)
         {
             AgentQueue.Enqueue(mountainAgent3);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent1.GetX(), mountainAgent1.GetY() - SeedSpacing);
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent3.GetX(), mountainAgent3.GetY() - SeedSpacing);
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
         if (mountainAgent4 != null)
         {
             AgentQueue.Enqueue(mountainAgent4);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent1.GetX() - SeedSpacing, mountainAgent1.GetY());
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent4.GetX() - SeedSpacing, mountainAgent4.GetY());
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
