@@ -8,14 +8,12 @@ public class BiomeGen : MonoBehaviour
 {
     private static int BiomeDimensions;
     private int SeedSpacing;
-    private int RadialSeeds;
     private uint Water, Sand, Grass, Mountain, Snow;
 
-    public void Init(int biomeDimensions, int seedSpacing, int radialSeeds, uint waterSymbol, uint sandSymbol, uint grassSymbol, uint mountainSymbol, uint snowSymbol)
+    public void Init(int biomeDimensions, int seedSpacing, uint waterSymbol, uint sandSymbol, uint grassSymbol, uint mountainSymbol, uint snowSymbol)
     {
         BiomeDimensions = biomeDimensions;
         SeedSpacing = seedSpacing;
-        RadialSeeds = radialSeeds;
         Water = waterSymbol;
         Sand = sandSymbol;
         Grass = grassSymbol;
@@ -117,12 +115,10 @@ public class BiomeGen : MonoBehaviour
         Biome = new uint[BiomeDimensions, BiomeDimensions];
 
         Queue<SeedAgent> AgentQueue = GetSeedAgentQueue();
-        int writes = 0;
 
         // BFS the AgentQueue, marking adjacent coordinates of Biome
         while (AgentQueue.Count > 0)
         {
-            writes++;
             SeedAgent agent = AgentQueue.Dequeue();
 
             //int cycle = UnityEngine.Random.Range(1, 9);
@@ -130,11 +126,125 @@ public class BiomeGen : MonoBehaviour
 
             for (int i = 1; i <= 8; i++)
             {
-                /*
-                if (UnityEngine.Random.Range(1, 3) == 2)
-                    continue;
-                    */
+                switch (i)
+                {
+                    // Up
+                    case 1:
+                        newAgent = SeedAgent.Create(agent.GetBiomeType(), agent.GetX() - 1, agent.GetY());
+                        break;
+                    // Up-right
+                    case 2:
+                        newAgent = SeedAgent.Create(agent.GetBiomeType(), agent.GetX() - 1, agent.GetY() + 1);
+                        break;
+                    // Right
+                    case 3:
+                        newAgent = SeedAgent.Create(agent.GetBiomeType(), agent.GetX(), agent.GetY() + 1);
+                        break;
+                    // Down-right
+                    case 4:
+                        newAgent = SeedAgent.Create(agent.GetBiomeType(), agent.GetX() + 1, agent.GetY() + 1);
+                        break;
+                    // Down
+                    case 5:
+                        newAgent = SeedAgent.Create(agent.GetBiomeType(), agent.GetX() + 1, agent.GetY());
+                        break;
+                    // Down-left
+                    case 6:
+                        newAgent = SeedAgent.Create(agent.GetBiomeType(), agent.GetX() + 1, agent.GetY() - 1);
+                        break;
+                    // Left
+                    case 7:
+                        newAgent = SeedAgent.Create(agent.GetBiomeType(), agent.GetX(), agent.GetY() - 1);
+                        break;
+                    // Up-left
+                    case 8:
+                        newAgent = SeedAgent.Create(agent.GetBiomeType(), agent.GetX() - 1, agent.GetY() - 1);
+                        break;
+                    default:
+                        break;
+                }
 
+                if (newAgent != null)
+                {
+                    AgentQueue.Enqueue(newAgent);
+                }
+            }
+        }
+
+        return Biome;
+    }
+
+    public uint[,] GenerateBiome(uint[,] Top, uint[,] Right, uint[,] Bottom, uint[,] Left)
+    {
+        Biome = new uint[BiomeDimensions, BiomeDimensions];
+
+        // Make the agent queue
+        Queue<SeedAgent> AgentQueue = new Queue<SeedAgent>();
+
+        // Enqueue all adjacent biome seeds
+        for(int Selection = 1; Selection <= 4; Selection++)
+        {
+            SeedAgent newAgent = SeedAgent.Create(0, -1, -1);
+            switch (Selection)
+            {
+                // Top
+                case 1:
+                    if (Top == null)
+                        break;
+                    for(int i = 0; i < BiomeDimensions; i++)
+                    {
+                        newAgent = SeedAgent.Create(Top[BiomeDimensions - 1, i], 0, i);
+                    }
+                    break;
+                // Right
+                case 2:
+                    if (Right == null)
+                        break;
+                    for (int i = 0; i < BiomeDimensions; i++)
+                    {
+                        newAgent = SeedAgent.Create(Right[i, 0], i, BiomeDimensions - 1);
+                    }
+                    break;
+                // Down
+                case 3:
+                    if (Bottom == null)
+                        break;
+                    for (int i = 0; i < BiomeDimensions; i++)
+                    {
+                        newAgent = SeedAgent.Create(Bottom[0, i], BiomeDimensions - 1, i);
+                    }
+                    break;
+                // Left
+                case 4:
+                    if (Left == null)
+                        break;
+                    for (int i = 0; i < BiomeDimensions; i++)
+                    {
+                        newAgent = SeedAgent.Create(Left[i, BiomeDimensions - 1], i, 0);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (newAgent != null)
+                AgentQueue.Enqueue(newAgent);
+        }
+
+        // Create and enqueue all init seed agents
+        Queue<SeedAgent> SeedAgentQueue = GetSeedAgentQueue();
+        while(SeedAgentQueue.Count > 0)
+            AgentQueue.Enqueue(SeedAgentQueue.Dequeue());
+
+        // BFS the AgentQueue, marking adjacent coordinates of Biome
+        while (AgentQueue.Count > 0)
+        {
+            SeedAgent agent = AgentQueue.Dequeue();
+
+            //int cycle = UnityEngine.Random.Range(1, 9);
+            SeedAgent newAgent = SeedAgent.Create(0, -1, -1);
+
+            for (int i = 1; i <= 8; i++)
+            {
                 switch (i)
                 {
                     // Up
@@ -178,40 +288,17 @@ public class BiomeGen : MonoBehaviour
                 if (newAgent != null)
                 {
                     AgentQueue.Enqueue(newAgent);
-                    //break;
                 }
-
-                /*
-                if (cycle < 8)
-                    cycle++;
-                else
-                    cycle = 1;
-                    */
-
             }
-
-            /*
-            if (agent.IsViable())
-                AgentQueue.Enqueue(agent);
-                */
-
         }
-
-        Debug.Log(writes);
-        return Biome;
-    }
-
-    public uint[,] GenerateBiome(uint[,] Top, uint[,] Right, uint[,] Bottom, uint[,] Left)
-    {
-        uint[,] Biome = new uint[BiomeDimensions, BiomeDimensions];
-
-        // TODO
 
         return Biome;
     }
 
     private Queue<SeedAgent> GetSeedAgentQueue()
     {
+        int GetRandomDisplacement() { return UnityEngine.Random.Range(-SeedSpacing / 4, SeedSpacing / 4); }
+
         // Create a queue of SeedAgents
         Queue<SeedAgent> AgentQueue = new Queue<SeedAgent>();
 
@@ -219,89 +306,33 @@ public class BiomeGen : MonoBehaviour
         SeedAgent snowAgent = SeedAgent.Create(Snow, UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3), UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3));
         AgentQueue.Enqueue(snowAgent);
 
-        int AgentCount = 0;
-
-        // Setup radial agent generation
-        int centerX = snowAgent.GetX();
-        int centerY = snowAgent.GetY();
-
-        // Generate mountain agents
-        int radius = SeedSpacing;
-        for (float t = 0; t < 2 * Math.PI; t += 0.01f)
+        void GenerateRadialAgents(uint BiomeType, int radius, int centerX, int centerY)
         {
-            var x = Math.Sin(t) * radius;
-            var y = Math.Cos(t) * radius;
+            int AgentCount = 0;
 
-            SeedAgent mountainAgent = SeedAgent.Create(Mountain, (int) x + centerX, (int) y + centerY);
-            if (mountainAgent != null)
+            for (float t = 0; t < 2 * Math.PI; t += 0.01f)
             {
-                Biome[(int)x + centerX, (int)y + centerY] = 1;
-                AgentQueue.Enqueue(mountainAgent);
-                AgentCount++;
+                var x = Math.Sin(t) * radius;
+                var y = Math.Cos(t) * radius;
+
+                SeedAgent agent = SeedAgent.Create(BiomeType, (int)x + centerX + GetRandomDisplacement(), (int)y + centerY + GetRandomDisplacement());
+                if (agent != null)
+                {
+                    AgentQueue.Enqueue(agent);
+                    AgentCount++;
+                }
             }
+
+            Debug.Log(AgentCount);
         }
 
-        Debug.Log(AgentCount);
-        AgentCount = 0;
-
-        // Generate grass agents
-        radius = SeedSpacing * 2;
-        for (float t = 0; t < 2 * Math.PI; t += 0.01f)
-        {
-            var x = Math.Sin(t) * radius;
-            var y = Math.Cos(t) * radius;
-
-            SeedAgent grassAgent = SeedAgent.Create(Grass, (int)x + centerX, (int)y + centerY);
-            if (grassAgent != null)
-            {
-                Biome[(int)x + centerX, (int)y + centerY] = 1;
-                AgentQueue.Enqueue(grassAgent);
-                AgentCount++;
-            }
-        }
-
-        Debug.Log(AgentCount);
-        AgentCount = 0;
-
-        // Generate sand agents
-        radius = SeedSpacing * 3;
-        for (float t = 0; t < 2 * Math.PI; t += 0.01f)
-        {
-            var x = Math.Sin(t) * radius;
-            var y = Math.Cos(t) * radius;
-
-            SeedAgent sandAgent = SeedAgent.Create(Sand, (int)x + centerX, (int)y + centerY);
-            if (sandAgent != null)
-            {
-                Biome[(int)x + centerX, (int)y + centerY] = 1;
-                AgentQueue.Enqueue(sandAgent);
-                AgentCount++;
-            }
-        }
-
-        Debug.Log(AgentCount);
-        AgentCount = 0;
-
-        // Generate water agents
-        radius = SeedSpacing * 4;
-        for (float t = 0; t < 2 * Math.PI; t += 0.01f)
-        {
-            var x = Math.Sin(t) * radius;
-            var y = Math.Cos(t) * radius;
-
-            SeedAgent waterAgent = SeedAgent.Create(Water, (int)x + centerX, (int)y + centerY);
-            if (waterAgent != null)
-            {
-                Biome[(int)x + centerX, (int)y + centerY] = 1;
-                AgentQueue.Enqueue(waterAgent);
-                AgentCount++;
-            }
-        }
-
-        Debug.Log(AgentCount);
+        // Generate radial mountain, grass, sand, and water agents
+        GenerateRadialAgents(Mountain, SeedSpacing, snowAgent.GetX(), snowAgent.GetY());
+        GenerateRadialAgents(Grass, SeedSpacing * 2, snowAgent.GetX(), snowAgent.GetY());
+        GenerateRadialAgents(Grass, SeedSpacing * 3, snowAgent.GetX(), snowAgent.GetY());
+        GenerateRadialAgents(Sand, SeedSpacing * 4, snowAgent.GetX(), snowAgent.GetY());
+        GenerateRadialAgents(Water, SeedSpacing * 5, snowAgent.GetX(), snowAgent.GetY());
 
         return AgentQueue;
     }
-
-
 }
