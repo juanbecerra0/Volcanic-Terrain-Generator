@@ -16,8 +16,10 @@ public class MasterGen : MonoBehaviour
     public float heightmap_DisplacementMax = 5.0f;
 
     public int biome_HeightmapContentWidth = 10;
-    public int biome_SeedSpacing = 32;
+
     public int biome_Dimensions = 1024;
+    public int biome_SeedSpacing = 32;
+    public int biome_RadialSeeds = 10;
     public uint biome_Water = 1;
     public uint biome_Sand = 2;
     public uint biome_Grass = 3;
@@ -76,7 +78,7 @@ public class MasterGen : MonoBehaviour
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
         BiomeGenInstance = (GameObject)GameObject.Instantiate(BiomeGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         BiomeGenScript = BiomeGenInstance.GetComponent<BiomeGen>();
-        BiomeGenScript.Init(biome_Dimensions, biome_SeedSpacing, biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
+        BiomeGenScript.Init(biome_Dimensions, biome_SeedSpacing, biome_RadialSeeds, biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
 
         // TODO test
         //BiomeGenScript.WriteAsTextFile(BiomeGenScript.GenerateBiome(), "C:/Users/becer/Downloads/test.txt");

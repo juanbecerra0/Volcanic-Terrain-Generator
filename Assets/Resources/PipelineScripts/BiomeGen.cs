@@ -8,9 +8,10 @@ public class BiomeGen : MonoBehaviour
 {
     private static int BiomeDimensions;
     private int SeedSpacing;
+    private int RadialSeeds;
     private uint Water, Sand, Grass, Mountain, Snow;
 
-    public void Init(int biomeDimensions, int seedSpacing, uint waterSymbol, uint sandSymbol, uint grassSymbol, uint mountainSymbol, uint snowSymbol)
+    public void Init(int biomeDimensions, int seedSpacing, int radialSeeds, uint waterSymbol, uint sandSymbol, uint grassSymbol, uint mountainSymbol, uint snowSymbol)
     {
         BiomeDimensions = biomeDimensions;
         SeedSpacing = seedSpacing;
@@ -119,15 +120,17 @@ public class BiomeGen : MonoBehaviour
             writes++;
             SeedAgent agent = AgentQueue.Dequeue();
 
-            int cycle = UnityEngine.Random.Range(1, 9);
+            //int cycle = UnityEngine.Random.Range(1, 9);
             SeedAgent newAgent = SeedAgent.Create(0, -1, -1);
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 1; i <= 8; i++)
             {
+                /*
                 if (UnityEngine.Random.Range(1, 3) == 2)
                     continue;
+                    */
 
-                switch (cycle)
+                switch (i)
                 {
                     // Up
                     case 1:
@@ -173,15 +176,19 @@ public class BiomeGen : MonoBehaviour
                     //break;
                 }
 
+                /*
                 if (cycle < 8)
                     cycle++;
                 else
                     cycle = 1;
+                    */
 
             }
 
+            /*
             if (agent.IsViable())
                 AgentQueue.Enqueue(agent);
+                */
 
         }
 
@@ -200,6 +207,10 @@ public class BiomeGen : MonoBehaviour
 
     private Queue<SeedAgent> GetSeedAgentQueue()
     {
+        int GetRandomDisplacement() {
+            return UnityEngine.Random.Range(-SeedSpacing, SeedSpacing);
+        }
+
         // Create a queue of SeedAgents
         Queue<SeedAgent> AgentQueue = new Queue<SeedAgent>();
 
@@ -207,39 +218,42 @@ public class BiomeGen : MonoBehaviour
         SeedAgent snowAgent = SeedAgent.Create(Snow, UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3), UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3));
         AgentQueue.Enqueue(snowAgent);
 
+        // Add mountain agents
+        // TODO
+
         // Enqueue several mountain agents
-        SeedAgent mountainAgent1 = SeedAgent.Create(Mountain, snowAgent.GetX() - SeedSpacing, snowAgent.GetY());
-        SeedAgent mountainAgent2 = SeedAgent.Create(Mountain, snowAgent.GetX(), snowAgent.GetY() + SeedSpacing);
-        SeedAgent mountainAgent3 = SeedAgent.Create(Mountain, snowAgent.GetX() + SeedSpacing, snowAgent.GetY());
-        SeedAgent mountainAgent4 = SeedAgent.Create(Mountain, snowAgent.GetX(), snowAgent.GetY() - SeedSpacing);
+        SeedAgent mountainAgent1 = SeedAgent.Create(Mountain, snowAgent.GetX() - SeedSpacing + GetRandomDisplacement(), snowAgent.GetY() + GetRandomDisplacement());
+        SeedAgent mountainAgent2 = SeedAgent.Create(Mountain, snowAgent.GetX() + GetRandomDisplacement(), snowAgent.GetY() + SeedSpacing + GetRandomDisplacement());
+        SeedAgent mountainAgent3 = SeedAgent.Create(Mountain, snowAgent.GetX() + SeedSpacing + GetRandomDisplacement(), snowAgent.GetY() + GetRandomDisplacement());
+        SeedAgent mountainAgent4 = SeedAgent.Create(Mountain, snowAgent.GetX() + GetRandomDisplacement(), snowAgent.GetY() - SeedSpacing + GetRandomDisplacement());
 
         // Verify mountain agents, then generate/verify grass agents
         // TODO add sand and water agents
         if (mountainAgent1 != null)
         {
             AgentQueue.Enqueue(mountainAgent1);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent1.GetX() - SeedSpacing, mountainAgent1.GetY() + SeedSpacing * 2);
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent1.GetX() - SeedSpacing + GetRandomDisplacement(), mountainAgent1.GetY() + SeedSpacing * 2 + GetRandomDisplacement());
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
         if (mountainAgent2 != null)
         {
             AgentQueue.Enqueue(mountainAgent2);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent2.GetX() + SeedSpacing * 2, mountainAgent2.GetY() + SeedSpacing);
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent2.GetX() + SeedSpacing * 2 + GetRandomDisplacement(), mountainAgent2.GetY() + SeedSpacing + GetRandomDisplacement());
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
         if (mountainAgent3 != null)
         {
             AgentQueue.Enqueue(mountainAgent3);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent3.GetX() + SeedSpacing, mountainAgent3.GetY() - SeedSpacing * 2);
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent3.GetX() + SeedSpacing + GetRandomDisplacement(), mountainAgent3.GetY() - SeedSpacing * 2 + GetRandomDisplacement());
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
         if (mountainAgent4 != null)
         {
             AgentQueue.Enqueue(mountainAgent4);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent4.GetX() - SeedSpacing * 2, mountainAgent4.GetY() - SeedSpacing);
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent4.GetX() - SeedSpacing * 2 + GetRandomDisplacement(), mountainAgent4.GetY() - SeedSpacing + GetRandomDisplacement());
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
