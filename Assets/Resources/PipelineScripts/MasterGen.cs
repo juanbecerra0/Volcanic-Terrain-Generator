@@ -81,7 +81,18 @@ public class MasterGen : MonoBehaviour
 
         // TODO test
         //BiomeGenScript.WriteAsTextFile(BiomeGenScript.GenerateBiome(), "C:/Users/becer/Downloads/test.txt");
-        BiomeGenScript.WriteAsTexture(BiomeGenScript.GenerateBiome(), "C:/Users/becer/Downloads/test.PNG");
+        uint[,] TL = BiomeGenScript.GenerateBiome(null, null, null, null);
+        uint[,] TR = BiomeGenScript.GenerateBiome(null, null, null, TL);
+        uint[,] BR = BiomeGenScript.GenerateBiome(TR, null, null, null);
+        uint[,] BL = BiomeGenScript.GenerateBiome(TL, BR, null, null);
+        BiomeGenScript.WriteAsTexture(TL, "C:/Users/becer/Downloads/TL.PNG");
+        BiomeGenScript.WriteAsTexture(TR, "C:/Users/becer/Downloads/TR.PNG");
+        BiomeGenScript.WriteAsTexture(BR, "C:/Users/becer/Downloads/BR.PNG");
+        BiomeGenScript.WriteAsTexture(BL, "C:/Users/becer/Downloads/BL.PNG");
+        BiomeGenScript.WriteAsTextFile(TL, "C:/Users/becer/Downloads/TL.TXT");
+        BiomeGenScript.WriteAsTextFile(TR, "C:/Users/becer/Downloads/TR.TXT");
+        BiomeGenScript.WriteAsTextFile(BR, "C:/Users/becer/Downloads/BR.TXT");
+        BiomeGenScript.WriteAsTextFile(BL, "C:/Users/becer/Downloads/BL.TXT");
 
         // Material gen
         GameObject MaterialGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/MaterialGenPrefab");
