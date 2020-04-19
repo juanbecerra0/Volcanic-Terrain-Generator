@@ -15,6 +15,7 @@ public class BiomeGen : MonoBehaviour
     {
         BiomeDimensions = biomeDimensions;
         SeedSpacing = seedSpacing;
+        RadialSeeds = radialSeeds;
         Water = waterSymbol;
         Sand = sandSymbol;
         Grass = grassSymbol;
@@ -49,7 +50,11 @@ public class BiomeGen : MonoBehaviour
         {
             for (int j = 0; j < BiomeDimensions; j++)
             {
-                if (Biome[i, j] == 3)
+                if (Biome[i, j] == 1)
+                    image.SetPixel(i, j, Color.blue);
+                else if (Biome[i, j] == 2)
+                    image.SetPixel(i, j, Color.yellow);
+                else if (Biome[i, j] == 3)
                     image.SetPixel(i, j, Color.green);
                 else if (Biome[i, j] == 4)
                     image.SetPixel(i, j, Color.grey);
@@ -207,10 +212,6 @@ public class BiomeGen : MonoBehaviour
 
     private Queue<SeedAgent> GetSeedAgentQueue()
     {
-        int GetRandomDisplacement() {
-            return UnityEngine.Random.Range(-SeedSpacing, SeedSpacing);
-        }
-
         // Create a queue of SeedAgents
         Queue<SeedAgent> AgentQueue = new Queue<SeedAgent>();
 
@@ -218,45 +219,86 @@ public class BiomeGen : MonoBehaviour
         SeedAgent snowAgent = SeedAgent.Create(Snow, UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3), UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3));
         AgentQueue.Enqueue(snowAgent);
 
-        // Add mountain agents
-        // TODO
+        int AgentCount = 0;
 
-        // Enqueue several mountain agents
-        SeedAgent mountainAgent1 = SeedAgent.Create(Mountain, snowAgent.GetX() - SeedSpacing + GetRandomDisplacement(), snowAgent.GetY() + GetRandomDisplacement());
-        SeedAgent mountainAgent2 = SeedAgent.Create(Mountain, snowAgent.GetX() + GetRandomDisplacement(), snowAgent.GetY() + SeedSpacing + GetRandomDisplacement());
-        SeedAgent mountainAgent3 = SeedAgent.Create(Mountain, snowAgent.GetX() + SeedSpacing + GetRandomDisplacement(), snowAgent.GetY() + GetRandomDisplacement());
-        SeedAgent mountainAgent4 = SeedAgent.Create(Mountain, snowAgent.GetX() + GetRandomDisplacement(), snowAgent.GetY() - SeedSpacing + GetRandomDisplacement());
+        // Setup radial agent generation
+        int centerX = snowAgent.GetX();
+        int centerY = snowAgent.GetY();
 
-        // Verify mountain agents, then generate/verify grass agents
-        // TODO add sand and water agents
-        if (mountainAgent1 != null)
+        // Generate mountain agents
+        int radius = SeedSpacing;
+        for (float t = 0; t < 2 * Math.PI; t += 0.01f)
         {
-            AgentQueue.Enqueue(mountainAgent1);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent1.GetX() - SeedSpacing + GetRandomDisplacement(), mountainAgent1.GetY() + SeedSpacing * 2 + GetRandomDisplacement());
-            if (grassAgent != null)
-                AgentQueue.Enqueue(grassAgent);
+            var x = Math.Sin(t) * radius;
+            var y = Math.Cos(t) * radius;
+
+            SeedAgent mountainAgent = SeedAgent.Create(Mountain, (int) x + centerX, (int) y + centerY);
+            if (mountainAgent != null)
+            {
+                Biome[(int)x + centerX, (int)y + centerY] = 1;
+                AgentQueue.Enqueue(mountainAgent);
+                AgentCount++;
+            }
         }
-        if (mountainAgent2 != null)
+
+        Debug.Log(AgentCount);
+        AgentCount = 0;
+
+        // Generate grass agents
+        radius = SeedSpacing * 2;
+        for (float t = 0; t < 2 * Math.PI; t += 0.01f)
         {
-            AgentQueue.Enqueue(mountainAgent2);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent2.GetX() + SeedSpacing * 2 + GetRandomDisplacement(), mountainAgent2.GetY() + SeedSpacing + GetRandomDisplacement());
+            var x = Math.Sin(t) * radius;
+            var y = Math.Cos(t) * radius;
+
+            SeedAgent grassAgent = SeedAgent.Create(Grass, (int)x + centerX, (int)y + centerY);
             if (grassAgent != null)
+            {
+                Biome[(int)x + centerX, (int)y + centerY] = 1;
                 AgentQueue.Enqueue(grassAgent);
+                AgentCount++;
+            }
         }
-        if (mountainAgent3 != null)
+
+        Debug.Log(AgentCount);
+        AgentCount = 0;
+
+        // Generate sand agents
+        radius = SeedSpacing * 3;
+        for (float t = 0; t < 2 * Math.PI; t += 0.01f)
         {
-            AgentQueue.Enqueue(mountainAgent3);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent3.GetX() + SeedSpacing + GetRandomDisplacement(), mountainAgent3.GetY() - SeedSpacing * 2 + GetRandomDisplacement());
-            if (grassAgent != null)
-                AgentQueue.Enqueue(grassAgent);
+            var x = Math.Sin(t) * radius;
+            var y = Math.Cos(t) * radius;
+
+            SeedAgent sandAgent = SeedAgent.Create(Sand, (int)x + centerX, (int)y + centerY);
+            if (sandAgent != null)
+            {
+                Biome[(int)x + centerX, (int)y + centerY] = 1;
+                AgentQueue.Enqueue(sandAgent);
+                AgentCount++;
+            }
         }
-        if (mountainAgent4 != null)
+
+        Debug.Log(AgentCount);
+        AgentCount = 0;
+
+        // Generate water agents
+        radius = SeedSpacing * 4;
+        for (float t = 0; t < 2 * Math.PI; t += 0.01f)
         {
-            AgentQueue.Enqueue(mountainAgent4);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent4.GetX() - SeedSpacing * 2 + GetRandomDisplacement(), mountainAgent4.GetY() - SeedSpacing + GetRandomDisplacement());
-            if (grassAgent != null)
-                AgentQueue.Enqueue(grassAgent);
+            var x = Math.Sin(t) * radius;
+            var y = Math.Cos(t) * radius;
+
+            SeedAgent waterAgent = SeedAgent.Create(Water, (int)x + centerX, (int)y + centerY);
+            if (waterAgent != null)
+            {
+                Biome[(int)x + centerX, (int)y + centerY] = 1;
+                AgentQueue.Enqueue(waterAgent);
+                AgentCount++;
+            }
         }
+
+        Debug.Log(AgentCount);
 
         return AgentQueue;
     }
