@@ -119,11 +119,14 @@ public class BiomeGen : MonoBehaviour
             writes++;
             SeedAgent agent = AgentQueue.Dequeue();
 
-            int cycle = UnityEngine.Random.Range(1, 8);
+            int cycle = UnityEngine.Random.Range(1, 9);
             SeedAgent newAgent = SeedAgent.Create(0, -1, -1);
 
             for (int i = 0; i < 8; i++)
             {
+                if (UnityEngine.Random.Range(1, 3) == 2)
+                    continue;
+
                 switch (cycle)
                 {
                     // Up
@@ -166,11 +169,8 @@ public class BiomeGen : MonoBehaviour
 
                 if (newAgent != null)
                 {
-                    if (agent.IsViable())
-                        AgentQueue.Enqueue(agent);
-
                     AgentQueue.Enqueue(newAgent);
-                    break;
+                    //break;
                 }
 
                 if (cycle < 8)
@@ -179,6 +179,10 @@ public class BiomeGen : MonoBehaviour
                     cycle = 1;
 
             }
+
+            if (agent.IsViable())
+                AgentQueue.Enqueue(agent);
+
         }
 
         Debug.Log(writes);
@@ -204,9 +208,9 @@ public class BiomeGen : MonoBehaviour
         AgentQueue.Enqueue(snowAgent);
 
         // Enqueue several mountain agents
-        SeedAgent mountainAgent1 = SeedAgent.Create(Mountain, snowAgent.GetX() + SeedSpacing, snowAgent.GetY());
+        SeedAgent mountainAgent1 = SeedAgent.Create(Mountain, snowAgent.GetX() - SeedSpacing, snowAgent.GetY());
         SeedAgent mountainAgent2 = SeedAgent.Create(Mountain, snowAgent.GetX(), snowAgent.GetY() + SeedSpacing);
-        SeedAgent mountainAgent3 = SeedAgent.Create(Mountain, snowAgent.GetX() - SeedSpacing, snowAgent.GetY());
+        SeedAgent mountainAgent3 = SeedAgent.Create(Mountain, snowAgent.GetX() + SeedSpacing, snowAgent.GetY());
         SeedAgent mountainAgent4 = SeedAgent.Create(Mountain, snowAgent.GetX(), snowAgent.GetY() - SeedSpacing);
 
         // Verify mountain agents, then generate/verify grass agents
@@ -214,28 +218,28 @@ public class BiomeGen : MonoBehaviour
         if (mountainAgent1 != null)
         {
             AgentQueue.Enqueue(mountainAgent1);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent1.GetX(), mountainAgent1.GetY() + SeedSpacing);
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent1.GetX() - SeedSpacing, mountainAgent1.GetY() + SeedSpacing * 2);
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
         if (mountainAgent2 != null)
         {
             AgentQueue.Enqueue(mountainAgent2);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent2.GetX() + SeedSpacing, mountainAgent2.GetY());
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent2.GetX() + SeedSpacing * 2, mountainAgent2.GetY() + SeedSpacing);
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
         if (mountainAgent3 != null)
         {
             AgentQueue.Enqueue(mountainAgent3);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent3.GetX(), mountainAgent3.GetY() - SeedSpacing);
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent3.GetX() + SeedSpacing, mountainAgent3.GetY() - SeedSpacing * 2);
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
         if (mountainAgent4 != null)
         {
             AgentQueue.Enqueue(mountainAgent4);
-            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent4.GetX() - SeedSpacing, mountainAgent4.GetY());
+            SeedAgent grassAgent = SeedAgent.Create(Grass, mountainAgent4.GetX() - SeedSpacing * 2, mountainAgent4.GetY() - SeedSpacing);
             if (grassAgent != null)
                 AgentQueue.Enqueue(grassAgent);
         }
