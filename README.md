@@ -19,11 +19,11 @@ I believe that achieving these effects will be most effective in parts. This is 
 As I work on this project, my tasks will likely be more complex, but I feel that this is a good set of goals to start off with.
 
 # Log
-### 4/17/2020 - Basic Biome Partition Algorithm
+### 4/10/2020 - Basic Biome Partition Algorithm
 ![10](Images/10.PNG)
 In this update, I implemented a basic and somewhat naive approach to biome partitioning. It involves seeding a large canvas with agents that pseudo-randomly travel the canvas with their respective colors until the canvas is filled. Different colors represent different types of biomes, like grass fields, rocky mountains, and snowy peaks. Above is a sample output, which I’m not quite satisfied with as it exhibits the same fractal pattern in every generation. I have some displacement tricks that I’ll be implementing in order to make biomes look more organic in the next update.
 
-### 4/10/2020 - Refactoring and Biome Partitioning Prep
+### 4/03/2020 - Refactoring and Biome Partitioning Prep
 ![9](Images/9.jpg)
 After a bit of a break, I have decided to refactor my entire generation pipeline in preparation for some of the more advanced features coming up. The pipeline now takes into account a cartesian coordinate system that queries both a biome map and a heightmap map, which takes care of some of the dependencies issues I would have had with the old implementation. In addition, I’ve opened up the pipeline to allow for bump/normal maps in addition to the regular texture generation. My next feature will be the biome generation algorithm.
 
