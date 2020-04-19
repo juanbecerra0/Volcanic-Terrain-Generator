@@ -19,6 +19,9 @@ I believe that achieving these effects will be most effective in parts. This is 
 As I work on this project, my tasks will likely be more complex, but I feel that this is a good set of goals to start off with.
 
 # Log
+### 4/17/2020 - Advanced Biome Partitioning Agents
+// TODO coming soon!
+
 ### 4/10/2020 - Basic Biome Partition Algorithm
 ![10](Images/10.PNG)
 In this update, I implemented a basic and somewhat naive approach to biome partitioning. It involves seeding a large canvas with agents that pseudo-randomly travel the canvas with their respective colors until the canvas is filled. Different colors represent different types of biomes, like grass fields, rocky mountains, and snowy peaks. Above is a sample output, which I’m not quite satisfied with as it exhibits the same fractal pattern in every generation. I have some displacement tricks that I’ll be implementing in order to make biomes look more organic in the next update.
