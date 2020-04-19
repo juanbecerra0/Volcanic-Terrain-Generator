@@ -20,7 +20,8 @@ As I work on this project, my tasks will likely be more complex, but I feel that
 
 # Log
 ### 4/17/2020 - Advanced Biome Partitioning Agents
-// TODO coming soon!
+![11](Images/11.PNG)
+In this update, I implemented a more organic-looking biome partitioning algorithm. This one works similarly to the previous implementation, but follow a more rigorous set of rules, including having one peak in every biome, circled by displaced mountain agents, then two sets of grass agents, then sand agents, and finally water agents. In addition, this generator takes in adjacent biomes as an argument and generates agents around the borders if one exists, which will make biomes seam with one another. For now, I’m satisfied with the results, and I’ll move on to generating this biomes on the fly and using them to influence displacement in heightmaps, in addition to the procedural texture generation algorithm.
 
 ### 4/10/2020 - Basic Biome Partition Algorithm
 ![10](Images/10.PNG)
