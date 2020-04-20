@@ -8,12 +8,14 @@ public class BiomeGen : MonoBehaviour
 {
     private static int BiomeDimensions;
     private int SeedSpacing;
+    private float DisplacementDiv;
     private uint Water, Sand, Grass, Mountain, Snow;
 
-    public void Init(int biomeDimensions, int seedSpacing, uint waterSymbol, uint sandSymbol, uint grassSymbol, uint mountainSymbol, uint snowSymbol)
+    public void Init(int biomeDimensions, int seedSpacing, float displacementDiv, uint waterSymbol, uint sandSymbol, uint grassSymbol, uint mountainSymbol, uint snowSymbol)
     {
         BiomeDimensions = biomeDimensions;
         SeedSpacing = seedSpacing;
+        DisplacementDiv = displacementDiv;
         Water = waterSymbol;
         Sand = sandSymbol;
         Grass = grassSymbol;
@@ -264,7 +266,7 @@ public class BiomeGen : MonoBehaviour
 
     private Queue<SeedAgent> GetSeedAgentQueue()
     {
-        int GetRandomDisplacement() { return UnityEngine.Random.Range(-SeedSpacing / 4, SeedSpacing / 4); }
+        int GetRandomDisplacement() { return UnityEngine.Random.Range((int)(-SeedSpacing / DisplacementDiv), (int)(SeedSpacing / DisplacementDiv)); }
 
         // Create a queue of SeedAgents
         Queue<SeedAgent> AgentQueue = new Queue<SeedAgent>();

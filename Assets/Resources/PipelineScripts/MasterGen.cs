@@ -19,6 +19,7 @@ public class MasterGen : MonoBehaviour
 
     public int biome_Dimensions = 1024;
     public int biome_SeedSpacing = 32;
+    public float biome_DisplacementDiv = 2.5f;
     public uint biome_Water = 1;
     public uint biome_Sand = 2;
     public uint biome_Grass = 3;
@@ -77,7 +78,7 @@ public class MasterGen : MonoBehaviour
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
         BiomeGenInstance = (GameObject)GameObject.Instantiate(BiomeGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         BiomeGenScript = BiomeGenInstance.GetComponent<BiomeGen>();
-        BiomeGenScript.Init(biome_Dimensions, biome_SeedSpacing, biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
+        BiomeGenScript.Init(biome_Dimensions, biome_SeedSpacing, biome_DisplacementDiv, biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
 
         // TODO test
         //BiomeGenScript.WriteAsTextFile(BiomeGenScript.GenerateBiome(), "C:/Users/becer/Downloads/test.txt");
@@ -89,10 +90,6 @@ public class MasterGen : MonoBehaviour
         BiomeGenScript.WriteAsTexture(TR, "C:/Users/becer/Downloads/TR.PNG");
         BiomeGenScript.WriteAsTexture(BR, "C:/Users/becer/Downloads/BR.PNG");
         BiomeGenScript.WriteAsTexture(BL, "C:/Users/becer/Downloads/BL.PNG");
-        BiomeGenScript.WriteAsTextFile(TL, "C:/Users/becer/Downloads/TL.TXT");
-        BiomeGenScript.WriteAsTextFile(TR, "C:/Users/becer/Downloads/TR.TXT");
-        BiomeGenScript.WriteAsTextFile(BR, "C:/Users/becer/Downloads/BR.TXT");
-        BiomeGenScript.WriteAsTextFile(BL, "C:/Users/becer/Downloads/BL.TXT");
 
         // Material gen
         GameObject MaterialGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/MaterialGenPrefab");
