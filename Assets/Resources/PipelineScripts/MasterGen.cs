@@ -172,9 +172,12 @@ public class MasterGen : MonoBehaviour
             return;
         }
 
-        // Generate biome/heightmap
-        float[,] Heightmap = HeightmapGenScript.GenerateHeightmap(x, z);
+        // Generate biome and sub-biome
+        MapDatabaseScript.GeneratePossibleBiome(x, z);
         uint[,] subBiome = MapDatabaseScript.GetSubBiome(x, z);
+
+        // Generate heightmap
+        float[,] Heightmap = HeightmapGenScript.GenerateHeightmap(x, z, subBiome);
 
         // Generate material
         Texture2D Texture = MaterialGenScript.GenerateTexture(Heightmap);

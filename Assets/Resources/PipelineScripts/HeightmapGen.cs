@@ -28,7 +28,7 @@ public class HeightmapGen : MonoBehaviour
 
     // Generates and adds heightmap to dictionary 
     // based on initial cartesian coordinates
-    public float[,] GenerateHeightmap(int x, int y)
+    public float[,] GenerateHeightmap(int x, int y, uint[,] subBiome)
     {
         // Create 2D array of noise values
         float[,] heightmap = new float[HeightmapDimensions, HeightmapDimensions];
