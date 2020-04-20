@@ -10,14 +10,16 @@ public class MapDatabase : MonoBehaviour
 
     BiomeGen BiomeGenScript;
     private int BiomeHMContentsWidth;
+    private int BiomePartitionWidth;
 
-    public void Init(int biomeHMContentsWidth)
+    public void Init(int heightmapBaseN, int biomeHMContentsWidth)
     {
         HeightmapDatabase = new Dictionary<Tuple<int, int>, float[,]>();
         BiomeDatabase = new Dictionary<Tuple<int, int>, uint[,]>();
 
         BiomeGenScript = GameObject.FindObjectOfType(typeof(BiomeGen)) as BiomeGen;
         BiomeHMContentsWidth = biomeHMContentsWidth;
+        BiomePartitionWidth = (int)Mathf.Pow(2, heightmapBaseN) + 1;
     }
 
     public bool IsVacent(int x, int z)
@@ -62,6 +64,42 @@ public class MapDatabase : MonoBehaviour
         }
 
         return HeightmapDatabase[new Tuple<int, int>(x, z)];
+    }
+
+    public uint[,] GetSubBiome(int x, int z)
+    {
+        Tuple<int, int> biomeCoordinates = HeightmapToBiomeCoord(x, z);
+
+        uint[,] correspondingBiome = BiomeDatabase[biomeCoordinates];
+        int biomeDimensions = correspondingBiome.GetLength(0);
+        int UDIndex, LRIndex;
+
+        float posXRatio = (x - (float)biomeCoordinates.Item1) / BiomeHMContentsWidth;
+        float negXRatio = -(biomeCoordinates.Item2 - x) / BiomeHMContentsWidth;
+        float posZRatio = (z - biomeCoordinates.Item2) / BiomeHMContentsWidth;
+        float negZRatio = -(biomeCoordinates.Item2 - z) / BiomeHMContentsWidth;
+
+        if (z >= 0)
+            UDIndex = (biomeDimensions - (int)(posZRatio * biomeDimensions)) - biomeDimensions;
+        else
+            UDIndex = (biomeDimensions - (int)(negZRatio * biomeDimensions)) - biomeDimensions;
+
+        if (x >= 0)
+            LRIndex = (int)(biomeDimensions * posXRatio);
+        else
+            LRIndex = (int)(biomeDimensions * negXRatio);
+
+        uint[,] subBiome = new uint[BiomePartitionWidth, BiomePartitionWidth];
+
+        for (int i = 0; i < BiomePartitionWidth; i++)
+        {
+            for (int j = 0; j < BiomePartitionWidth; j++)
+            {
+                subBiome[i, j] = correspondingBiome[UDIndex + i, LRIndex + j];
+            }
+        }
+
+        return subBiome;
     }
 
     private Tuple<int, int> HeightmapToBiomeCoord(int x, int z)
