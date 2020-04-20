@@ -35,6 +35,10 @@ public class MasterGen : MonoBehaviour
     private Color texture_MountainColor = new Color(0.333f, 0.267f, 0.200f);
     private Color texture_SnowColor = new Color(0.900f, 0.900f, 0.900f);
 
+    // Biome gen
+    private GameObject BiomeGenInstance;
+    private BiomeGen BiomeGenScript;
+
     // Map database
     private GameObject MapDatabaseInstance;
     private MapDatabase MapDatabaseScript;
@@ -42,10 +46,6 @@ public class MasterGen : MonoBehaviour
     // Heightmap gen
     private GameObject HeightmapGenInstance;
     private HeightmapGen HeightmapGenScript;
-
-    // Biome gen
-    private GameObject BiomeGenInstance;
-    private BiomeGen BiomeGenScript;
 
     // Material gen
     private GameObject MaterialGenInstance;
@@ -62,6 +62,12 @@ public class MasterGen : MonoBehaviour
 
     private void InitPrefabsAndScripts()
     {
+        // Biome gen
+        GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
+        BiomeGenInstance = (GameObject)GameObject.Instantiate(BiomeGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        BiomeGenScript = BiomeGenInstance.GetComponent<BiomeGen>();
+        BiomeGenScript.Init(biome_Dimensions, biome_SeedSpacing, biome_DisplacementDiv, biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
+
         // Map database
         GameObject MapDatabasePrefab = (GameObject)Resources.Load("PipelinePrefabs/MapDatabasePrefab");
         MapDatabaseInstance = (GameObject)GameObject.Instantiate(MapDatabasePrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -73,23 +79,6 @@ public class MasterGen : MonoBehaviour
         HeightmapGenInstance = (GameObject)GameObject.Instantiate(HeightmapGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         HeightmapGenScript = HeightmapGenInstance.GetComponent<HeightmapGen>();
         HeightmapGenScript.Init(heightmap_PowerN, heightmap_CornerInitMin, heightmap_CornerInitMax, heightmap_DisplacementMin, heightmap_DisplacementMax);
-
-        // Biome gen
-        GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
-        BiomeGenInstance = (GameObject)GameObject.Instantiate(BiomeGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        BiomeGenScript = BiomeGenInstance.GetComponent<BiomeGen>();
-        BiomeGenScript.Init(biome_Dimensions, biome_SeedSpacing, biome_DisplacementDiv, biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
-
-        // TODO test
-        //BiomeGenScript.WriteAsTextFile(BiomeGenScript.GenerateBiome(), "C:/Users/becer/Downloads/test.txt");
-        uint[,] TL = BiomeGenScript.GenerateBiome(null, null, null, null);
-        uint[,] TR = BiomeGenScript.GenerateBiome(null, null, null, TL);
-        uint[,] BR = BiomeGenScript.GenerateBiome(TR, null, null, null);
-        uint[,] BL = BiomeGenScript.GenerateBiome(TL, BR, null, null);
-        BiomeGenScript.WriteAsTexture(TL, "C:/Users/becer/Downloads/TL.PNG");
-        BiomeGenScript.WriteAsTexture(TR, "C:/Users/becer/Downloads/TR.PNG");
-        BiomeGenScript.WriteAsTexture(BR, "C:/Users/becer/Downloads/BR.PNG");
-        BiomeGenScript.WriteAsTexture(BL, "C:/Users/becer/Downloads/BL.PNG");
 
         // Material gen
         GameObject MaterialGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/MaterialGenPrefab");
