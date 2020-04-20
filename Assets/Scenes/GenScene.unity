@@ -250,9 +250,9 @@ MonoBehaviour:
   heightmap_DisplacementMin: -0.5
   heightmap_DisplacementMax: 5
   biome_HeightmapContentWidth: 10
-  biome_Dimensions: 1024
+  biome_Dimensions: 1290
   biome_SeedSpacing: 128
-  biome_RadialSeeds: 30
+  biome_DisplacementDiv: 2.5
   biome_Water: 1
   biome_Sand: 2
   biome_Grass: 3

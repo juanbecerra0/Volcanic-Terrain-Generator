@@ -77,22 +77,19 @@ public class MapDatabase : MonoBehaviour
 
         uint[,] correspondingBiome = BiomeDatabase[biomeCoordinates];
         int biomeDimensions = correspondingBiome.GetLength(0);
-        int UDIndex, LRIndex;
 
-        float posXRatio = (x - (float)biomeCoordinates.Item1) / BiomeHMContentsWidth;
-        float negXRatio = -(biomeCoordinates.Item2 - x) / BiomeHMContentsWidth;
-        float posZRatio = (z - biomeCoordinates.Item2) / BiomeHMContentsWidth;
-        float negZRatio = -(biomeCoordinates.Item2 - z) / BiomeHMContentsWidth;
+        // Starting indexes for copying
+        int LRIndex = (int)(biomeDimensions * (
+            (x >= 0) ? 
+                ((float)(x - biomeCoordinates.Item1) / BiomeHMContentsWidth) : 
+                (-((float)biomeCoordinates.Item1 - x) / BiomeHMContentsWidth)
+            ));
 
-        if (z >= 0)
-            UDIndex = (biomeDimensions - (int)(posZRatio * biomeDimensions)) - biomeDimensions;
-        else
-            UDIndex = (biomeDimensions - (int)(negZRatio * biomeDimensions)) - biomeDimensions;
-
-        if (x >= 0)
-            LRIndex = (int)(biomeDimensions * posXRatio);
-        else
-            LRIndex = (int)(biomeDimensions * negXRatio);
+        int UDIndex = (int)(biomeDimensions * (
+            (z >= 0) ?
+                ((float)((biomeCoordinates.Item2 + BiomeHMContentsWidth) - (z + 1)) / BiomeHMContentsWidth) :
+                (-((float)((z + 1) + (biomeCoordinates.Item2 + BiomeHMContentsWidth))) / BiomeHMContentsWidth)
+            )); ;
 
         uint[,] subBiome = new uint[BiomePartitionWidth, BiomePartitionWidth];
 

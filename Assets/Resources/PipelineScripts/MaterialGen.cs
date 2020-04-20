@@ -44,7 +44,30 @@ public class MaterialGen : MonoBehaviour
 
     public Texture2D GenerateTexture(float[,] heightmap, uint[,] biomeMap)
     {
-        Texture2D texture = new Texture2D(textureResolution, textureResolution);
+        Texture2D rotateTexture(Texture2D originalTexture, bool clockwise)
+        {
+            Color32[] original = originalTexture.GetPixels32();
+            Color32[] rotated = new Color32[original.Length];
+            int w = originalTexture.width;
+            int h = originalTexture.height;
+
+            int iRotated, iOriginal;
+
+            for (int j = 0; j < h; ++j)
+            {
+                for (int i = 0; i < w; ++i)
+                {
+                    iRotated = (i + 1) * h - j - 1;
+                    iOriginal = clockwise ? original.Length - 1 - (j * w + i) : j * w + i;
+                    rotated[iRotated] = original[iOriginal];
+                }
+            }
+
+            Texture2D rotatedTexture = new Texture2D(h, w);
+            rotatedTexture.SetPixels32(rotated);
+            rotatedTexture.Apply();
+            return rotatedTexture;
+        }
 
         Tuple<int, int> GetHeightmapIndex(Tuple<int, int> textureIndex)
         {
@@ -88,74 +111,9 @@ public class MaterialGen : MonoBehaviour
                 return SnowColor;
             else
                 return Color.red;
-
-            /*
-            // Get actual value
-            float height = heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-
-            // Top
-            if (heightmapIndex.Item1 - 1 < 0)
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-            else
-                height += heightmap[heightmapIndex.Item1 - 1, heightmapIndex.Item2];
-
-            // Top-right
-            if (heightmapIndex.Item1 - 1 < 0 || heightmapIndex.Item2 + 1 >= heightmapResolution)
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-            else
-                height += heightmap[heightmapIndex.Item1 - 1, heightmapIndex.Item2 + 1];
-
-            // Right
-            if (heightmapIndex.Item2 + 1 >= heightmapResolution)
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-            else
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2 + 1];
-
-            // Bottom-right
-            if (heightmapIndex.Item1 + 1 >= heightmapResolution || heightmapIndex.Item2 + 1 >= heightmapResolution)
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-            else
-                height += heightmap[heightmapIndex.Item1 + 1, heightmapIndex.Item2 + 1];
-
-            // Bottom
-            if (heightmapIndex.Item1 + 1 >= heightmapResolution)
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-            else
-                height += heightmap[heightmapIndex.Item1 + 1, heightmapIndex.Item2];
-
-            // Bottom-left
-            if (heightmapIndex.Item1 + 1 >= heightmapResolution || heightmapIndex.Item2 - 1 < 0)
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-            else
-                height += heightmap[heightmapIndex.Item1 + 1, heightmapIndex.Item2 - 1];
-
-            // Left
-            if (heightmapIndex.Item2 - 1 < 0)
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-            else
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2 - 1];
-
-            // Top-left
-            if (heightmapIndex.Item1 - 1 < 0 || heightmapIndex.Item2 - 1 < 0)
-                height += heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
-            else
-                height += heightmap[heightmapIndex.Item1 - 1, heightmapIndex.Item2 - 1];
-
-            // Calc average
-            height /= 9;
-
-            // Finally, calculate interpolated color
-            if (height <= grassMountainThres)
-                // Grass
-                return Color.Lerp(darkGrassColor, grassColor, height / (grassMountainThres));
-            else if (height <= mountainSnowThres)
-                // Mountain
-                return Color.Lerp(grassColor, mountainColor, height / (mountainSnowThres));
-            else
-                // Snow
-                return Color.Lerp(mountainColor, snowColor, height / (grassMountainThres + mountainSnowThres));
-                */
         }
+
+        Texture2D texture = new Texture2D(textureResolution, textureResolution);
 
         for (int i = 0; i < textureResolution; i++)
         {
@@ -166,6 +124,8 @@ public class MaterialGen : MonoBehaviour
                 texture.SetPixel(i, j, GetColor(heightmapIndex));
             }
         }
+
+        texture = rotateTexture(texture, true);
 
         texture.Apply();
         return texture;
