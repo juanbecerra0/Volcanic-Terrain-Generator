@@ -9,32 +9,40 @@ public class MaterialGen : MonoBehaviour
     private int heightmapResolution;
     private float heightmapTextureRatio;
 
+    // Color index
+    private uint WaterIndex;
+    private uint SandIndex;
+    private uint GrassIndex;
+    private uint MountainIndex;
+    private uint SnowIndex;
+
     // Colors
-    private float grassMountainThres = 13.0f;
-    private float mountainSnowThres = 20.0f;
+    private Color WaterColor;
+    private Color SandColor;
+    private Color GrassColor;
+    private Color MountainColor;
+    private Color SnowColor;
 
-    private Color darkGrassColor = new Color(0.255f / 2, 0.573f / 2, 0.294f / 2);
-    private Color grassColor = new Color(0.255f, 0.573f, 0.294f);
-    private Color mountainColor = new Color(0.333f, 0.267f, 0.200f);
-    private Color snowColor = new Color(0.900f, 0.900f, 0.900f);
-
-    public void InitTexture(int textureResolution, int heightmapBaseN, float grassMountainThres, float mountainSnowThres,
-        Color darkGrassColor, Color grassColor, Color mountainColor, Color snowColor)
+    public void InitTexture(int textureResolution, int heightmapBaseN, Tuple<uint, uint, uint, uint, uint> BiomeTuple, Tuple<Color, Color, Color, Color, Color> ColorTuple)
     {
         this.textureResolution = textureResolution;
         this.heightmapResolution = (int)Mathf.Pow(2, heightmapBaseN) + 1; ;
         this.heightmapTextureRatio = (float)((float)heightmapResolution / (float)textureResolution);
 
-        this.grassMountainThres = grassMountainThres;
-        this.mountainSnowThres = mountainSnowThres;
+        WaterIndex = BiomeTuple.Item1;
+        SandIndex = BiomeTuple.Item2;
+        GrassIndex = BiomeTuple.Item3;
+        MountainIndex = BiomeTuple.Item4;
+        SnowIndex = BiomeTuple.Item5;
 
-        this.darkGrassColor = darkGrassColor;
-        this.grassColor = grassColor;
-        this.mountainColor = mountainColor;
-        this.snowColor = snowColor;
+        WaterColor = ColorTuple.Item1;
+        SandColor = ColorTuple.Item2;
+        GrassColor = ColorTuple.Item3;
+        MountainColor = ColorTuple.Item4;
+        SnowColor = ColorTuple.Item5;
     }
 
-    public Texture2D GenerateTexture(float[,] heightmap)
+    public Texture2D GenerateTexture(float[,] heightmap, uint[,] biomeMap)
     {
         Texture2D texture = new Texture2D(textureResolution, textureResolution);
 
@@ -66,6 +74,22 @@ public class MaterialGen : MonoBehaviour
 
         Color GetColor(Tuple<int, int> heightmapIndex)
         {
+            uint index = biomeMap[heightmapIndex.Item1, heightmapIndex.Item2];
+
+            if (index == WaterIndex)
+                return WaterColor;
+            else if (index == SandIndex)
+                return SandColor;
+            else if (index == GrassIndex)
+                return GrassColor;
+            else if (index == MountainIndex)
+                return MountainColor;
+            else if (index == SnowIndex)
+                return SnowColor;
+            else
+                return Color.red;
+
+            /*
             // Get actual value
             float height = heightmap[heightmapIndex.Item1, heightmapIndex.Item2];
 
@@ -130,6 +154,7 @@ public class MaterialGen : MonoBehaviour
             else
                 // Snow
                 return Color.Lerp(mountainColor, snowColor, height / (grassMountainThres + mountainSnowThres));
+                */
         }
 
         for (int i = 0; i < textureResolution; i++)

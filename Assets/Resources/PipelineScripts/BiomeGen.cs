@@ -11,16 +11,16 @@ public class BiomeGen : MonoBehaviour
     private float DisplacementDiv;
     private uint Water, Sand, Grass, Mountain, Snow;
 
-    public void Init(int biomeDimensions, int seedSpacing, float displacementDiv, uint waterSymbol, uint sandSymbol, uint grassSymbol, uint mountainSymbol, uint snowSymbol)
+    public void Init(int biomeDimensions, int seedSpacing, float displacementDiv, Tuple<uint, uint, uint, uint, uint> biomeTuple)
     {
         BiomeDimensions = biomeDimensions;
         SeedSpacing = seedSpacing;
         DisplacementDiv = displacementDiv;
-        Water = waterSymbol;
-        Sand = sandSymbol;
-        Grass = grassSymbol;
-        Mountain = mountainSymbol;
-        Snow = snowSymbol;
+        Water = biomeTuple.Item1;
+        Sand = biomeTuple.Item2;
+        Grass = biomeTuple.Item3;
+        Mountain = biomeTuple.Item4;
+        Snow = biomeTuple.Item5;
     }
 
     private static uint[,] Biome;

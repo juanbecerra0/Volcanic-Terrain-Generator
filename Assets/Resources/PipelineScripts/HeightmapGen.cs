@@ -14,8 +14,9 @@ public class HeightmapGen : MonoBehaviour
     private float HeightmapCornerMax;
     private static float HeightmapDisplacementMin;
     private static float HeightmapDisplacementMax;
+    private uint Water, Sand, Grass, Mountain, Snow;
 
-    public void Init(float heightmapBaseN, float cornerMin, float cornerMax, float displacementMin, float displacementMax)
+    public void Init(float heightmapBaseN, float cornerMin, float cornerMax, float displacementMin, float displacementMax, Tuple<uint, uint, uint, uint, uint> biomeTuple)
     {
         MapDatabaseScript = GameObject.FindObjectOfType(typeof(MapDatabase)) as MapDatabase;
 
@@ -24,7 +25,16 @@ public class HeightmapGen : MonoBehaviour
         HeightmapCornerMax = cornerMax;
         HeightmapDisplacementMin = displacementMin;
         HeightmapDisplacementMax = displacementMax;
+
+        Water = biomeTuple.Item1;
+        Sand = biomeTuple.Item2;
+        Grass = biomeTuple.Item3;
+        Mountain = biomeTuple.Item4;
+        Snow = biomeTuple.Item5;
     }
+
+    private static Tuple<bool, bool, bool, bool> adjacentTruthTable;
+    private static uint[,] BiomeMap;
 
     // Generates and adds heightmap to dictionary 
     // based on initial cartesian coordinates
@@ -33,8 +43,11 @@ public class HeightmapGen : MonoBehaviour
         // Create 2D array of noise values
         float[,] heightmap = new float[HeightmapDimensions, HeightmapDimensions];
 
+        // Assign this biome map
+        BiomeMap = subBiome;
+
         // Check for adjacent heightmaps
-        Tuple<bool, bool, bool, bool> adjacentTruthTable = new Tuple<bool, bool, bool, bool>(
+        adjacentTruthTable = new Tuple<bool, bool, bool, bool>(
             MapDatabaseScript.IsFilled(x, y + 1),
             MapDatabaseScript.IsFilled(x + 1, y),
             MapDatabaseScript.IsFilled(x, y - 1),
@@ -95,7 +108,7 @@ public class HeightmapGen : MonoBehaviour
             heightmap[HeightmapDimensions - 1, HeightmapDimensions - 1] = UnityEngine.Random.Range(HeightmapCornerMin, HeightmapCornerMax);
 
         // Recursive diamond-square terrain generation algorithm
-        DiamondSquareGen(heightmap, 0, HeightmapDimensions - 1, 0, HeightmapDimensions - 1, adjacentTruthTable);
+        DiamondSquareGen(heightmap, 0, HeightmapDimensions - 1, 0, HeightmapDimensions - 1);
 
         // Perform fractal brownian motion
         DistortionGen(heightmap);
@@ -104,8 +117,13 @@ public class HeightmapGen : MonoBehaviour
         return heightmap;
     }
 
+    private static void SetVertex(int x, int y)
+    {
+
+    }
+
     // Recursively performs the diamond-square algorithm to generate terrain
-    private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax, Tuple<bool, bool, bool, bool> adjacentTruthTable)
+    private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax)
     {
         // Diamond step
         Tuple<int, int> diamondIndex = getDiamondIndex(xMin, xMax, yMin, yMax);
@@ -141,10 +159,10 @@ public class HeightmapGen : MonoBehaviour
         else
         {
             // Recursive calls on sub-problems
-            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), yMin, (yMax / 2) + (yMin / 2), adjacentTruthTable);    // Top-left
-            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, yMin, (yMax / 2) + (yMin / 2), adjacentTruthTable);    // Top-right
-            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, (yMax / 2) + (yMin / 2), yMax, adjacentTruthTable);    // Bottom-right
-            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), (yMax / 2) + (yMin / 2), yMax, adjacentTruthTable);    // Bottom-left
+            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), yMin, (yMax / 2) + (yMin / 2));    // Top-left
+            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, yMin, (yMax / 2) + (yMin / 2));    // Top-right
+            DiamondSquareGen(heightmap, (xMax / 2) + (xMin / 2), xMax, (yMax / 2) + (yMin / 2), yMax);    // Bottom-right
+            DiamondSquareGen(heightmap, xMin, (xMax / 2) + (xMin / 2), (yMax / 2) + (yMin / 2), yMax);    // Bottom-left
         }
     }
 
