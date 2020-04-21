@@ -11,13 +11,19 @@ public class MasterGen : MonoBehaviour
     public int block_VertexWidth = 256;
 
     public int heightmap_PowerN = 7;
-    public float heightmap_CornerInitMin = 0.0f;
-    public float heightmap_CornerInitMax = 1.0f;
-    public float heightmap_DisplacementMin = -0.5f;
-    public float heightmap_DisplacementMax = 5.0f;
+    public float WaterBase = 0f;
+    public float SandBase = 2f;
+    public float GrassBase = 6f;
+    public float MountainBase = 15f;
+    public float SnowBase = 20f;
+
+    public float WaterDisp = 0.01f;
+    public float SandDisp = 0.4f;
+    public float GrassDisp = 1.4f;
+    public float MountainDisp = 4.4f;
+    public float SnowDisp = 1.2f;
 
     public int biome_HeightmapContentWidth = 10;
-
     public int biome_Dimensions = 1024;
     public int biome_SeedSpacing = 32;
     public float biome_DisplacementDiv = 2.5f;
@@ -69,6 +75,10 @@ public class MasterGen : MonoBehaviour
         Tuple<uint, uint, uint, uint, uint> BiomeTuple = new Tuple<uint, uint, uint, uint, uint>(biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
         Tuple<Color, Color, Color, Color, Color> ColorTuple = new Tuple<Color, Color, Color, Color, Color>(texture_WaterColor, texture_SandColor, texture_GrassColor, texture_MountainColor, texture_SnowColor);
 
+        // Heightmap tuples
+        Tuple<float, float, float, float, float> heightmapBasesTuple = new Tuple<float, float, float, float, float>(WaterBase, SandBase, GrassBase, MountainBase, SnowBase);
+        Tuple<float, float, float, float, float> heightmapDispTuple = new Tuple<float, float, float, float, float>(WaterDisp, SandDisp, GrassDisp, MountainDisp, SnowDisp);
+
         // Biome gen
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
         BiomeGenInstance = (GameObject)GameObject.Instantiate(BiomeGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -85,7 +95,7 @@ public class MasterGen : MonoBehaviour
         GameObject HeightmapGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/HeightmapGenPrefab");
         HeightmapGenInstance = (GameObject)GameObject.Instantiate(HeightmapGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         HeightmapGenScript = HeightmapGenInstance.GetComponent<HeightmapGen>();
-        HeightmapGenScript.Init(heightmap_PowerN, heightmap_CornerInitMin, heightmap_CornerInitMax, heightmap_DisplacementMin, heightmap_DisplacementMax, BiomeTuple);
+        HeightmapGenScript.Init(heightmap_PowerN, BiomeTuple, heightmapBasesTuple, heightmapDispTuple);
 
         // Material gen
         GameObject MaterialGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/MaterialGenPrefab");

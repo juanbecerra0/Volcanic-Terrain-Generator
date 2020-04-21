@@ -10,27 +10,34 @@ public class HeightmapGen : MonoBehaviour
 
     // Variables
     private int HeightmapDimensions;
-    private float HeightmapCornerMin;
-    private float HeightmapCornerMax;
-    private static float HeightmapDisplacementMin;
-    private static float HeightmapDisplacementMax;
-    private static uint Water, Sand, Grass, Mountain, Snow;
 
-    public void Init(float heightmapBaseN, float cornerMin, float cornerMax, float displacementMin, float displacementMax, Tuple<uint, uint, uint, uint, uint> biomeTuple)
+    private static uint Water, Sand, Grass, Mountain, Snow;
+    private static float WaterBase, SandBase, GrassBase, MountainBase, SnowBase;
+    private static float WaterDisp, SandDisp, GrassDisp, MountainDisp, SnowDisp;
+
+    public void Init(float heightmapBaseN, Tuple<uint, uint, uint, uint, uint> biomeTuple, Tuple<float, float, float, float, float> bases, Tuple<float, float, float, float, float> displacements)
     {
         MapDatabaseScript = GameObject.FindObjectOfType(typeof(MapDatabase)) as MapDatabase;
 
         HeightmapDimensions = (int)Mathf.Pow(2, heightmapBaseN) + 1;
-        HeightmapCornerMin = cornerMin;
-        HeightmapCornerMax = cornerMax;
-        HeightmapDisplacementMin = displacementMin;
-        HeightmapDisplacementMax = displacementMax;
 
         Water = biomeTuple.Item1;
         Sand = biomeTuple.Item2;
         Grass = biomeTuple.Item3;
         Mountain = biomeTuple.Item4;
         Snow = biomeTuple.Item5;
+
+        WaterBase = bases.Item1;
+        SandBase = bases.Item2;
+        GrassBase = bases.Item3;
+        MountainBase = bases.Item4;
+        SnowBase = bases.Item5;
+
+        WaterDisp = displacements.Item1;
+        SandDisp = displacements.Item2;
+        GrassDisp = displacements.Item3;
+        MountainDisp = displacements.Item4;
+        SnowDisp = displacements.Item5;
     }
 
     private static Tuple<bool, bool, bool, bool> adjacentTruthTable;
@@ -94,46 +101,43 @@ public class HeightmapGen : MonoBehaviour
             }
         }
 
-        // Set random value to each of the four corners of the heightmap
+        // Set values to uninitialized verticies
         if (!adjacentTruthTable.Item1 && !adjacentTruthTable.Item4)
-            heightmap[0, 0] = UnityEngine.Random.Range(HeightmapCornerMin, HeightmapCornerMax);
+            heightmap[0, 0] = GetVertex(0, 0, 0f);
 
         if (!adjacentTruthTable.Item3 && !adjacentTruthTable.Item4)
-            heightmap[HeightmapDimensions - 1, 0] = UnityEngine.Random.Range(HeightmapCornerMin, HeightmapCornerMax);
+            heightmap[HeightmapDimensions - 1, 0] = GetVertex(HeightmapDimensions - 1, 0, 0f);
 
         if (!adjacentTruthTable.Item1 && !adjacentTruthTable.Item2)
-            heightmap[0, HeightmapDimensions - 1] = UnityEngine.Random.Range(HeightmapCornerMin, HeightmapCornerMax);
+            heightmap[0, HeightmapDimensions - 1] = GetVertex(0, HeightmapDimensions - 1, 0f);
 
         if (!adjacentTruthTable.Item2 && !adjacentTruthTable.Item3)
-            heightmap[HeightmapDimensions - 1, HeightmapDimensions - 1] = UnityEngine.Random.Range(HeightmapCornerMin, HeightmapCornerMax);
+            heightmap[HeightmapDimensions - 1, HeightmapDimensions - 1] = GetVertex(HeightmapDimensions - 1, HeightmapDimensions - 1, 0f);
 
         // Recursive diamond-square terrain generation algorithm
         DiamondSquareGen(heightmap, 0, HeightmapDimensions - 1, 0, HeightmapDimensions - 1);
-
-        // Perform fractal brownian motion
-        DistortionGen(heightmap);
 
         MapDatabaseScript.AddHeightmap(x, y, heightmap);
         return heightmap;
     }
 
-    private float GetVertex(int x, int y)
+    private static float GetVertex(int x, int y, float delta)
     {
         if(BiomeMap[x, y] == Water)
         {
-            return 0f;
+            return WaterBase + (WaterDisp * delta);
         } else if (BiomeMap[x, y] == Sand)
         {
-            return 0f;
+            return SandBase + (SandDisp * delta);
         } else if (BiomeMap[x, y] == Grass)
         {
-            return 0f;
+            return GrassBase + (GrassDisp * delta);
         } else if (BiomeMap[x, y] == Mountain)
         {
-            return 0f;
+            return MountainBase + (MountainDisp * delta);
         } else if (BiomeMap[x, y] == Snow)
         {
-            return 0f;
+            return SnowBase + (SnowDisp * delta);
         } else
         {
             return 0f;
@@ -147,7 +151,7 @@ public class HeightmapGen : MonoBehaviour
         Tuple<int, int> diamondIndex = getDiamondIndex(xMin, xMax, yMin, yMax);
         float cornerAverage = (heightmap[xMin, yMin] + heightmap[xMax, yMin] + heightmap[xMin, yMax] + heightmap[xMax, yMax]) / 4;
 
-        heightmap[diamondIndex.Item1, diamondIndex.Item2] = cornerAverage + getRandomDisplacement();
+        heightmap[diamondIndex.Item1, diamondIndex.Item2] = GetVertex(diamondIndex.Item1, diamondIndex.Item2, cornerAverage);
 
         // Square step
         Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>> squareIndicies = getSquareIndices(xMin, xMax, yMin, yMax);
@@ -158,16 +162,16 @@ public class HeightmapGen : MonoBehaviour
         float leftAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMin]) / 3; ;
 
         if (!adjacentTruthTable.Item1 || squareIndicies.Item1.Item1 != 0)
-            heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = topAverage + getRandomDisplacement();
+            heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = GetVertex(squareIndicies.Item1.Item1, squareIndicies.Item1.Item2, topAverage);
 
         if (!adjacentTruthTable.Item2 || squareIndicies.Item2.Item2 != heightmap.GetLength(0) - 1)
-            heightmap[squareIndicies.Item2.Item1, squareIndicies.Item2.Item2] = rightAverage + getRandomDisplacement();
+            heightmap[squareIndicies.Item2.Item1, squareIndicies.Item2.Item2] = GetVertex(squareIndicies.Item2.Item1, squareIndicies.Item2.Item2, rightAverage);
 
         if (!adjacentTruthTable.Item3 || squareIndicies.Item3.Item1 != heightmap.GetLength(0) - 1)
-            heightmap[squareIndicies.Item3.Item1, squareIndicies.Item3.Item2] = bottomAverage + getRandomDisplacement();
+            heightmap[squareIndicies.Item3.Item1, squareIndicies.Item3.Item2] = GetVertex(squareIndicies.Item3.Item1, squareIndicies.Item3.Item2, bottomAverage);
 
         if (!adjacentTruthTable.Item4 || squareIndicies.Item4.Item2 != 0)
-            heightmap[squareIndicies.Item4.Item1, squareIndicies.Item4.Item2] = leftAverage + getRandomDisplacement();
+            heightmap[squareIndicies.Item4.Item1, squareIndicies.Item4.Item2] = GetVertex(squareIndicies.Item4.Item1, squareIndicies.Item4.Item2, leftAverage);
 
         // Determine if recursive step is required
         if (xMax - xMin <= 2 && yMax - yMin <= 2)
@@ -217,31 +221,5 @@ public class HeightmapGen : MonoBehaviour
                 (yMin)
             )
         );
-    }
-
-    // Returns a random float between min and max displacement values (inclusive)
-    private static float getRandomDisplacement()
-    {
-        return UnityEngine.Random.Range(HeightmapDisplacementMin, HeightmapDisplacementMax);
-    }
-
-    // Distorts a generated noisemap to seem more organic
-    private static void DistortionGen(float[,] heightmap)
-    {
-        float[,] originalHeightmapValues = (float[,])heightmap.Clone();
-
-        for (int i = 0; i < heightmap.GetLength(0); i++)
-        {
-            for (int j = 0; j < heightmap.GetLength(1); j++)
-            {
-                heightmap[i, j] = GetDistortionValue(originalHeightmapValues, i, j);
-            }
-        }
-    }
-
-    // Given a 2D index of the heightmap, returns a new value of applied swirling
-    private static float GetDistortionValue(float[,] originalHeightmapValues, int x, int y)
-    {
-        return originalHeightmapValues[x, y];
     }
 }

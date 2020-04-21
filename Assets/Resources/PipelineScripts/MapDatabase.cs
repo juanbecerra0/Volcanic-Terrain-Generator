@@ -89,7 +89,13 @@ public class MapDatabase : MonoBehaviour
             (z >= 0) ?
                 ((float)((biomeCoordinates.Item2 + BiomeHMContentsWidth) - (z + 1)) / BiomeHMContentsWidth) :
                 (-((float)((z + 1) + (biomeCoordinates.Item2 + BiomeHMContentsWidth))) / BiomeHMContentsWidth)
-            )); ;
+            ));
+
+        if (LRIndex + BiomePartitionWidth > biomeDimensions)
+            LRIndex = biomeDimensions - BiomePartitionWidth;
+
+        if (UDIndex + BiomePartitionWidth > biomeDimensions)
+            UDIndex = biomeDimensions - BiomePartitionWidth;
 
         uint[,] subBiome = new uint[BiomePartitionWidth, BiomePartitionWidth];
 
