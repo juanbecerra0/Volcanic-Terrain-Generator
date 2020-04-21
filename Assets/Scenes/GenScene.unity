@@ -245,10 +245,16 @@ MonoBehaviour:
   block_Radius: 2
   block_VertexWidth: 256
   heightmap_PowerN: 7
-  heightmap_CornerInitMin: 0
-  heightmap_CornerInitMax: 1
-  heightmap_DisplacementMin: -0.5
-  heightmap_DisplacementMax: 5
+  WaterBase: 0
+  SandBase: 2
+  GrassBase: 6
+  MountainBase: 15
+  SnowBase: 20
+  WaterDisp: 0.01
+  SandDisp: 0.4
+  GrassDisp: 1.4
+  MountainDisp: 4.4
+  SnowDisp: 1.2
   biome_HeightmapContentWidth: 10
   biome_Dimensions: 1290
   biome_SeedSpacing: 128

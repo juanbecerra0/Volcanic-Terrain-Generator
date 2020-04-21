@@ -123,16 +123,16 @@ public class HeightmapGen : MonoBehaviour
 
     private static float GetVertex(int x, int y, float delta)
     {
-        if(BiomeMap[x, y] == Water)
-            return WaterBase + Mathf.Lerp(WaterDisp, delta, 0.8f);
+        if (BiomeMap[x, y] == Water)
+            return WaterBase + UnityEngine.Random.Range(-(WaterDisp + delta), (WaterDisp + delta));//Mathf.Lerp(WaterDisp, delta, 0.8f);
         else if (BiomeMap[x, y] == Sand)
-            return SandBase + Mathf.Lerp(SandDisp, delta, 0.8f);
+            return SandBase + UnityEngine.Random.Range(-(SandDisp + delta), (SandDisp + delta));
         else if (BiomeMap[x, y] == Grass)
-            return GrassBase + Mathf.Lerp(GrassDisp, delta, 0.8f);
+            return GrassBase + UnityEngine.Random.Range(-(GrassDisp + delta), (GrassDisp + delta));
         else if (BiomeMap[x, y] == Mountain)
-            return MountainBase + Mathf.Lerp(MountainDisp, delta, 0.8f);
+            return MountainBase + UnityEngine.Random.Range(-(MountainDisp + delta), (MountainDisp + delta));
         else if (BiomeMap[x, y] == Snow)
-            return SnowBase + Mathf.Lerp(SnowDisp, delta, 0.8f);
+            return SnowBase + UnityEngine.Random.Range(-(SnowDisp + delta), (SnowDisp + delta));
         else
             return 0f;
     }

@@ -11,17 +11,16 @@ public class MasterGen : MonoBehaviour
     public int block_VertexWidth = 256;
 
     public int heightmap_PowerN = 7;
-    public float WaterBase = 0f;
-    public float SandBase = 2f;
-    public float GrassBase = 6f;
-    public float MountainBase = 15f;
-    public float SnowBase = 20f;
-
-    public float WaterDisp = 0.01f;
-    public float SandDisp = 0.4f;
-    public float GrassDisp = 1.4f;
-    public float MountainDisp = 4.4f;
-    public float SnowDisp = 1.2f;
+    public float heightmap_WaterBase = 0f;
+    public float heightmap_SandBase = 2f;
+    public float heightmap_GrassBase = 6f;
+    public float heightmap_MountainBase = 15f;
+    public float heightmap_SnowBase = 12f;
+    public float heightmap_WaterDisp = 0.01f;
+    public float heightmap_SandDisp = 0.4f;
+    public float heightmap_GrassDisp = 1.4f;
+    public float heightmap_MountainDisp = 4.4f;
+    public float heightmap_SnowDisp = 0.01f;
 
     public int biome_HeightmapContentWidth = 10;
     public int biome_Dimensions = 1024;
@@ -42,7 +41,7 @@ public class MasterGen : MonoBehaviour
     private Color texture_SandColor = new Color(0.827f, 0.781f, 0.635f);
     private Color texture_GrassColor = new Color(0.255f, 0.573f, 0.294f);
     private Color texture_MountainColor = new Color(0.333f, 0.267f, 0.200f);
-    private Color texture_SnowColor = new Color(0.900f, 0.900f, 0.900f);
+    private Color texture_SnowColor = new Color(0.812f, 0.063f, 0.125f);
 
     // Biome gen
     private GameObject BiomeGenInstance;
@@ -76,8 +75,8 @@ public class MasterGen : MonoBehaviour
         Tuple<Color, Color, Color, Color, Color> ColorTuple = new Tuple<Color, Color, Color, Color, Color>(texture_WaterColor, texture_SandColor, texture_GrassColor, texture_MountainColor, texture_SnowColor);
 
         // Heightmap tuples
-        Tuple<float, float, float, float, float> heightmapBasesTuple = new Tuple<float, float, float, float, float>(WaterBase, SandBase, GrassBase, MountainBase, SnowBase);
-        Tuple<float, float, float, float, float> heightmapDispTuple = new Tuple<float, float, float, float, float>(WaterDisp, SandDisp, GrassDisp, MountainDisp, SnowDisp);
+        Tuple<float, float, float, float, float> heightmapBasesTuple = new Tuple<float, float, float, float, float>(heightmap_WaterBase, heightmap_SandBase, heightmap_GrassBase, heightmap_MountainBase, heightmap_SnowBase);
+        Tuple<float, float, float, float, float> heightmapDispTuple = new Tuple<float, float, float, float, float>(heightmap_WaterDisp, heightmap_SandDisp, heightmap_GrassDisp, heightmap_MountainDisp, heightmap_SnowDisp);
 
         // Biome gen
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
