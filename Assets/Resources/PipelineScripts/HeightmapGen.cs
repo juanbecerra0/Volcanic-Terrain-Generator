@@ -14,7 +14,7 @@ public class HeightmapGen : MonoBehaviour
     private float HeightmapCornerMax;
     private static float HeightmapDisplacementMin;
     private static float HeightmapDisplacementMax;
-    private uint Water, Sand, Grass, Mountain, Snow;
+    private static uint Water, Sand, Grass, Mountain, Snow;
 
     public void Init(float heightmapBaseN, float cornerMin, float cornerMax, float displacementMin, float displacementMax, Tuple<uint, uint, uint, uint, uint> biomeTuple)
     {
@@ -117,9 +117,27 @@ public class HeightmapGen : MonoBehaviour
         return heightmap;
     }
 
-    private static void SetVertex(int x, int y)
+    private float GetVertex(int x, int y)
     {
-
+        if(BiomeMap[x, y] == Water)
+        {
+            return 0f;
+        } else if (BiomeMap[x, y] == Sand)
+        {
+            return 0f;
+        } else if (BiomeMap[x, y] == Grass)
+        {
+            return 0f;
+        } else if (BiomeMap[x, y] == Mountain)
+        {
+            return 0f;
+        } else if (BiomeMap[x, y] == Snow)
+        {
+            return 0f;
+        } else
+        {
+            return 0f;
+        }
     }
 
     // Recursively performs the diamond-square algorithm to generate terrain

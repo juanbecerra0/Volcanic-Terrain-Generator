@@ -230,6 +230,8 @@ public class CharMouseCam : MonoBehaviour
             // Enqueue coordinate into list if it does not contain it
             if (!coordList.Contains((coordinate.Item1, coordinate.Item2)))
                 coordList.Add((coordinate.Item1, coordinate.Item2));
+
+            line.transform.rotation = Quaternion.identity;
         }
 
         void RenderCircle(GameObject line)
@@ -266,6 +268,8 @@ public class CharMouseCam : MonoBehaviour
                 }
 
             }
+
+            line.transform.rotation = Quaternion.identity;
         }
 
         // Calculate rays
