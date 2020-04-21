@@ -123,18 +123,20 @@ public class HeightmapGen : MonoBehaviour
 
     private static float GetVertex(int x, int y, float delta)
     {
+        float GetHeight(float Base, float Delta, float Disp) { return Base + Delta + UnityEngine.Random.Range(-Disp / 2, Disp / 2); }
+
         if (BiomeMap[x, y] == Water)
-            return WaterBase + UnityEngine.Random.Range(-(WaterDisp + delta), (WaterDisp + delta));//Mathf.Lerp(WaterDisp, delta, 0.8f);
+            return GetHeight(WaterBase, delta, WaterDisp);
         else if (BiomeMap[x, y] == Sand)
-            return SandBase + UnityEngine.Random.Range(-(SandDisp + delta), (SandDisp + delta));
+            return GetHeight(SandBase, delta, SandDisp);
         else if (BiomeMap[x, y] == Grass)
-            return GrassBase + UnityEngine.Random.Range(-(GrassDisp + delta), (GrassDisp + delta));
+            return GetHeight(GrassBase, delta, GrassDisp);
         else if (BiomeMap[x, y] == Mountain)
-            return MountainBase + UnityEngine.Random.Range(-(MountainDisp + delta), (MountainDisp + delta));
+            return GetHeight(MountainBase, delta, MountainDisp);
         else if (BiomeMap[x, y] == Snow)
-            return SnowBase + UnityEngine.Random.Range(-(SnowDisp + delta), (SnowDisp + delta));
+            return GetHeight(SnowBase, delta, SnowDisp);
         else
-            return 0f;
+            return -10000f;
     }
 
     // Recursively performs the diamond-square algorithm to generate terrain

@@ -38,7 +38,7 @@ public class CharMouseCam : MonoBehaviour
     // Procedural generation scripts/variables
     MapDatabase MapDatabaseScript;
     MasterGen MasterGenScript;
-    private int circlePoints = 8;
+    private int circlePoints = 3;
     private int blockSize;
 
     // Start is called before the first frame update
@@ -221,16 +221,18 @@ public class CharMouseCam : MonoBehaviour
                 endPoint
             });
 
-            // Translate coordinate into simplified integer coordinate system
-            Tuple<int, int> coordinate = new Tuple<int, int>(
-                Convert.ToInt32((endPoint.x - (blockSize / 2)) / blockSize),
-                Convert.ToInt32((endPoint.z - (blockSize / 2)) / blockSize)
-            );
+            for (float i = 0f; i <= 1.0f; i += 0.10f)
+            {
+                // Translate coordinate into simplified integer coordinate system
+                Tuple<int, int> coordinate = new Tuple<int, int>(
+                    Convert.ToInt32((Mathf.Lerp(transform.position.x, endPoint.x, i) - (blockSize / 2)) / blockSize),
+                    Convert.ToInt32((Mathf.Lerp(transform.position.z, endPoint.z, i) - (blockSize / 2)) / blockSize)
+                );
 
-            // Enqueue coordinate into list if it does not contain it
-            if (!coordList.Contains((coordinate.Item1, coordinate.Item2)))
-                coordList.Add((coordinate.Item1, coordinate.Item2));
-
+                // Enqueue coordinate into list if it does not contain it
+                if (!coordList.Contains((coordinate.Item1, coordinate.Item2)))
+                    coordList.Add((coordinate.Item1, coordinate.Item2));
+            }
             line.transform.rotation = Quaternion.identity;
         }
 

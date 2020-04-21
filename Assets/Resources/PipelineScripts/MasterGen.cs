@@ -34,9 +34,6 @@ public class MasterGen : MonoBehaviour
 
     public int material_Resolution = 512;
 
-    public float texture_grassMountainThres = 13.0f;
-    public float texture_mountainSnowThres = 20.0f;
-
     private Color texture_WaterColor = new Color(0.004f, 0.467f, 0.745f);
     private Color texture_SandColor = new Color(0.827f, 0.781f, 0.635f);
     private Color texture_GrassColor = new Color(0.255f, 0.573f, 0.294f);
