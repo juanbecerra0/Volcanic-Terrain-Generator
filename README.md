@@ -19,6 +19,10 @@ I believe that achieving these effects will be most effective in parts. This is 
 As I work on this project, my tasks will likely be more complex, but I feel that this is a good set of goals to start off with.
 
 # Log
+### 4/24/2020 - Biome -> Texture and Heightmap Generation
+![12](Images/12.PNG)
+// TODO
+
 ### 4/17/2020 - Advanced Biome Partitioning Agents
 ![11](Images/11.PNG)
 In this update, I implemented a more organic-looking biome partitioning algorithm. This one works similarly to the previous implementation, but follow a more rigorous set of rules, including having one peak in every biome, circled by displaced mountain agents, then two sets of grass agents, then sand agents, and finally water agents. In addition, this generator takes in adjacent biomes as an argument and generates agents around the borders if one exists, which will make biomes seam with one another. For now, I’m satisfied with the results, and I’ll move on to generating this biomes on the fly and using them to influence displacement in heightmaps, in addition to the procedural texture generation algorithm.
