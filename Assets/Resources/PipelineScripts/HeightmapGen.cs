@@ -124,24 +124,17 @@ public class HeightmapGen : MonoBehaviour
     private static float GetVertex(int x, int y, float delta)
     {
         if(BiomeMap[x, y] == Water)
-        {
-            return WaterBase + (WaterDisp * delta);
-        } else if (BiomeMap[x, y] == Sand)
-        {
-            return SandBase + (SandDisp * delta);
-        } else if (BiomeMap[x, y] == Grass)
-        {
-            return GrassBase + (GrassDisp * delta);
-        } else if (BiomeMap[x, y] == Mountain)
-        {
-            return MountainBase + (MountainDisp * delta);
-        } else if (BiomeMap[x, y] == Snow)
-        {
-            return SnowBase + (SnowDisp * delta);
-        } else
-        {
+            return WaterBase + Mathf.Lerp(WaterDisp, delta, 0.8f);
+        else if (BiomeMap[x, y] == Sand)
+            return SandBase + Mathf.Lerp(SandDisp, delta, 0.8f);
+        else if (BiomeMap[x, y] == Grass)
+            return GrassBase + Mathf.Lerp(GrassDisp, delta, 0.8f);
+        else if (BiomeMap[x, y] == Mountain)
+            return MountainBase + Mathf.Lerp(MountainDisp, delta, 0.8f);
+        else if (BiomeMap[x, y] == Snow)
+            return SnowBase + Mathf.Lerp(SnowDisp, delta, 0.8f);
+        else
             return 0f;
-        }
     }
 
     // Recursively performs the diamond-square algorithm to generate terrain
