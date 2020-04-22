@@ -8,6 +8,9 @@ public class MapDatabase : MonoBehaviour
     private Dictionary<Tuple<int, int>, float[,]> HeightmapDatabase;
     private Dictionary<Tuple<int, int>, uint[,]> BiomeDatabase;
 
+    private HashSet<Tuple<int, int>> HeightmapProcessed;
+    private HashSet<Tuple<int, int>> BiomeProcessed;
+
     BiomeGen BiomeGenScript;
     private int BiomeHMContentsWidth;
     private int BiomePartitionWidth;
@@ -17,6 +20,9 @@ public class MapDatabase : MonoBehaviour
         HeightmapDatabase = new Dictionary<Tuple<int, int>, float[,]>();
         BiomeDatabase = new Dictionary<Tuple<int, int>, uint[,]>();
 
+        HeightmapProcessed = new HashSet<Tuple<int, int>>();
+        BiomeProcessed = new HashSet<Tuple<int, int>>();
+
         BiomeGenScript = GameObject.FindObjectOfType(typeof(BiomeGen)) as BiomeGen;
         BiomeHMContentsWidth = biomeHMContentsWidth;
         BiomePartitionWidth = (int)Mathf.Pow(2, heightmapBaseN) + 1;
@@ -24,12 +30,12 @@ public class MapDatabase : MonoBehaviour
 
     public bool IsVacent(int x, int z)
     {
-        return !HeightmapDatabase.ContainsKey(new Tuple<int, int>(x, z));
+        return !HeightmapProcessed.Contains(new Tuple<int, int>(x, z));
     }
 
     public bool IsFilled(int x, int z)
     {
-        return HeightmapDatabase.ContainsKey(new Tuple<int, int>(x, z));
+        return HeightmapProcessed.Contains(new Tuple<int, int>(x, z));
     }
 
     public void AddHeightmap(int x, int z, float[,] heightmap)
@@ -37,7 +43,12 @@ public class MapDatabase : MonoBehaviour
         if(IsFilled(x, z))
             Debug.Log("WARNING: Overwriting heightmap at (" + x + ", " + z + ")!");
 
+        HeightmapProcessed.Add(new Tuple<int, int>(x, z));
         HeightmapDatabase.Add(new Tuple<int, int>(x, z), heightmap);
+        CleanHeightmap(x + 1, z);
+        CleanHeightmap(x - 1, z);
+        CleanHeightmap(x, z + 1);
+        CleanHeightmap(x, z - 1);
     }
 
     public float[,] GetHeightmap(int x, int z)
@@ -125,5 +136,27 @@ public class MapDatabase : MonoBehaviour
             zCoord = z - (BiomeHMContentsWidth + (z % BiomeHMContentsWidth));
 
         return new Tuple<int, int>(xCoord, zCoord);
+    }
+
+    private void CleanHeightmap(int x, int z)
+    {
+        if (HeightmapProcessed.Contains(new Tuple<int, int>(x, z + 1)) &&
+            //HeightmapProcessed.Contains(new Tuple<int, int>(x + 1, z + 1)) &&
+            HeightmapProcessed.Contains(new Tuple<int, int>(x + 1, z)) &&
+            //HeightmapProcessed.Contains(new Tuple<int, int>(x + 1, z - 1)) &&
+            HeightmapProcessed.Contains(new Tuple<int, int>(x, z - 1)) &&
+            //HeightmapProcessed.Contains(new Tuple<int, int>(x - 1, z - 1)) &&
+            HeightmapProcessed.Contains(new Tuple<int, int>(x - 1, z)) //&&
+            //HeightmapProcessed.Contains(new Tuple<int, int>(x - 1, z + 1))
+            )
+        {
+            //Debug.Log(x + " " + z + " cleaned!");
+            HeightmapDatabase.Remove(new Tuple<int, int>(x, z));
+        }
+    }
+
+    private void CleanBiome(int x, int z)
+    {
+
     }
 }
