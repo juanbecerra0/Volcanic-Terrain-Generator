@@ -85,7 +85,7 @@ public class MasterGen : MonoBehaviour
         GameObject MapDatabasePrefab = (GameObject)Resources.Load("PipelinePrefabs/MapDatabasePrefab");
         MapDatabaseInstance = (GameObject)GameObject.Instantiate(MapDatabasePrefab, new Vector3(0, 0, 0), Quaternion.identity);
         MapDatabaseScript = MapDatabaseInstance.GetComponent<MapDatabase>();
-        MapDatabaseScript.Init(heightmap_PowerN, biome_HeightmapContentWidth);
+        MapDatabaseScript.Init(heightmap_PowerN, biome_Dimensions, biome_HeightmapContentWidth);
 
         // Heightmap gen
         GameObject HeightmapGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/HeightmapGenPrefab");

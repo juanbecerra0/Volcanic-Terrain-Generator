@@ -12,10 +12,11 @@ public class MapDatabase : MonoBehaviour
     private HashSet<Tuple<int, int>> BiomeProcessed;
 
     BiomeGen BiomeGenScript;
+    private int BiomeDimensions;
     private int BiomeHMContentsWidth;
     private int BiomePartitionWidth;
 
-    public void Init(int heightmapBaseN, int biomeHMContentsWidth)
+    public void Init(int heightmapBaseN, int biomeDimensions, int biomeHMContentsWidth)
     {
         HeightmapDatabase = new Dictionary<Tuple<int, int>, float[,]>();
         BiomeDatabase = new Dictionary<Tuple<int, int>, uint[,]>();
@@ -24,6 +25,7 @@ public class MapDatabase : MonoBehaviour
         BiomeProcessed = new HashSet<Tuple<int, int>>();
 
         BiomeGenScript = GameObject.FindObjectOfType(typeof(BiomeGen)) as BiomeGen;
+        BiomeDimensions = biomeDimensions;
         BiomeHMContentsWidth = biomeHMContentsWidth;
         BiomePartitionWidth = (int)Mathf.Pow(2, heightmapBaseN) + 1;
     }
@@ -79,7 +81,12 @@ public class MapDatabase : MonoBehaviour
         uint[,] BottomBiome = BiomeDatabase.ContainsKey(BottomCoord) ? BiomeDatabase[BottomCoord] : null;
         uint[,] LeftBiome = BiomeDatabase.ContainsKey(LeftCoord) ? BiomeDatabase[LeftCoord] : null;
 
+        BiomeProcessed.Add(BiomeCoordinates);
         BiomeDatabase.Add(BiomeCoordinates, BiomeGenScript.GenerateBiome(TopBiome, RightBiome, BottomBiome, LeftBiome));
+        CleanBiome(BiomeCoordinates.Item1 + BiomeHMContentsWidth, BiomeCoordinates.Item2);
+        CleanBiome(BiomeCoordinates.Item1 - BiomeHMContentsWidth, BiomeCoordinates.Item2);
+        CleanBiome(BiomeCoordinates.Item1, BiomeCoordinates.Item2 + BiomeHMContentsWidth);
+        CleanBiome(BiomeCoordinates.Item1, BiomeCoordinates.Item2 - BiomeHMContentsWidth);
     }
 
     public uint[,] GetSubBiome(int x, int z)
@@ -87,26 +94,27 @@ public class MapDatabase : MonoBehaviour
         Tuple<int, int> biomeCoordinates = HeightmapToBiomeCoord(x, z);
 
         uint[,] correspondingBiome = BiomeDatabase[biomeCoordinates];
-        int biomeDimensions = correspondingBiome.GetLength(0);
 
         // Starting indexes for copying
-        int LRIndex = (int)(biomeDimensions * (
+        int LRIndex = (int)(BiomeDimensions * (
             (x >= 0) ? 
                 ((float)(x - biomeCoordinates.Item1) / BiomeHMContentsWidth) : 
                 (-((float)biomeCoordinates.Item1 - x) / BiomeHMContentsWidth)
             ));
 
-        int UDIndex = (int)(biomeDimensions * (
+        int UDIndex = (int)(BiomeDimensions * (
             (z >= 0) ?
                 ((float)((biomeCoordinates.Item2 + BiomeHMContentsWidth) - (z + 1)) / BiomeHMContentsWidth) :
                 (-((float)((z + 1) + (biomeCoordinates.Item2 + BiomeHMContentsWidth))) / BiomeHMContentsWidth)
             ));
 
-        if (LRIndex + BiomePartitionWidth > biomeDimensions)
-            LRIndex = biomeDimensions - BiomePartitionWidth;
+        // TODO errors in indexing are causing bad partitions. This is onlt a temporary fix.
 
-        if (UDIndex + BiomePartitionWidth > biomeDimensions)
-            UDIndex = biomeDimensions - BiomePartitionWidth;
+        if (LRIndex + BiomePartitionWidth > BiomeDimensions)
+            LRIndex = BiomeDimensions - BiomePartitionWidth;
+
+        if (UDIndex + BiomePartitionWidth > BiomeDimensions)
+            UDIndex = BiomeDimensions - BiomePartitionWidth;
 
         uint[,] subBiome = new uint[BiomePartitionWidth, BiomePartitionWidth];
 
@@ -141,22 +149,24 @@ public class MapDatabase : MonoBehaviour
     private void CleanHeightmap(int x, int z)
     {
         if (HeightmapProcessed.Contains(new Tuple<int, int>(x, z + 1)) &&
-            //HeightmapProcessed.Contains(new Tuple<int, int>(x + 1, z + 1)) &&
             HeightmapProcessed.Contains(new Tuple<int, int>(x + 1, z)) &&
-            //HeightmapProcessed.Contains(new Tuple<int, int>(x + 1, z - 1)) &&
             HeightmapProcessed.Contains(new Tuple<int, int>(x, z - 1)) &&
-            //HeightmapProcessed.Contains(new Tuple<int, int>(x - 1, z - 1)) &&
-            HeightmapProcessed.Contains(new Tuple<int, int>(x - 1, z)) //&&
-            //HeightmapProcessed.Contains(new Tuple<int, int>(x - 1, z + 1))
+            HeightmapProcessed.Contains(new Tuple<int, int>(x - 1, z))
             )
         {
-            //Debug.Log(x + " " + z + " cleaned!");
             HeightmapDatabase.Remove(new Tuple<int, int>(x, z));
         }
     }
 
     private void CleanBiome(int x, int z)
     {
-
+        if (BiomeProcessed.Contains(new Tuple<int, int>(x, z + BiomeHMContentsWidth)) &&
+            BiomeProcessed.Contains(new Tuple<int, int>(x + BiomeHMContentsWidth, z)) &&
+            BiomeProcessed.Contains(new Tuple<int, int>(x, z - BiomeHMContentsWidth)) &&
+            BiomeProcessed.Contains(new Tuple<int, int>(x - BiomeHMContentsWidth, z))
+            )
+        {
+            BiomeDatabase.Remove(new Tuple<int, int>(x, z));
+        }
     }
 }
