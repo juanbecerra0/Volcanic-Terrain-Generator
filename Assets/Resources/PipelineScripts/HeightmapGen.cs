@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 public class HeightmapGen : MonoBehaviour
 {
@@ -103,27 +105,30 @@ public class HeightmapGen : MonoBehaviour
 
         // Set values to uninitialized verticies
         if (!adjacentTruthTable.Item1 && !adjacentTruthTable.Item4)
-            heightmap[0, 0] = GetVertex(0, 0, 0f);
+            heightmap[0, 0] = GetBiomeVertex(0, 0);
 
         if (!adjacentTruthTable.Item3 && !adjacentTruthTable.Item4)
-            heightmap[HeightmapDimensions - 1, 0] = GetVertex(HeightmapDimensions - 1, 0, 0f);
+            heightmap[HeightmapDimensions - 1, 0] = GetBiomeVertex(HeightmapDimensions - 1, 0);
 
         if (!adjacentTruthTable.Item1 && !adjacentTruthTable.Item2)
-            heightmap[0, HeightmapDimensions - 1] = GetVertex(0, HeightmapDimensions - 1, 0f);
+            heightmap[0, HeightmapDimensions - 1] = GetBiomeVertex(0, HeightmapDimensions - 1);
 
         if (!adjacentTruthTable.Item2 && !adjacentTruthTable.Item3)
-            heightmap[HeightmapDimensions - 1, HeightmapDimensions - 1] = GetVertex(HeightmapDimensions - 1, HeightmapDimensions - 1, 0f);
+            heightmap[HeightmapDimensions - 1, HeightmapDimensions - 1] = GetBiomeVertex(HeightmapDimensions - 1, HeightmapDimensions - 1);
 
-        // Recursive diamond-square terrain generation algorithm
         //DiamondSquareGen(heightmap, 0, HeightmapDimensions - 1, 0, HeightmapDimensions - 1);
 
-        AltGen(HeightmapDimensions, heightmap);
+        //ZeroGen(HeightmapDimensions, heightmap);
+
+        //BasicBiomeGen(HeightmapDimensions, heightmap);
+
+        AdvancedBiomeGen(HeightmapDimensions, heightmap);
 
         MapDatabaseScript.AddHeightmap(x, y, heightmap);
         return heightmap;
     }
 
-    private static void AltGen(int dim, float[,] heightmap)
+    private static void ZeroGen(int dim, float[,] heightmap)
     {
         for(int i = 0; i < dim; i++)
         {
@@ -134,32 +139,60 @@ public class HeightmapGen : MonoBehaviour
         }
     }
 
-    private static float GetVertex(int x, int y, float delta)
+    private static float GetBiomeVertex(int x, int y/*,float delta*/)
     {
-        float GetHeight(float Base, float Delta, float Disp) { return Base + Delta + UnityEngine.Random.Range(-Disp / 2, Disp / 2); }
+        float GetHeight(float Base, /*float Delta,*/ float Disp) { return Base /*+ Delta*/ + UnityEngine.Random.Range(-Disp / 2, Disp / 2); }
 
         if (BiomeMap[x, y] == Water)
-            return GetHeight(WaterBase, delta, WaterDisp);
+            return GetHeight(WaterBase, /*delta,*/ WaterDisp);
         else if (BiomeMap[x, y] == Sand)
-            return GetHeight(SandBase, delta, SandDisp);
+            return GetHeight(SandBase, /*delta,*/ SandDisp);
         else if (BiomeMap[x, y] == Grass)
-            return GetHeight(GrassBase, delta, GrassDisp);
+            return GetHeight(GrassBase, /*delta,*/ GrassDisp);
         else if (BiomeMap[x, y] == Mountain)
-            return GetHeight(MountainBase, delta, MountainDisp);
+            return GetHeight(MountainBase, /*delta,*/ MountainDisp);
         else if (BiomeMap[x, y] == Snow)
-            return GetHeight(SnowBase, delta, SnowDisp);
+            return GetHeight(SnowBase, /*delta,*/ SnowDisp);
         else
             return -10000f;
+    }
+
+    private static void BasicBiomeGen(int dim, float[,] heightmap)
+    {
+        for (int i = 0; i < dim; i++)
+        {
+            for (int j = 0; j < dim; j++)
+            {
+                if (heightmap[i, j] != 0)
+                    heightmap[i, j] = GetBiomeVertex(i, j);
+            }
+        }
+    }
+
+    private static void AdvancedBiomeGen(int dim, float[,] heightmap)
+    {
+        for (int i = 0; i < dim; i++)
+        {
+            for (int j = 0; j < dim; j++)
+            {
+                if (heightmap[i, j] != 0)
+                    heightmap[i, j] = GetBiomeVertex(i, j);
+            }
+        }
     }
 
     // Recursively performs the diamond-square algorithm to generate terrain
     private static void DiamondSquareGen(float[,] heightmap, int xMin, int xMax, int yMin, int yMax)
     {
+        float GetRandomDisplacement() {
+            return UnityEngine.Random.Range(-1.0f, 1.0f);
+        }
+
         // Diamond step
         Tuple<int, int> diamondIndex = getDiamondIndex(xMin, xMax, yMin, yMax);
         float cornerAverage = (heightmap[xMin, yMin] + heightmap[xMax, yMin] + heightmap[xMin, yMax] + heightmap[xMax, yMax]) / 4;
 
-        heightmap[diamondIndex.Item1, diamondIndex.Item2] = GetVertex(diamondIndex.Item1, diamondIndex.Item2, cornerAverage);
+        heightmap[diamondIndex.Item1, diamondIndex.Item2] = cornerAverage + GetRandomDisplacement();
 
         // Square step
         Tuple<Tuple<int, int>, Tuple<int, int>, Tuple<int, int>, Tuple<int, int>> squareIndicies = getSquareIndices(xMin, xMax, yMin, yMax);
@@ -170,16 +203,16 @@ public class HeightmapGen : MonoBehaviour
         float leftAverage = (heightmap[xMin, yMin] + heightmap[diamondIndex.Item1, diamondIndex.Item2] + heightmap[xMax, yMin]) / 3; ;
 
         if (!adjacentTruthTable.Item1 || squareIndicies.Item1.Item1 != 0)
-            heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = GetVertex(squareIndicies.Item1.Item1, squareIndicies.Item1.Item2, topAverage);
+            heightmap[squareIndicies.Item1.Item1, squareIndicies.Item1.Item2] = topAverage + GetRandomDisplacement();
 
         if (!adjacentTruthTable.Item2 || squareIndicies.Item2.Item2 != heightmap.GetLength(0) - 1)
-            heightmap[squareIndicies.Item2.Item1, squareIndicies.Item2.Item2] = GetVertex(squareIndicies.Item2.Item1, squareIndicies.Item2.Item2, rightAverage);
+            heightmap[squareIndicies.Item2.Item1, squareIndicies.Item2.Item2] = rightAverage + GetRandomDisplacement();
 
         if (!adjacentTruthTable.Item3 || squareIndicies.Item3.Item1 != heightmap.GetLength(0) - 1)
-            heightmap[squareIndicies.Item3.Item1, squareIndicies.Item3.Item2] = GetVertex(squareIndicies.Item3.Item1, squareIndicies.Item3.Item2, bottomAverage);
+            heightmap[squareIndicies.Item3.Item1, squareIndicies.Item3.Item2] = bottomAverage + GetRandomDisplacement();
 
         if (!adjacentTruthTable.Item4 || squareIndicies.Item4.Item2 != 0)
-            heightmap[squareIndicies.Item4.Item1, squareIndicies.Item4.Item2] = GetVertex(squareIndicies.Item4.Item1, squareIndicies.Item4.Item2, leftAverage);
+            heightmap[squareIndicies.Item4.Item1, squareIndicies.Item4.Item2] = leftAverage + GetRandomDisplacement();
 
         // Determine if recursive step is required
         if (xMax - xMin <= 2 && yMax - yMin <= 2)
