@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c928b7ee8bec5864997437e370ad62cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  block_Radius: 5
+  block_Radius: 6
   block_VertexWidth: 256
   heightmap_PowerN: 7
   heightmap_WaterBase: 0

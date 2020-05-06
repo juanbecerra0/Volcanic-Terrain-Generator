@@ -69,7 +69,7 @@ public class MasterGen : MonoBehaviour
     {
         // Biome/color tuple
         Tuple<uint, uint, uint, uint, uint> BiomeTuple = new Tuple<uint, uint, uint, uint, uint>(biome_Water, biome_Sand, biome_Grass, biome_Mountain, biome_Snow);
-        Tuple<Color, Color, Color, Color, Color> ColorTuple = new Tuple<Color, Color, Color, Color, Color>(texture_WaterColor, texture_SandColor, texture_GrassColor, texture_MountainColor, texture_SnowColor);
+        Tuple<Color, Color, Color, Color, Color> ColorTuple = new Tuple<Color, Color, Color, Color, Color>(texture_WaterColor, texture_SandColor, texture_GrassColor, texture_MountainColor, texture_MountainColor);//texture_SnowColor);
 
         // Heightmap tuples
         Tuple<float, float, float, float, float> heightmapBasesTuple = new Tuple<float, float, float, float, float>(heightmap_WaterBase, heightmap_SandBase, heightmap_GrassBase, heightmap_MountainBase, heightmap_SnowBase);

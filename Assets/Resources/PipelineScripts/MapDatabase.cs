@@ -14,6 +14,8 @@ public class MapDatabase : MonoBehaviour
     BiomeGen BiomeGenScript;
     private int BiomeDimensions;
     private int BiomeHMContentsWidth;
+    private double BiomeHMIndexRatio;
+
     private int BiomePartitionWidth;
 
     public void Init(int heightmapBaseN, int biomeDimensions, int biomeHMContentsWidth)
@@ -27,7 +29,10 @@ public class MapDatabase : MonoBehaviour
         BiomeGenScript = GameObject.FindObjectOfType(typeof(BiomeGen)) as BiomeGen;
         BiomeDimensions = biomeDimensions;
         BiomeHMContentsWidth = biomeHMContentsWidth;
+        
+
         BiomePartitionWidth = (int)Mathf.Pow(2, heightmapBaseN) + 1;
+        BiomeHMIndexRatio = (double)BiomePartitionWidth / (double)biomeDimensions;
     }
 
     public bool IsVacent(int x, int z)
@@ -92,32 +97,28 @@ public class MapDatabase : MonoBehaviour
     public uint[,] GetSubBiome(int x, int z)
     {
         Tuple<int, int> biomeCoordinates = HeightmapToBiomeCoord(x, z);
-
         uint[,] correspondingBiome = BiomeDatabase[biomeCoordinates];
 
-        // Starting indexes for copying
-        int LRIndex = (int)(BiomeDimensions * (
-            (x >= 0) ? 
-                ((float)(x - biomeCoordinates.Item1) / BiomeHMContentsWidth) : 
-                (-((float)biomeCoordinates.Item1 - x) / BiomeHMContentsWidth)
-            ));
+        // Determine sub-biome / biome ratios
+        float LRRatio;
+        float UDRatio;
 
-        int UDIndex = (int)(BiomeDimensions * (
-            (z >= 0) ?
-                ((float)((biomeCoordinates.Item2 + BiomeHMContentsWidth) - (z + 1)) / BiomeHMContentsWidth) :
-                (-((float)((z + 1) + (biomeCoordinates.Item2 + BiomeHMContentsWidth))) / BiomeHMContentsWidth)
-            ));
+        if (biomeCoordinates.Item1 >= 0)
+            LRRatio = (float)(x - biomeCoordinates.Item1) / BiomeHMContentsWidth;
+        else
+            LRRatio = (float)-(biomeCoordinates.Item1 - x) / BiomeHMContentsWidth;
 
-        // TODO errors in indexing are causing bad partitions. This is onlt a temporary fix.
+        if (biomeCoordinates.Item2 >= 0)
+            UDRatio = (float)(biomeCoordinates.Item2 + BiomeHMContentsWidth - (z + 1)) / BiomeHMContentsWidth;
+        else
+            UDRatio = (float)-((z + 1) - (biomeCoordinates.Item2 + BiomeHMContentsWidth)) / BiomeHMContentsWidth;
 
-        if (LRIndex + BiomePartitionWidth > BiomeDimensions)
-            LRIndex = BiomeDimensions - BiomePartitionWidth;
+        // Determine the top-left point where the sub-biome maps to the biome
+        int LRIndex = (int)(BiomeDimensions * LRRatio);
+        int UDIndex = (int)(BiomeDimensions * UDRatio);
 
-        if (UDIndex + BiomePartitionWidth > BiomeDimensions)
-            UDIndex = BiomeDimensions - BiomePartitionWidth;
-
+        // Copy over this sub-biome
         uint[,] subBiome = new uint[BiomePartitionWidth, BiomePartitionWidth];
-
         for (int i = 0; i < BiomePartitionWidth; i++)
         {
             for (int j = 0; j < BiomePartitionWidth; j++)
@@ -134,14 +135,27 @@ public class MapDatabase : MonoBehaviour
         int xCoord, zCoord;
 
         if (x >= 0)
+        {
             xCoord = x - (x % BiomeHMContentsWidth);
+        }
         else
-            xCoord = x - (BiomeHMContentsWidth + (x % BiomeHMContentsWidth));
-
-        if(z >= 0)
+        {
+            if (x % BiomeHMContentsWidth == 0)
+                xCoord = x;
+            else
+                xCoord = x - (BiomeHMContentsWidth + (x % BiomeHMContentsWidth));
+        }
+        if (z >= 0)
+        {
             zCoord = z - (z % BiomeHMContentsWidth);
+        }
         else
-            zCoord = z - (BiomeHMContentsWidth + (z % BiomeHMContentsWidth));
+        {
+            if (z % BiomeHMContentsWidth == 0)
+                zCoord = z;
+            else
+                zCoord = z - (BiomeHMContentsWidth + (z % BiomeHMContentsWidth));
+        }
 
         return new Tuple<int, int>(xCoord, zCoord);
     }

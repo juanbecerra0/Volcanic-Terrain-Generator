@@ -115,10 +115,23 @@ public class HeightmapGen : MonoBehaviour
             heightmap[HeightmapDimensions - 1, HeightmapDimensions - 1] = GetVertex(HeightmapDimensions - 1, HeightmapDimensions - 1, 0f);
 
         // Recursive diamond-square terrain generation algorithm
-        DiamondSquareGen(heightmap, 0, HeightmapDimensions - 1, 0, HeightmapDimensions - 1);
+        //DiamondSquareGen(heightmap, 0, HeightmapDimensions - 1, 0, HeightmapDimensions - 1);
+
+        AltGen(HeightmapDimensions, heightmap);
 
         MapDatabaseScript.AddHeightmap(x, y, heightmap);
         return heightmap;
+    }
+
+    private static void AltGen(int dim, float[,] heightmap)
+    {
+        for(int i = 0; i < dim; i++)
+        {
+            for (int j = 0; j < dim; j++)
+            {
+                heightmap[i, j] = 0f;
+            }
+        }
     }
 
     private static float GetVertex(int x, int y, float delta)

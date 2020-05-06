@@ -121,11 +121,9 @@ public class MaterialGen : MonoBehaviour
             {
                 // Get delta average of heightmap, then set corresponding color
                 Tuple<int, int> heightmapIndex = GetHeightmapIndex(new Tuple<int, int>(i, j));
-                texture.SetPixel(i, j, GetColor(heightmapIndex));
+                texture.SetPixel(j, textureResolution - i, GetColor(heightmapIndex));
             }
         }
-
-        texture = rotateTexture(texture, true);
 
         texture.Apply();
         return texture;
