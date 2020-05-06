@@ -6,7 +6,7 @@ public class MapDatabase : MonoBehaviour
 {
     // Databases
     private Dictionary<Tuple<int, int>, float[,]> HeightmapDatabase;
-    private Dictionary<Tuple<int, int>, uint[,]> BiomeDatabase;
+    private Dictionary<Tuple<int, int>, Tuple<uint[,], Tuple<int, int>>> BiomeDatabase;
 
     private HashSet<Tuple<int, int>> HeightmapProcessed;
     private HashSet<Tuple<int, int>> BiomeProcessed;
@@ -14,14 +14,13 @@ public class MapDatabase : MonoBehaviour
     BiomeGen BiomeGenScript;
     private int BiomeDimensions;
     private int BiomeHMContentsWidth;
-    private double BiomeHMIndexRatio;
 
     private int BiomePartitionWidth;
 
     public void Init(int heightmapBaseN, int biomeDimensions, int biomeHMContentsWidth)
     {
         HeightmapDatabase = new Dictionary<Tuple<int, int>, float[,]>();
-        BiomeDatabase = new Dictionary<Tuple<int, int>, uint[,]>();
+        BiomeDatabase = new Dictionary<Tuple<int, int>, Tuple<uint[,], Tuple<int, int>>>();
 
         HeightmapProcessed = new HashSet<Tuple<int, int>>();
         BiomeProcessed = new HashSet<Tuple<int, int>>();
@@ -32,7 +31,6 @@ public class MapDatabase : MonoBehaviour
         
 
         BiomePartitionWidth = (int)Mathf.Pow(2, heightmapBaseN) + 1;
-        BiomeHMIndexRatio = (double)BiomePartitionWidth / (double)biomeDimensions;
     }
 
     public bool IsVacent(int x, int z)
@@ -81,23 +79,27 @@ public class MapDatabase : MonoBehaviour
         Tuple<int, int> BottomCoord = new Tuple<int, int>(BiomeCoordinates.Item1, BiomeCoordinates.Item2 - BiomeHMContentsWidth);
         Tuple<int, int> LeftCoord = new Tuple<int, int>(BiomeCoordinates.Item1 - BiomeHMContentsWidth, BiomeCoordinates.Item2);
 
-        uint[,] TopBiome = BiomeDatabase.ContainsKey(TopCoord) ? BiomeDatabase[TopCoord] : null;
-        uint[,] RightBiome = BiomeDatabase.ContainsKey(RightCoord) ? BiomeDatabase[RightCoord] : null;
-        uint[,] BottomBiome = BiomeDatabase.ContainsKey(BottomCoord) ? BiomeDatabase[BottomCoord] : null;
-        uint[,] LeftBiome = BiomeDatabase.ContainsKey(LeftCoord) ? BiomeDatabase[LeftCoord] : null;
+        uint[,] TopBiome = BiomeDatabase.ContainsKey(TopCoord) ? BiomeDatabase[TopCoord].Item1 : null;
+        uint[,] RightBiome = BiomeDatabase.ContainsKey(RightCoord) ? BiomeDatabase[RightCoord].Item1 : null;
+        uint[,] BottomBiome = BiomeDatabase.ContainsKey(BottomCoord) ? BiomeDatabase[BottomCoord].Item1 : null;
+        uint[,] LeftBiome = BiomeDatabase.ContainsKey(LeftCoord) ? BiomeDatabase[LeftCoord].Item1 : null;
 
         BiomeProcessed.Add(BiomeCoordinates);
-        BiomeDatabase.Add(BiomeCoordinates, BiomeGenScript.GenerateBiome(TopBiome, RightBiome, BottomBiome, LeftBiome));
+
+        Tuple<uint[,], Tuple<int ,int>> BT = BiomeGenScript.GenerateBiome(TopBiome, RightBiome, BottomBiome, LeftBiome);
+
+        BiomeDatabase.Add(BiomeCoordinates, BT);
+
         CleanBiome(BiomeCoordinates.Item1 + BiomeHMContentsWidth, BiomeCoordinates.Item2);
         CleanBiome(BiomeCoordinates.Item1 - BiomeHMContentsWidth, BiomeCoordinates.Item2);
         CleanBiome(BiomeCoordinates.Item1, BiomeCoordinates.Item2 + BiomeHMContentsWidth);
         CleanBiome(BiomeCoordinates.Item1, BiomeCoordinates.Item2 - BiomeHMContentsWidth);
     }
 
-    public uint[,] GetSubBiome(int x, int z)
+    public Tuple<uint[,], float[,]> GetSubBiome(int x, int z)
     {
         Tuple<int, int> biomeCoordinates = HeightmapToBiomeCoord(x, z);
-        uint[,] correspondingBiome = BiomeDatabase[biomeCoordinates];
+        Tuple<uint[,], Tuple<int, int>> correspondingBiomeTP = BiomeDatabase[biomeCoordinates];
 
         // Determine sub-biome / biome ratios
         float LRRatio;
@@ -117,17 +119,26 @@ public class MapDatabase : MonoBehaviour
         int LRIndex = (int)(BiomeDimensions * LRRatio);
         int UDIndex = (int)(BiomeDimensions * UDRatio);
 
-        // Copy over this sub-biome
+        // Copy over this sub-biome and gradient
         uint[,] subBiome = new uint[BiomePartitionWidth, BiomePartitionWidth];
+        float[,] gradient = new float[BiomePartitionWidth, BiomePartitionWidth];
+
         for (int i = 0; i < BiomePartitionWidth; i++)
         {
             for (int j = 0; j < BiomePartitionWidth; j++)
             {
-                subBiome[i, j] = correspondingBiome[UDIndex + i, LRIndex + j];
+                int xIndex = UDIndex + i;
+                int zIndex = LRIndex + j;
+
+                subBiome[i, j] = correspondingBiomeTP.Item1[xIndex, zIndex];
+                gradient[i, j] = (float)(-10f * Mathf.Sqrt(
+                    (float)(Math.Abs(correspondingBiomeTP.Item2.Item1 - zIndex)^2) +
+                    (float)(Math.Abs(correspondingBiomeTP.Item2.Item2 - xIndex)^2)
+                    ));
             }
         }
 
-        return subBiome;
+        return new Tuple<uint[,], float[,]>(subBiome, gradient);
     }
 
     private Tuple<int, int> HeightmapToBiomeCoord(int x, int z)

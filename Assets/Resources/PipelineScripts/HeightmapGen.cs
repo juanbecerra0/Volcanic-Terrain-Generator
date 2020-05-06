@@ -47,7 +47,7 @@ public class HeightmapGen : MonoBehaviour
 
     // Generates and adds heightmap to dictionary 
     // based on initial cartesian coordinates
-    public float[,] GenerateHeightmap(int x, int y, uint[,] subBiome)
+    public float[,] GenerateHeightmap(int x, int y, uint[,] subBiome, float[,] gradient)
     {
         // Create 2D array of noise values
         float[,] heightmap = new float[HeightmapDimensions, HeightmapDimensions];
@@ -103,6 +103,7 @@ public class HeightmapGen : MonoBehaviour
             }
         }
 
+        /*
         // Set values to uninitialized verticies
         if (!adjacentTruthTable.Item1 && !adjacentTruthTable.Item4)
             heightmap[0, 0] = GetBiomeVertex(0, 0);
@@ -115,6 +116,7 @@ public class HeightmapGen : MonoBehaviour
 
         if (!adjacentTruthTable.Item2 && !adjacentTruthTable.Item3)
             heightmap[HeightmapDimensions - 1, HeightmapDimensions - 1] = GetBiomeVertex(HeightmapDimensions - 1, HeightmapDimensions - 1);
+        */
 
         //DiamondSquareGen(heightmap, 0, HeightmapDimensions - 1, 0, HeightmapDimensions - 1);
 
@@ -122,7 +124,7 @@ public class HeightmapGen : MonoBehaviour
 
         //BasicBiomeGen(HeightmapDimensions, heightmap);
 
-        AdvancedBiomeGen(HeightmapDimensions, heightmap);
+        AdvancedBiomeGen(HeightmapDimensions, heightmap, gradient);
 
         MapDatabaseScript.AddHeightmap(x, y, heightmap);
         return heightmap;
@@ -157,6 +159,24 @@ public class HeightmapGen : MonoBehaviour
             return -10000f;
     }
 
+    private static float GetBiomeVertex(int x, int y, float delta)
+    {
+        float GetHeight(float Base, float Delta, float Disp) { return Base + Delta + UnityEngine.Random.Range(-Disp, Disp); }
+
+        if (BiomeMap[x, y] == Water)
+            return GetHeight(WaterBase, delta, WaterDisp);
+        else if (BiomeMap[x, y] == Sand)
+            return GetHeight(SandBase, delta, SandDisp);
+        else if (BiomeMap[x, y] == Grass)
+            return GetHeight(GrassBase, delta, GrassDisp);
+        else if (BiomeMap[x, y] == Mountain)
+            return GetHeight(MountainBase, delta, MountainDisp);
+        else if (BiomeMap[x, y] == Snow)
+            return GetHeight(SnowBase, delta, SnowDisp);
+        else
+            return -10000f;
+    }
+
     private static void BasicBiomeGen(int dim, float[,] heightmap)
     {
         for (int i = 0; i < dim; i++)
@@ -169,14 +189,14 @@ public class HeightmapGen : MonoBehaviour
         }
     }
 
-    private static void AdvancedBiomeGen(int dim, float[,] heightmap)
+    private static void AdvancedBiomeGen(int dim, float[,] heightmap, float[,] gradient)
     {
         for (int i = 0; i < dim; i++)
         {
             for (int j = 0; j < dim; j++)
             {
-                if (heightmap[i, j] != 0)
-                    heightmap[i, j] = GetBiomeVertex(i, j);
+                if(heightmap[i, j] == 0)
+                    heightmap[i, j] = GetBiomeVertex(i, j, gradient[i,j]);
             }
         }
     }

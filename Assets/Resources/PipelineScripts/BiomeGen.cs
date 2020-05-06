@@ -138,7 +138,7 @@ public class BiomeGen : MonoBehaviour
         public int GetY() { return Y; }
     }
 
-    public uint[,] GenerateBiome(uint[,] Top, uint[,] Right, uint[,] Bottom, uint[,] Left)
+    public Tuple<uint[,], Tuple<int, int>> GenerateBiome(uint[,] Top, uint[,] Right, uint[,] Bottom, uint[,] Left)
     {
         Biome = new uint[BiomeDimensions, BiomeDimensions];
 
@@ -201,7 +201,8 @@ public class BiomeGen : MonoBehaviour
         }
 
         // Create and enqueue all init seed agents
-        Queue<SeedAgent> SeedAgentQueue = GetSeedAgentQueue();
+        Tuple<int, int> center = new Tuple<int, int>(UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3), UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3));
+        Queue<SeedAgent> SeedAgentQueue = GetSeedAgentQueue(center);
         while(SeedAgentQueue.Count > 0)
             AgentQueue.Enqueue(SeedAgentQueue.Dequeue());
 
@@ -261,10 +262,10 @@ public class BiomeGen : MonoBehaviour
             }
         }
 
-        return Biome;
+        return new Tuple<uint[,], Tuple<int, int>>(Biome, center);
     }
 
-    private Queue<SeedAgent> GetSeedAgentQueue()
+    private Queue<SeedAgent> GetSeedAgentQueue(Tuple<int, int> center)
     {
         int GetRandomDisplacement() { return UnityEngine.Random.Range((int)(-SeedSpacing / DisplacementDiv), (int)(SeedSpacing / DisplacementDiv)); }
 
@@ -272,7 +273,7 @@ public class BiomeGen : MonoBehaviour
         Queue<SeedAgent> AgentQueue = new Queue<SeedAgent>();
 
         // Enqueue the snow agent
-        SeedAgent snowAgent = SeedAgent.Create(Snow, UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3), UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3));
+        SeedAgent snowAgent = SeedAgent.Create(Snow, center.Item1, center.Item2);
         AgentQueue.Enqueue(snowAgent);
 
         void GenerateRadialAgents(uint BiomeType, int radius, int centerX, int centerY)
