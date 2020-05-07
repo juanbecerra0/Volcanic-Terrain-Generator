@@ -161,10 +161,10 @@ public class HeightmapGen : MonoBehaviour
 
     private static float GetBiomeVertex(int x, int y, float delta)
     {
-        float GetHeight(float Base, float Delta, float Disp) { return Base + -(Delta * 1000) + UnityEngine.Random.Range(-Disp*200, Disp*200); }
+        float GetHeight(float Base, float Delta, float Disp) { return Base + -(Delta * 3300) + UnityEngine.Random.Range(-Disp*500, Disp*500); }
 
         if (BiomeMap[x, y] == Water)
-            return -17000f;//GetHeight(WaterBase, 0, WaterDisp / 10);
+            return -55000f;//GetHeight(WaterBase, 0, WaterDisp / 10);
         else if (BiomeMap[x, y] == Sand)
             return GetHeight(SandBase, delta, SandDisp);
         else if (BiomeMap[x, y] == Grass)

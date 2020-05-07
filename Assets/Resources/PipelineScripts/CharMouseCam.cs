@@ -17,9 +17,9 @@ public class CharMouseCam : MonoBehaviour
 
     // Line rendering variables
     private float lineWidth;
-    private float frustDist = 150000.0f;
+    private float frustDist = 500000.0f;
     private int segments = 90;
-    private float radius = 100000.0f;
+    private float radius = 380000.0f;
 
     // Line objects
     private GameObject leftLine;

@@ -38,7 +38,7 @@ public class MasterGen : MonoBehaviour
     private Color texture_SandColor = new Color(0.827f, 0.781f, 0.635f);
     private Color texture_GrassColor = new Color(0.255f, 0.573f, 0.294f);
     private Color texture_MountainColor = new Color(0.333f, 0.267f, 0.200f);
-    private Color texture_SnowColor = new Color(0.812f, 0.063f, 0.125f);
+    private Color texture_SnowColor = new Color(0.94f, 0.94f, 0.96f);//new Color(0.812f, 0.063f, 0.125f);
 
     // Biome gen
     private GameObject BiomeGenInstance;

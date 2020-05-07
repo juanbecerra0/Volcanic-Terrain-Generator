@@ -243,7 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   block_Radius: 10
-  block_VertexWidth: 15000
+  block_VertexWidth: 30000
   heightmap_PowerN: 5
   heightmap_WaterBase: 0
   heightmap_SandBase: 2
@@ -257,8 +257,8 @@ MonoBehaviour:
   heightmap_SnowDisp: 0.01
   biome_HeightmapContentWidth: 20
   biome_Dimensions: 660
-  biome_SeedSpacing: 50
-  biome_DisplacementDiv: 2
+  biome_SeedSpacing: 40
+  biome_DisplacementDiv: 1.5
   biome_Water: 1
   biome_Sand: 2
   biome_Grass: 3
