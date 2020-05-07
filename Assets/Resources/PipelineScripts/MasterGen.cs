@@ -34,11 +34,15 @@ public class MasterGen : MonoBehaviour
 
     public int material_Resolution = 512;
 
-    private Color texture_WaterColor = new Color(0.004f, 0.467f, 0.745f);
+    private Color texture_WaterColor = new Color(0.1f, 0.1f, 0.1f);
     private Color texture_SandColor = new Color(0.827f, 0.781f, 0.635f);
     private Color texture_GrassColor = new Color(0.255f, 0.573f, 0.294f);
     private Color texture_MountainColor = new Color(0.333f, 0.267f, 0.200f);
     private Color texture_SnowColor = new Color(0.94f, 0.94f, 0.96f);//new Color(0.812f, 0.063f, 0.125f);
+
+    // Model placer
+    private GameObject ModelPlacerInstance;
+    private ModelPlacer ModelPlacerScript;
 
     // Biome gen
     private GameObject BiomeGenInstance;
@@ -75,6 +79,12 @@ public class MasterGen : MonoBehaviour
         Tuple<float, float, float, float, float> heightmapBasesTuple = new Tuple<float, float, float, float, float>(heightmap_WaterBase, heightmap_SandBase, heightmap_GrassBase, heightmap_MountainBase, heightmap_SnowBase);
         Tuple<float, float, float, float, float> heightmapDispTuple = new Tuple<float, float, float, float, float>(heightmap_WaterDisp, heightmap_SandDisp, heightmap_GrassDisp, heightmap_MountainDisp, heightmap_SnowDisp);
 
+        // Model placer
+        GameObject ModelPlacerPrefab = (GameObject)Resources.Load("PipelinePrefabs/ModelPlacerPrefab");
+        ModelPlacerInstance = (GameObject)GameObject.Instantiate(ModelPlacerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        ModelPlacerScript = ModelPlacerInstance.GetComponent<ModelPlacer>();
+        ModelPlacerScript.Init(block_VertexWidth, biome_HeightmapContentWidth);
+
         // Biome gen
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
         BiomeGenInstance = (GameObject)GameObject.Instantiate(BiomeGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
@@ -85,7 +95,7 @@ public class MasterGen : MonoBehaviour
         GameObject MapDatabasePrefab = (GameObject)Resources.Load("PipelinePrefabs/MapDatabasePrefab");
         MapDatabaseInstance = (GameObject)GameObject.Instantiate(MapDatabasePrefab, new Vector3(0, 0, 0), Quaternion.identity);
         MapDatabaseScript = MapDatabaseInstance.GetComponent<MapDatabase>();
-        MapDatabaseScript.Init(heightmap_PowerN, biome_Dimensions, biome_HeightmapContentWidth);
+        MapDatabaseScript.Init(heightmap_PowerN, biome_Dimensions, biome_HeightmapContentWidth, block_VertexWidth);
 
         // Heightmap gen
         GameObject HeightmapGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/HeightmapGenPrefab");
@@ -176,13 +186,13 @@ public class MasterGen : MonoBehaviour
 
     public void GenerateBlockInstance(int x, int z)
     {
-        Vector3 GetWorldCoordinates(float xIndex, float zIndex) { return new Vector3(xIndex * block_VertexWidth, 0, zIndex * block_VertexWidth); }
-
         if (!MapDatabaseScript.IsVacent(x, z))
         {
             Debug.Log("Tried to generate block at (" + x + ", " + z + "). Aborted.");
             return;
         }
+
+        Vector3 GetWorldCoordinates(float xIndex, float zIndex) { return new Vector3(xIndex * block_VertexWidth, 0, zIndex * block_VertexWidth); }
 
         // Generate biome and sub-biome, and get the gradient
         MapDatabaseScript.GeneratePossibleBiome(x, z);

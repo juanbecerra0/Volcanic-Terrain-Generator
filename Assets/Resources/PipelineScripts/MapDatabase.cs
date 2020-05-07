@@ -14,10 +14,12 @@ public class MapDatabase : MonoBehaviour
     BiomeGen BiomeGenScript;
     private int BiomeDimensions;
     private int BiomeHMContentsWidth;
-
     private int BiomePartitionWidth;
 
-    public void Init(int heightmapBaseN, int biomeDimensions, int biomeHMContentsWidth)
+    private ModelPlacer ModelPlacerScript;
+    private int BlockVertexWidth;
+
+    public void Init(int heightmapBaseN, int biomeDimensions, int biomeHMContentsWidth, int blockVertexWidth)
     {
         HeightmapDatabase = new Dictionary<Tuple<int, int>, float[,]>();
         BiomeDatabase = new Dictionary<Tuple<int, int>, Tuple<uint[,], Tuple<int, int>>>();
@@ -28,9 +30,10 @@ public class MapDatabase : MonoBehaviour
         BiomeGenScript = GameObject.FindObjectOfType(typeof(BiomeGen)) as BiomeGen;
         BiomeDimensions = biomeDimensions;
         BiomeHMContentsWidth = biomeHMContentsWidth;
-        
-
         BiomePartitionWidth = (int)Mathf.Pow(2, heightmapBaseN) + 1;
+
+        ModelPlacerScript = GameObject.FindObjectOfType(typeof(ModelPlacer)) as ModelPlacer;
+        BlockVertexWidth = blockVertexWidth;
     }
 
     public bool IsVacent(int x, int z)
@@ -50,10 +53,10 @@ public class MapDatabase : MonoBehaviour
 
         HeightmapProcessed.Add(new Tuple<int, int>(x, z));
         HeightmapDatabase.Add(new Tuple<int, int>(x, z), heightmap);
-        CleanHeightmap(x + 1, z);
-        CleanHeightmap(x - 1, z);
-        CleanHeightmap(x, z + 1);
-        CleanHeightmap(x, z - 1);
+        //CleanHeightmap(x + 1, z);
+        //CleanHeightmap(x - 1, z);
+        //CleanHeightmap(x, z + 1);
+        //CleanHeightmap(x, z - 1);
     }
 
     public float[,] GetHeightmap(int x, int z)
@@ -90,10 +93,15 @@ public class MapDatabase : MonoBehaviour
 
         BiomeDatabase.Add(BiomeCoordinates, BT);
 
-        CleanBiome(BiomeCoordinates.Item1 + BiomeHMContentsWidth, BiomeCoordinates.Item2);
-        CleanBiome(BiomeCoordinates.Item1 - BiomeHMContentsWidth, BiomeCoordinates.Item2);
-        CleanBiome(BiomeCoordinates.Item1, BiomeCoordinates.Item2 + BiomeHMContentsWidth);
-        CleanBiome(BiomeCoordinates.Item1, BiomeCoordinates.Item2 - BiomeHMContentsWidth);
+        Vector3 GetWorldCoordinates(float xIndex, float zIndex) { return new Vector3(xIndex * BlockVertexWidth, 0, zIndex * BlockVertexWidth); }
+
+        // Generate water
+        ModelPlacerScript.PlaceWater(GetWorldCoordinates(BiomeCoordinates.Item1, BiomeCoordinates.Item2));
+
+        //CleanBiome(BiomeCoordinates.Item1 + BiomeHMContentsWidth, BiomeCoordinates.Item2);
+        //CleanBiome(BiomeCoordinates.Item1 - BiomeHMContentsWidth, BiomeCoordinates.Item2);
+        //CleanBiome(BiomeCoordinates.Item1, BiomeCoordinates.Item2 + BiomeHMContentsWidth);
+        //CleanBiome(BiomeCoordinates.Item1, BiomeCoordinates.Item2 - BiomeHMContentsWidth);
     }
 
     public Tuple<uint[,], float[,]> GetSubBiome(int x, int z)
@@ -137,6 +145,8 @@ public class MapDatabase : MonoBehaviour
                     ));
             }
         }
+
+        //Debug.Log("HM at (" + x + ", " + z + ") :: BM at (" + biomeCoordinates.Item1 + ", " + biomeCoordinates.Item2 + ") :: CP at (" + correspondingBiomeTP.Item2.Item1 + ", " + correspondingBiomeTP.Item2.Item2 + ")");
 
         return new Tuple<uint[,], float[,]>(subBiome, gradient);
     }
