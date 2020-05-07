@@ -19,9 +19,13 @@ I believe that achieving these effects will be most effective in parts. This is 
 As I work on this project, my tasks will likely be more complex, but I feel that this is a good set of goals to start off with.
 
 # Log
+### 5/01/2020 - Biome-Aided Heightmap Generation
+![13](Images/13.PNG)
+In earlier versions of this project, I stressed a lot of importance with the diamond-square algorithm for generating heightmaps. As the biome system was implemented, the algorithm became more and more obsolete, as the noise generated did not match the corresponding biomes very well. To remedy this, I created an alternative heightmap generation algorithm that would take a sub-biome as an input and interpolate from the peak down to the ocean biomes. In addition, different noise values would be applied depending on the biome that the algorithm would interpolate on. From here, I’m going to focus on polishing this algorithm, in addition to adding model placement and an improved texture generator.
+
 ### 4/24/2020 - Biome -> Texture and Heightmap Generation
 ![12](Images/12.PNG)
-// TODO
+In this update, I refactored my material and heightmap generators to take in information from the biome. This was done by making an array with the same dimensions as the heightmap and filling it with a “sub-biome” (i.e., a small snippet of the biome that a block would reside in). Using this, I can generate a basic material using the colors of the biome, and I can use information from the biome to influence the heightmap. Both implementations are still rather simple, but I’ll eventually end up polishing both components to get better-looking blocks.
 
 ### 4/17/2020 - Advanced Biome Partitioning Agents
 ![11](Images/11.PNG)
