@@ -7,6 +7,18 @@ using UnityEngine;
 public class MasterGen : MonoBehaviour
 {
     // Init variables
+    public float charc_startSpeed = 120000f;
+    public float charc_startHeight = 60000f;
+    public float charc_incrementSpeed = 10000f;
+    public float charc_incrementHeight = 20000f;
+
+    public float charm_sensetivity = 5.0f;
+    public float charm_smoothing = 2.0f;
+    public float charm_frustDist = 500000f;
+    public float charm_frustSegments = 0.02f;
+    public float charm_circleRadius = 380000f;
+    public int charm_circleSegments = 90;
+
     public int block_Radius = 2;
     public int block_VertexWidth = 256;
 
@@ -66,6 +78,7 @@ public class MasterGen : MonoBehaviour
 
     // Player controls prefab
     private GameObject PlayerCharacterPrefab;
+    private GameObject PlayerCharacterInstance;
 
     private bool CheckErrors() { return (block_Radius < 1 || heightmap_PowerN < 3 || block_VertexWidth < 1 || material_Resolution < 64); }
 
@@ -113,14 +126,19 @@ public class MasterGen : MonoBehaviour
         ModelGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/ModelGenPrefab");
         GameObject MasterTerrainPrefab = (GameObject) Resources.Load("PipelinePrefabs/MasterTerrainPrefab");
         MasterTerrainInstance = (GameObject)GameObject.Instantiate(MasterTerrainPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-
-        // Player character
-        PlayerCharacterPrefab = (GameObject)Resources.Load("PipelinePrefabs/PlayerCharacterPrefab");
     }
 
     private void InitPlayerCharacter()
     {
-        GameObject PlayerCharacterInstance = (GameObject)GameObject.Instantiate(PlayerCharacterPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        // Player character
+        PlayerCharacterPrefab = (GameObject)Resources.Load("PipelinePrefabs/PlayerCharacterPrefab");
+        PlayerCharacterInstance = (GameObject)GameObject.Instantiate(PlayerCharacterPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+        CharController CharControllerScript = PlayerCharacterInstance.GetComponent<CharController>();
+        CharControllerScript.Init(charc_startSpeed, charc_startHeight, charc_incrementSpeed, charc_incrementHeight);
+
+        CharMouseCam CharMouseCamScript = PlayerCharacterInstance.GetComponentInChildren<CharMouseCam>();
+        CharMouseCamScript.Init(PlayerCharacterInstance, charm_sensetivity, charm_smoothing, charm_frustDist, charm_frustSegments, charm_circleRadius, charm_circleSegments);
     }
 
     // Start is called before the first frame update

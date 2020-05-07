@@ -248,7 +248,7 @@ MonoBehaviour:
   heightmap_WaterBase: 0
   heightmap_SandBase: 2
   heightmap_GrassBase: 6
-  heightmap_MountainBase: 11
+  heightmap_MountainBase: 9
   heightmap_SnowBase: -20000
   heightmap_WaterDisp: 0.01
   heightmap_SandDisp: 0.4
@@ -257,7 +257,7 @@ MonoBehaviour:
   heightmap_SnowDisp: 0.01
   biome_HeightmapContentWidth: 20
   biome_Dimensions: 660
-  biome_SeedSpacing: 66
+  biome_SeedSpacing: 60
   biome_DisplacementDiv: 1.5
   biome_Water: 1
   biome_Sand: 2

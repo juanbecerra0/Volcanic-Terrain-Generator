@@ -201,7 +201,7 @@ public class BiomeGen : MonoBehaviour
         }
 
         // Create and enqueue all init seed agents
-        Tuple<int, int> center = new Tuple<int, int>(UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3), UnityEngine.Random.Range(BiomeDimensions / 4, (BiomeDimensions / 4) * 3));
+        Tuple<int, int> center = new Tuple<int, int>(UnityEngine.Random.Range(2 * (BiomeDimensions / 5), 3 * (BiomeDimensions / 5)), UnityEngine.Random.Range(2 * (BiomeDimensions / 5), 3 * (BiomeDimensions / 5)));
         Queue<SeedAgent> SeedAgentQueue = GetSeedAgentQueue(center);
         while(SeedAgentQueue.Count > 0)
             AgentQueue.Enqueue(SeedAgentQueue.Dequeue());

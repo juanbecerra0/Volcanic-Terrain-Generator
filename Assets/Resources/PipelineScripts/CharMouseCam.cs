@@ -5,21 +5,20 @@ using UnityEngine;
 
 public class CharMouseCam : MonoBehaviour
 {
-    [SerializeField]
-    public float sensitivity = 5.0f;
-    [SerializeField]
-    public float smoothing = 2.0f;
+    private float sensitivity = 5.0f;
+    private float smoothing = 2.0f;
 
     // Character components
-    public GameObject character;
+    private GameObject character;
     private Camera charCamera;
     private Camera overviewCamera;
 
     // Line rendering variables
     private float lineWidth;
-    private float frustDist = 500000.0f;
-    private int segments = 90;
-    private float radius = 380000.0f;
+    private float frustDist;
+    private float frustSegments;
+    private float circleRadius;
+    private int circleSegments;
 
     // Line objects
     private GameObject leftLine;
@@ -40,10 +39,17 @@ public class CharMouseCam : MonoBehaviour
     MasterGen MasterGenScript;
     private int blockSize;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Init(GameObject characterInstance, float sensitivity, float smoothing, float frustDist, float frustSegments, float circleRadius, int circleSegments)
     {
-        // Setup up variables
+        // Constants
+        this.sensitivity = sensitivity;
+        this.smoothing = smoothing;
+        this.frustDist = frustDist;
+        this.frustSegments = frustSegments;
+        this.circleRadius = circleRadius;
+        this.circleSegments = circleSegments;
+
+        // Component variables variables
         character = this.transform.parent.gameObject;
         charCamera = this.GetComponentsInChildren<Camera>()[0];
         overviewCamera = this.GetComponentsInChildren<Camera>()[1];
@@ -74,7 +80,7 @@ public class CharMouseCam : MonoBehaviour
 
             LineRenderer render = line.GetComponent<LineRenderer>();
 
-            render.positionCount = segments + 1;
+            render.positionCount = circleSegments + 1;
             render.useWorldSpace = false;
             render.startWidth = lineWidth;
             render.endWidth = lineWidth;
@@ -220,7 +226,7 @@ public class CharMouseCam : MonoBehaviour
                 endPoint
             });
 
-            for (float i = 0f; i <= 1.0f; i += 0.02f)
+            for (float i = 0f; i <= 1.0f; i += frustSegments)
             {
                 // Translate coordinate into simplified integer coordinate system
                 Tuple<int, int> coordinate = new Tuple<int, int>(
@@ -239,12 +245,12 @@ public class CharMouseCam : MonoBehaviour
         {
             line.transform.position = transform.position;
 
-            for(int i = 0; i < segments + 1; i++)
+            for(int i = 0; i < circleSegments + 1; i++)
             {
-                float rad = Mathf.Deg2Rad * (i * 360f / segments);
+                float rad = Mathf.Deg2Rad * (i * 360f / circleSegments);
 
-                float xPoint = Mathf.Sin(rad) * radius;
-                float zPoint = Mathf.Cos(rad) * radius;
+                float xPoint = Mathf.Sin(rad) * circleRadius;
+                float zPoint = Mathf.Cos(rad) * circleRadius;
 
                 line.GetComponent<LineRenderer>().SetPosition(i, new Vector3(
                     xPoint,

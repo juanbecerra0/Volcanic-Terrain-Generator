@@ -4,19 +4,22 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour
 {
-    public float speed;
-    public float height;
+    private float speed;
+    private float height;
+
+    private float IncrementSpeed;
+    private float IncrementHeight;
 
     private float translation;
     private float straffe;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Init(float startSpeed, float startHeight, float incrementSpeed, float incrementHeight)
     {
-        // Turn off cursor
         Cursor.lockState = CursorLockMode.Locked;
-        height = 120000.0f;
-        speed = 60000f;
+        speed = startSpeed;
+        height = startHeight;
+        IncrementSpeed = incrementSpeed;
+        IncrementHeight = incrementHeight;
     }
 
     // Update is called once per frame
@@ -49,22 +52,22 @@ public class CharController : MonoBehaviour
 
         if (Input.GetKeyDown("]"))
         {
-            speed += 10000.0f;
+            speed += IncrementSpeed;
         }
 
         if (Input.GetKeyDown("["))
         {
-            speed -= 10000.0f;
+            speed -= IncrementSpeed;
         }
 
         if (Input.GetKeyDown("="))
         {
-            height += 20000.0f;
+            height += IncrementHeight;
         }
 
         if (Input.GetKeyDown("-"))
         {
-            height -= 20000.0f;
+            height -= IncrementHeight;
         }
     }
 }
