@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour
 {
-    public float speed = 100.0f;
-    public float height = 40.0f;
+    public float speed;
+    public float height = 400.0f;
 
     private float translation;
     private float straffe;
@@ -15,6 +15,7 @@ public class CharController : MonoBehaviour
     {
         // Turn off cursor
         Cursor.lockState = CursorLockMode.Locked;
+        speed = 60000f;
     }
 
     // Update is called once per frame
@@ -47,22 +48,22 @@ public class CharController : MonoBehaviour
 
         if (Input.GetKeyDown("]"))
         {
-            speed += 10.0f;
+            speed += 10000.0f;
         }
 
         if (Input.GetKeyDown("["))
         {
-            speed -= 10.0f;
+            speed -= 10000.0f;
         }
 
         if (Input.GetKeyDown("="))
         {
-            height += 5.0f;
+            height += 5000.0f;
         }
 
         if (Input.GetKeyDown("-"))
         {
-            height -= 5.0f;
+            height -= 5000.0f;
         }
     }
 }

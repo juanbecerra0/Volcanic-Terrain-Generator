@@ -17,9 +17,9 @@ public class CharMouseCam : MonoBehaviour
 
     // Line rendering variables
     private float lineWidth;
-    private float frustDist = 2200.0f;
+    private float frustDist = 150000.0f;
     private int segments = 90;
-    private float radius = 1200.0f;
+    private float radius = 100000.0f;
 
     // Line objects
     private GameObject leftLine;
@@ -38,7 +38,6 @@ public class CharMouseCam : MonoBehaviour
     // Procedural generation scripts/variables
     MapDatabase MapDatabaseScript;
     MasterGen MasterGenScript;
-    private int circlePoints = 3;
     private int blockSize;
 
     // Start is called before the first frame update
@@ -188,7 +187,7 @@ public class CharMouseCam : MonoBehaviour
             {
                 overviewCamera.transform.localPosition = new Vector3(
                     overviewCamera.transform.localPosition.x,
-                    overviewCamera.transform.localPosition.y - 5.0f,
+                    overviewCamera.transform.localPosition.y - 1000.0f,
                     overviewCamera.transform.localPosition.z
                 );
                 UpdateLineWidth();
@@ -197,7 +196,7 @@ public class CharMouseCam : MonoBehaviour
             {
                 overviewCamera.transform.localPosition = new Vector3(
                     overviewCamera.transform.localPosition.x,
-                    overviewCamera.transform.localPosition.y + 5.0f,
+                    overviewCamera.transform.localPosition.y + 1000.0f,
                     overviewCamera.transform.localPosition.z
                 );
                 UpdateLineWidth();
@@ -221,7 +220,7 @@ public class CharMouseCam : MonoBehaviour
                 endPoint
             });
 
-            for (float i = 0f; i <= 1.0f; i += 0.10f)
+            for (float i = 0f; i <= 1.0f; i += 0.02f)
             {
                 // Translate coordinate into simplified integer coordinate system
                 Tuple<int, int> coordinate = new Tuple<int, int>(
@@ -253,8 +252,6 @@ public class CharMouseCam : MonoBehaviour
                     zPoint
                 ));
 
-                if (i % circlePoints == 0)
-                {
                     // Translate this point in the radial line to world coordinates
                     Vector3 worldPoint = transform.position + (new Vector3(xPoint, 0, zPoint));
 
@@ -267,7 +264,6 @@ public class CharMouseCam : MonoBehaviour
                     // Enqueue coordinate into list if it does not contain it
                     if (!coordList.Contains((coordinate.Item1, coordinate.Item2)))
                         coordList.Add((coordinate.Item1, coordinate.Item2));
-                }
 
             }
 

@@ -131,9 +131,9 @@ public class MapDatabase : MonoBehaviour
                 int zIndex = LRIndex + j;
 
                 subBiome[i, j] = correspondingBiomeTP.Item1[xIndex, zIndex];
-                gradient[i, j] = (float)(-10f * Mathf.Sqrt(
-                    (float)(Math.Abs(correspondingBiomeTP.Item2.Item1 - zIndex)^2) +
-                    (float)(Math.Abs(correspondingBiomeTP.Item2.Item2 - xIndex)^2)
+                gradient[i, j] = (Mathf.Sqrt(
+                    (float)(Math.Abs(correspondingBiomeTP.Item2.Item1 - xIndex)^2) +
+                    (float)(Math.Abs(correspondingBiomeTP.Item2.Item2 - zIndex)^2)
                     ));
             }
         }

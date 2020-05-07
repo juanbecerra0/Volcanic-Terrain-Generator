@@ -242,9 +242,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c928b7ee8bec5864997437e370ad62cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  block_Radius: 6
-  block_VertexWidth: 256
-  heightmap_PowerN: 7
+  block_Radius: 10
+  block_VertexWidth: 15000
+  heightmap_PowerN: 5
   heightmap_WaterBase: 0
   heightmap_SandBase: 2
   heightmap_GrassBase: 6
@@ -255,16 +255,16 @@ MonoBehaviour:
   heightmap_GrassDisp: 1.4
   heightmap_MountainDisp: 4.4
   heightmap_SnowDisp: 0.01
-  biome_HeightmapContentWidth: 10
-  biome_Dimensions: 1290
-  biome_SeedSpacing: 128
-  biome_DisplacementDiv: 2.5
+  biome_HeightmapContentWidth: 20
+  biome_Dimensions: 660
+  biome_SeedSpacing: 50
+  biome_DisplacementDiv: 2
   biome_Water: 1
   biome_Sand: 2
   biome_Grass: 3
   biome_Mountain: 4
   biome_Snow: 5
-  material_Resolution: 512
+  material_Resolution: 128
 --- !u!4 &1401406874
 Transform:
   m_ObjectHideFlags: 0
