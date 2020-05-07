@@ -5,7 +5,7 @@ using UnityEngine;
 public class CharController : MonoBehaviour
 {
     public float speed;
-    public float height = 400.0f;
+    public float height;
 
     private float translation;
     private float straffe;
@@ -15,6 +15,7 @@ public class CharController : MonoBehaviour
     {
         // Turn off cursor
         Cursor.lockState = CursorLockMode.Locked;
+        height = 120000.0f;
         speed = 60000f;
     }
 
@@ -58,12 +59,12 @@ public class CharController : MonoBehaviour
 
         if (Input.GetKeyDown("="))
         {
-            height += 5000.0f;
+            height += 20000.0f;
         }
 
         if (Input.GetKeyDown("-"))
         {
-            height -= 5000.0f;
+            height -= 20000.0f;
         }
     }
 }

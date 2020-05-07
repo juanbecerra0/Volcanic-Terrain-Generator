@@ -17,7 +17,9 @@ public class ModelPlacer : MonoBehaviour
 
     public void PlaceWater(Vector3 position)
     {
-        Vector3 adjustedPosition = new Vector3(position.x + WaterOffset, -68000, position.z + WaterOffset);
-        GameObject.Instantiate(WaterModel, adjustedPosition, Quaternion.identity);
+        Vector3 adjustedPosition = new Vector3(position.x + WaterOffset, 0, position.z + WaterOffset);
+        GameObject WaterInstance = GameObject.Instantiate(WaterModel, adjustedPosition, Quaternion.identity);
+
+        WaterInstance.transform.parent = this.transform;
     }
 }

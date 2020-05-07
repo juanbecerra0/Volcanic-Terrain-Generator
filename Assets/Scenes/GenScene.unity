@@ -206,13 +206,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 428368189}
-  m_LocalRotation: {x: 0.62088513, y: -0.19826688, z: 0.16636564, w: 0.7399422}
+  m_LocalRotation: {x: 0.5954344, y: -0.28857604, z: 0.242144, w: 0.70961124}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 80, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 80, y: -44.26, z: 0}
 --- !u!1 &1401406872
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,12 +248,12 @@ MonoBehaviour:
   heightmap_WaterBase: 0
   heightmap_SandBase: 2
   heightmap_GrassBase: 6
-  heightmap_MountainBase: 15
-  heightmap_SnowBase: 12
+  heightmap_MountainBase: 11
+  heightmap_SnowBase: -20000
   heightmap_WaterDisp: 0.01
   heightmap_SandDisp: 0.4
   heightmap_GrassDisp: 1.4
-  heightmap_MountainDisp: 4.4
+  heightmap_MountainDisp: 2.5
   heightmap_SnowDisp: 0.01
   biome_HeightmapContentWidth: 20
   biome_Dimensions: 660

@@ -139,14 +139,33 @@ public class MapDatabase : MonoBehaviour
                 int zIndex = LRIndex + j;
 
                 subBiome[i, j] = correspondingBiomeTP.Item1[xIndex, zIndex];
-                gradient[i, j] = (Mathf.Sqrt(
-                    (float)(Math.Abs(correspondingBiomeTP.Item2.Item1 - xIndex)^2) +
-                    (float)(Math.Abs(correspondingBiomeTP.Item2.Item2 - zIndex)^2)
-                    ));
+
+                // gradient falloff is determined by how close this point is to the edge of biome
+                // 1f = center of biome, 0f = edge of biome
+
+                float gradientFalloff, xScore, zScore;
+
+                if (xIndex < BiomeDimensions / 2)
+                    xScore = (float)xIndex / (BiomeDimensions / 2);
+                else
+                    xScore = (float)(BiomeDimensions - xIndex) / (BiomeDimensions / 2);
+
+                if (zIndex < BiomeDimensions / 2)
+                    zScore = (float)zIndex / (BiomeDimensions / 2);
+                else
+                    zScore = (float)(BiomeDimensions - zIndex) / (BiomeDimensions / 2);
+
+                if (xScore <= zScore)
+                    gradientFalloff = xScore;
+                else
+                    gradientFalloff = zScore;
+
+                gradient[i, j] = (gradientFalloff) * (1 / Mathf.Sqrt(
+                        (float)(Math.Abs(correspondingBiomeTP.Item2.Item1 - xIndex) ^ 2) +
+                        (float)(Math.Abs(correspondingBiomeTP.Item2.Item2 - zIndex) ^ 2)
+                        ));
             }
         }
-
-        //Debug.Log("HM at (" + x + ", " + z + ") :: BM at (" + biomeCoordinates.Item1 + ", " + biomeCoordinates.Item2 + ") :: CP at (" + correspondingBiomeTP.Item2.Item1 + ", " + correspondingBiomeTP.Item2.Item2 + ")");
 
         return new Tuple<uint[,], float[,]>(subBiome, gradient);
     }
@@ -180,6 +199,8 @@ public class MapDatabase : MonoBehaviour
 
         return new Tuple<int, int>(xCoord, zCoord);
     }
+
+    // Removing clean methods as they seem to cause glitches in querying biomes out of order
 
     private void CleanHeightmap(int x, int z)
     {
