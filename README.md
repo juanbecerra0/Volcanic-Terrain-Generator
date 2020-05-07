@@ -19,6 +19,10 @@ I believe that achieving these effects will be most effective in parts. This is 
 As I work on this project, my tasks will likely be more complex, but I feel that this is a good set of goals to start off with.
 
 # Log
+### 5/08/2020 - Water Model and Volcanic Terrain
+![14](Images/14.PNG)
+With the deadline coming up, I decided to scale back the scope of this project and focus on a single objective rather than encapsulating all types of terrain. I decided that my procedural terrain generator would be well suited to making volcanic islands, so I modified heightmap generation to allow for this. I also implemented procedural placement of moving water/waves in place of the old, flat texture. In the next update, I will be focusing on getting prefab model placement working and improving the existing texture generation to sample Unity assets rather than flat colors. Time permitting, I will attempt to implement bump-mapping on the procedural materials.
+
 ### 5/01/2020 - Biome-Aided Heightmap Generation
 ![13](Images/13.PNG)
 In earlier versions of this project, I stressed a lot of importance with the diamond-square algorithm for generating heightmaps. As the biome system was implemented, the algorithm became more and more obsolete, as the noise generated did not match the corresponding biomes very well. To remedy this, I created an alternative heightmap generation algorithm that would take a sub-biome as an input and interpolate from the peak down to the ocean biomes. In addition, different noise values would be applied depending on the biome that the algorithm would interpolate on. From here, I’m going to focus on polishing this algorithm, in addition to adding model placement and an improved texture generator.
