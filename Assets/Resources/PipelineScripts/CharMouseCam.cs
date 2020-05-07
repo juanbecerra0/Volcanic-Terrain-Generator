@@ -39,7 +39,7 @@ public class CharMouseCam : MonoBehaviour
     MasterGen MasterGenScript;
     private int blockSize;
 
-    public void Init(GameObject characterInstance, float sensitivity, float smoothing, float frustDist, float frustSegments, float circleRadius, int circleSegments)
+    public void Init(float sensitivity, float smoothing, float frustDist, float frustSegments, float circleRadius, int circleSegments)
     {
         // Constants
         this.sensitivity = sensitivity;

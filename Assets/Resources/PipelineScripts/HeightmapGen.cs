@@ -17,7 +17,15 @@ public class HeightmapGen : MonoBehaviour
     private static float WaterBase, SandBase, GrassBase, MountainBase, SnowBase;
     private static float WaterDisp, SandDisp, GrassDisp, MountainDisp, SnowDisp;
 
-    public void Init(float heightmapBaseN, Tuple<uint, uint, uint, uint, uint> biomeTuple, Tuple<float, float, float, float, float> bases, Tuple<float, float, float, float, float> displacements)
+    private static float DisplacementScale;
+    private static float DeltaScale;
+    private static float DeltaClamp;
+
+    public void Init(float heightmapBaseN, 
+        Tuple<uint, uint, uint, uint, uint> biomeTuple, 
+        Tuple<float, float, float, float, float> bases, 
+        Tuple<float, float, float, float, float> displacements,
+        float displacementScale, float deltaScale, float deltaClamp)
     {
         MapDatabaseScript = GameObject.FindObjectOfType(typeof(MapDatabase)) as MapDatabase;
 
@@ -40,6 +48,10 @@ public class HeightmapGen : MonoBehaviour
         GrassDisp = displacements.Item3;
         MountainDisp = displacements.Item4;
         SnowDisp = displacements.Item5;
+
+        DisplacementScale = displacementScale;
+        DeltaScale = deltaScale;
+        DeltaClamp = deltaClamp;
     }
 
     private static Tuple<bool, bool, bool, bool> adjacentTruthTable;
@@ -161,10 +173,10 @@ public class HeightmapGen : MonoBehaviour
 
     private static float GetBiomeVertex(int x, int y, float delta)
     {
-        float GetHeight(float Base, float Delta, float Disp) { return Base + Mathf.Clamp(Delta * 700000, -120000f, 120000f) + UnityEngine.Random.Range(-Disp*500, Disp*500); }
+        float GetHeight(float Base, float Delta, float Disp) { return Base + Mathf.Clamp(Delta * DeltaScale, -DeltaClamp, DeltaClamp) + UnityEngine.Random.Range(-Disp*DisplacementScale, Disp*DisplacementScale); }
 
         if (BiomeMap[x, y] == Water)
-            return -10000f;//GetHeight(WaterBase, 0, WaterDisp / 10);
+            return WaterBase;
         else if (BiomeMap[x, y] == Sand)
             return GetHeight(SandBase, delta, SandDisp);
         else if (BiomeMap[x, y] == Grass)

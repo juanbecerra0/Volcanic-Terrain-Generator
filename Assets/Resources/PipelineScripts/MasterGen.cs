@@ -33,6 +33,9 @@ public class MasterGen : MonoBehaviour
     public float heightmap_GrassDisp = 1.4f;
     public float heightmap_MountainDisp = 4.4f;
     public float heightmap_SnowDisp = 0.01f;
+    public float heightmap_displacementScale = 500f;
+    public float heightmap_deltaScale = 700000f;
+    public float heightmap_deltaClamp = 120000f;
 
     public int biome_HeightmapContentWidth = 10;
     public int biome_Dimensions = 1024;
@@ -45,6 +48,8 @@ public class MasterGen : MonoBehaviour
     public uint biome_Snow = 5;
 
     public int material_Resolution = 512;
+
+    public float mp_waterHeight = 1000f;
 
     private Color texture_WaterColor = new Color(0.1f, 0.1f, 0.1f);
     private Color texture_SandColor = new Color(0.827f, 0.781f, 0.635f);
@@ -96,7 +101,7 @@ public class MasterGen : MonoBehaviour
         GameObject ModelPlacerPrefab = (GameObject)Resources.Load("PipelinePrefabs/ModelPlacerPrefab");
         ModelPlacerInstance = (GameObject)GameObject.Instantiate(ModelPlacerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         ModelPlacerScript = ModelPlacerInstance.GetComponent<ModelPlacer>();
-        ModelPlacerScript.Init(block_VertexWidth, biome_HeightmapContentWidth);
+        ModelPlacerScript.Init(block_VertexWidth, biome_HeightmapContentWidth, mp_waterHeight);
 
         // Biome gen
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
@@ -114,7 +119,7 @@ public class MasterGen : MonoBehaviour
         GameObject HeightmapGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/HeightmapGenPrefab");
         HeightmapGenInstance = (GameObject)GameObject.Instantiate(HeightmapGenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         HeightmapGenScript = HeightmapGenInstance.GetComponent<HeightmapGen>();
-        HeightmapGenScript.Init(heightmap_PowerN, BiomeTuple, heightmapBasesTuple, heightmapDispTuple);
+        HeightmapGenScript.Init(heightmap_PowerN, BiomeTuple, heightmapBasesTuple, heightmapDispTuple, heightmap_displacementScale, heightmap_deltaScale, heightmap_deltaClamp); ;
 
         // Material gen
         GameObject MaterialGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/MaterialGenPrefab");
@@ -138,7 +143,7 @@ public class MasterGen : MonoBehaviour
         CharControllerScript.Init(charc_startSpeed, charc_startHeight, charc_incrementSpeed, charc_incrementHeight);
 
         CharMouseCam CharMouseCamScript = PlayerCharacterInstance.GetComponentInChildren<CharMouseCam>();
-        CharMouseCamScript.Init(PlayerCharacterInstance, charm_sensetivity, charm_smoothing, charm_frustDist, charm_frustSegments, charm_circleRadius, charm_circleSegments);
+        CharMouseCamScript.Init(charm_sensetivity, charm_smoothing, charm_frustDist, charm_frustSegments, charm_circleRadius, charm_circleSegments);
     }
 
     // Start is called before the first frame update
