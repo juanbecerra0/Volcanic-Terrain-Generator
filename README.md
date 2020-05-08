@@ -68,14 +68,18 @@ Using a few view raycasts, circle intersection points, local-to-world point calc
 In this update, I set up procedural UV mapping for generated blocks of terrain. This will allow me to utilize Unity's shaders to create procedural materials (textures, normal maps, etc…). This depends on the biome mapping, which I will focus on in a future update. Currently, the generated terrain is covered using a default diffuse tile texture. In addition, I’ve implemented frame-by-frame calculations for rays casted by the player’s frustum and a circle generated around the player’s position. Using these components, I’ll be able to set up procedural placement.
 
 ### 3/06/2020 - Off-Week
+<!---
 ![5](Images/5.PNG)
+--->
 
 Went to Vegas this week for the Mountain West Basketball Tournament. Didn't have much time to sit down and implement features.
 
 Go Broncos!
 
 ### 2/28/2020 - Feature Planning
+<!---
 ![4](Images/4.PNG)
+--->
 
 In this update, I pushed a bit of a work, but I was primarily focused on planning out how I would develop the rest of the project beyond my initial brainstorming. I created a slideshow that I presented to the BSU Visual Lab which showed off some of my currently implemented ideas, as well as some ideas that I wanted to eventually implement.
 
