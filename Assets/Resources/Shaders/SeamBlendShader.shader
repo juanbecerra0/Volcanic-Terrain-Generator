@@ -8,92 +8,62 @@
 
     SubShader{
         Tags { "RenderType" = "Opaque" }
+		LOD 200
+
         CGPROGRAM
-        #pragma surface surf Lambert
+        #pragma surface surf Lambert vertex:vert addshadow
+		#pragma multi_compile __ HORIZON_WAVES 
+		#pragma multi_compile __ BEND_ON
+
+		// Global properties to be set by BendControllerRadial script
+		uniform half3 _CurveOrigin;
+		uniform fixed3 _ReferenceDirection;
+		uniform half _Curvature;
+		uniform fixed3 _Scale;
+		uniform half _FlatMargin;
+		uniform half _HorizonWaveFrequency;
+
         struct Input {
             float2 uv_MainTex;
         };
         sampler2D _MainTex;
+
         void surf(Input IN, inout SurfaceOutput o) {
             o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
         }
+
+		half4 Bend(half4 v)
+		{
+			half4 wpos = mul(unity_ObjectToWorld, v);
+
+			half2 xzDist = (wpos.xz - _CurveOrigin.xz) / _Scale.xz;
+			half dist = length(xzDist);
+			fixed waveMultiplier = 1;
+
+			#if defined(HORIZON_WAVES)
+			half2 direction = lerp(_ReferenceDirection.xz, xzDist, min(dist, 1));
+
+			half theta = acos(clamp(dot(normalize(direction), _ReferenceDirection.xz), -1, 1));
+
+			waveMultiplier = cos(theta * _HorizonWaveFrequency);
+			#endif
+
+			dist = max(0, dist - _FlatMargin);
+
+			wpos.y -= dist * dist * _Curvature * waveMultiplier;
+
+			wpos = mul(unity_WorldToObject, wpos);
+
+			return wpos;
+		}
+
+		void vert(inout appdata_full v)
+		{
+			#if defined(BEND_ON)
+			v.vertex = Bend(v.vertex);
+			#endif
+		}
         ENDCG
     }
     Fallback "Diffuse"
-    
-    /*
-    // WIREFRAME
-
-    Properties
-    {
-        _Color ("Color", Color) = (1,1,1,1)
-        _Wireframe("Wireframe thickness", Range(0.0, 0.005)) = 0.0025
-        _Transparency("Transparency", Range(0.0, 1)) = 0.5
-    }
-    SubShader
-    {
-        Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
-        LOD 200
-
-        Pass
-        {
-            Blend SrcAlpha OneMinusSrcAlpha
-            Cull Back
-
-            CGPROGRAM
-
-            #pragma vertex vertexFunction
-            #pragma fragment fragmentFunction
-            #pragma geometry geometryFunction
-            #include "UnityCG.cginc"
-
-            struct v2g
-            {
-                float4 pos : SV_POSITION;
-            };
-
-            struct g2f
-            {
-                float4 pos : SV_POSITION;
-                float3 bary : TEXCOORD0;
-            };
-
-            v2g vertexFunction(appdata_base v)
-            {
-                v2g o;
-                o.pos = UnityObjectToClipPos(v.vertex);
-                return o;
-            }
-
-            [maxvertexcount(3)]
-            void geometryFunction(triangle v2g IN[3],
-                inout TriangleStream<g2f> triStream)
-            {
-                g2f o;
-                o.pos = IN[0].pos;
-                o.bary = float3(1, 0, 0);
-                triStream.Append(o);
-                o.pos = IN[1].pos;
-                o.bary = float3(0, 0, 1);
-                triStream.Append(o);
-                o.pos = IN[2].pos;
-                o.bary = float3(0, 1, 0);
-                triStream.Append(o);
-            }
-
-            float _Wireframe;
-            fixed4 _Color;
-            float _Transparency;
-            fixed4 fragmentFunction(g2f i) : SV_Target
-            {
-                float value = min(i.bary.x, (min(i.bary.y, i.bary.z)));
-                value = exp2(-1 / _Wireframe * value * value);
-                fixed4 col = _Color;
-                col.a = _Transparency;
-                return col * value;
-            }
-            ENDCG
-        }
-    }
-    */
 }

@@ -31,10 +31,11 @@ public class BendControllerRadial : MonoBehaviour
 
 	private Vector3 m_scale = Vector3.zero;
 
-	public void Init(Transform characterCameraTransform)
+	public void Init(Transform characterCameraTransform, float curvature)
 	{
 		m_curveOrigin = characterCameraTransform;
 		m_referenceDirection = transform;
+		m_curvature = curvature;
 
 		m_curveOriginId = Shader.PropertyToID("_CurveOrigin");
 		m_referenceDirectionId = Shader.PropertyToID("_ReferenceDirection");

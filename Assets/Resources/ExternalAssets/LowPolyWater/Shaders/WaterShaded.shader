@@ -37,6 +37,14 @@ CGINCLUDE
   	float _isInnerAlphaBlendOrColor; 
 	#define VERTEX_WORLD_NORMAL i.normalInterpolator.xyz 
 
+	// Global properties to be set by BendControllerRadial script
+	uniform half3 _CurveOrigin;
+	uniform fixed3 _ReferenceDirection;
+	uniform half _Curvature;
+	uniform fixed3 _Scale;
+	uniform half _FlatMargin;
+	uniform half _HorizonWaveFrequency;
+
 
 	struct appdata
 	{
@@ -66,6 +74,31 @@ CGINCLUDE
 		return foam;
 	}
 
+	half4 Bend(half4 v)
+	{
+		half4 wpos = mul(unity_ObjectToWorld, v);
+
+		half2 xzDist = (wpos.xz - _CurveOrigin.xz) / _Scale.xz;
+		half dist = length(xzDist);
+		fixed waveMultiplier = 1;
+
+		#if defined(HORIZON_WAVES)
+		half2 direction = lerp(_ReferenceDirection.xz, xzDist, min(dist, 1));
+
+		half theta = acos(clamp(dot(normalize(direction), _ReferenceDirection.xz), -1, 1));
+
+		waveMultiplier = cos(theta * _HorizonWaveFrequency);
+		#endif
+
+		dist = max(0, dist - _FlatMargin);
+
+		wpos.y -= dist * dist * _Curvature * waveMultiplier;
+
+		wpos = mul(unity_WorldToObject, wpos);
+
+		return wpos;
+	}
+
 	v2f vert(appdata_full v)
 	{
 		v2f o;
@@ -79,6 +112,9 @@ CGINCLUDE
 		half3	nrml = half3(0,1,0);
 		
 		v.vertex.xyz += offsets;
+		#if defined(BEND_ON)
+			v.vertex = Bend(v.vertex);
+		#endif
 		 
 		half2 tileableUv = mul(unity_ObjectToWorld,(v.vertex)).xz;
 		
@@ -150,62 +186,69 @@ CGINCLUDE
             return half4(ambientLighting + diffuseReflection  + specularReflection, 1.0);
          }
 
-	half4 frag( v2f i ) : SV_Target
-	{ 
- 
-		half4 edgeBlendFactors = half4(1.0, 0.0, 0.0, 0.0);
-		
-		#ifdef WATER_EDGEBLEND_ON
-			half depth = SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(i.screenPos));
-			depth = LinearEyeDepth(depth);
-			edgeBlendFactors = saturate(_InvFadeParemeter * (depth-i.screenPos.w));
-			edgeBlendFactors.y = 1.0-edgeBlendFactors.y;
-		#endif
-		
- 
-        half4 baseColor = calculateBaseColor(i);
-       
- 
-		half4 foam = Foam(_ShoreTex, i.bumpCoords * 2.0);
-		baseColor.rgb += foam.rgb * _Foam.x * (edgeBlendFactors.y + saturate(i.viewInterpolator.w - _Foam.y));
-		if( _isInnerAlphaBlendOrColor==0)
-			baseColor.rgb += 1.0-edgeBlendFactors.x;
-		if(  _isInnerAlphaBlendOrColor==1.0)
-			baseColor.a  =  edgeBlendFactors.x;
-		UNITY_APPLY_FOG(i.fogCoord, baseColor);
-		return baseColor;
-	}
-	
-ENDCG
+	 half4 frag(v2f i) : SV_Target
+	 {
 
-Subshader
-{
-	Tags {"RenderType"="Transparent" "Queue"="Transparent"}
-	
-	Lod 500
-	ColorMask RGB
-	
-	GrabPass { "_RefractionTex" }
-	
-	Pass {
-			Blend SrcAlpha OneMinusSrcAlpha
-			ZTest LEqual
-			ZWrite Off
-			Cull Off
-		
-			CGPROGRAM
-		
-			#pragma target 3.0
-		
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma multi_compile_fog
-		
-			#pragma multi_compile WATER_EDGEBLEND_ON WATER_EDGEBLEND_OFF 
-		
-			ENDCG
-	}
-}
+		 half4 edgeBlendFactors = half4(1.0, 0.0, 0.0, 0.0);
+
+		 #ifdef WATER_EDGEBLEND_ON
+			 half depth = SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(i.screenPos));
+			 depth = LinearEyeDepth(depth);
+			 edgeBlendFactors = saturate(_InvFadeParemeter * (depth - i.screenPos.w));
+			 edgeBlendFactors.y = 1.0 - edgeBlendFactors.y;
+		 #endif
+
+
+		 half4 baseColor = calculateBaseColor(i);
+
+
+		 half4 foam = Foam(_ShoreTex, i.bumpCoords * 2.0);
+		 baseColor.rgb += foam.rgb * _Foam.x * (edgeBlendFactors.y + saturate(i.viewInterpolator.w - _Foam.y));
+		 if (_isInnerAlphaBlendOrColor == 0)
+			 baseColor.rgb += 1.0 - edgeBlendFactors.x;
+		 if (_isInnerAlphaBlendOrColor == 1.0)
+			 baseColor.a = edgeBlendFactors.x;
+		 UNITY_APPLY_FOG(i.fogCoord, baseColor);
+		 return baseColor;
+	 }
+
+		 ENDCG
+
+		 Subshader
+	 {
+		 Tags{ "RenderType" = "Transparent" "Queue" = "Transparent" }
+
+			 Lod 500
+			 ColorMask RGB
+
+
+
+			 GrabPass{ "_RefractionTex" }
+
+			 Pass{
+					 Blend SrcAlpha OneMinusSrcAlpha
+					 ZTest LEqual
+					 ZWrite Off
+					 Cull Off
+
+					 CGPROGRAM
+
+					 #pragma target 3.0
+
+					 #pragma vertex vert
+					 #pragma fragment frag
+					 #pragma multi_compile_fog
+
+					 #pragma multi_compile WATER_EDGEBLEND_ON WATER_EDGEBLEND_OFF 
+
+					 //#pragma surface surf Lambert vertex:vert addshadow
+					 #pragma multi_compile __ HORIZON_WAVES 
+					 #pragma multi_compile __ BEND_ON
+
+					 ENDCG
+		 }
+
+	 }
 
 
 Fallback "Transparent/Diffuse"

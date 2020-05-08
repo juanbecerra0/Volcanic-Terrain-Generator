@@ -19,6 +19,8 @@ public class MasterGen : MonoBehaviour
     public float charm_circleRadius = 380000f;
     public int charm_circleSegments = 90;
 
+    public float bend_curvature = 30f;
+
     public int block_Radius = 2;
     public int block_VertexWidth = 256;
 
@@ -152,7 +154,7 @@ public class MasterGen : MonoBehaviour
         GameObject BendControllerPrefab = (GameObject)Resources.Load("PipelinePrefabs/BendController");
         BendControllerInstance = (GameObject)GameObject.Instantiate(BendControllerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         BendControllerScript = BendControllerInstance.GetComponent<BendControllerRadial>();
-        BendControllerScript.Init(CharMouseCamScript.GetCameraTransform());
+        BendControllerScript.Init(CharMouseCamScript.GetCameraTransform(), bend_curvature);
     }
 
     // Start is called before the first frame update
