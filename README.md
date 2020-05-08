@@ -19,6 +19,12 @@ I believe that achieving these effects will be most effective in parts. This is 
 As I work on this project, my tasks will likely be more complex, but I feel that this is a good set of goals to start off with.
 
 # Log
+### 5/08/2020 (part 2) - Texture Mapping and Planet Curve Vertex Shader
+![15](Images/15.PNG)
+(Decided to do another update this week. What else am I supposed to do during this pandemic?)
+
+I implemented the aforementioned texture mapping, which sample pixels from corresponding biome types during the texture generation process for each block. This replaces the old method that simply filled in a texture with a single RGB value. In addition, I noticed some performance issues when viewing large vistas of generated terrain. To remedy this, I reduced the culling distance in the player’s view frustrum, but now it became a bit jarring to see distant terrain disappear when it’s far away. To make it a little less jarring, I implemented a vertex shader that simulates a curved earth surface, which hide culled terrain from the player (thank you Animal Crossing: New Horizons for the inspiration).
+
 ### 5/08/2020 - Water Model and Volcanic Terrain
 ![14](Images/14.PNG)
 With the deadline coming up, I decided to scale back the scope of this project and focus on a single objective rather than encapsulating all types of terrain. I decided that my procedural terrain generator would be well suited to making volcanic islands, so I modified heightmap generation to allow for this. I also implemented procedural placement of moving water/waves in place of the old, flat texture. In the next update, I will be focusing on getting prefab model placement working and improving the existing texture generation to sample Unity assets rather than flat colors. Time permitting, I will attempt to implement bump-mapping on the procedural materials.
