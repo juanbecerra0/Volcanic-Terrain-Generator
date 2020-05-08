@@ -81,9 +81,12 @@ public class MasterGen : MonoBehaviour
     private GameObject ModelGenPrefab;
     private GameObject MasterTerrainInstance;
 
-    // Player controls prefab
-    private GameObject PlayerCharacterPrefab;
+    // Player controls
     private GameObject PlayerCharacterInstance;
+
+    // Bend controler
+    private GameObject BendControllerInstance;
+    private BendControllerRadial BendControllerScript;
 
     private bool CheckErrors() { return (block_Radius < 1 || heightmap_PowerN < 3 || block_VertexWidth < 1 || material_Resolution < 64); }
 
@@ -136,7 +139,7 @@ public class MasterGen : MonoBehaviour
     private void InitPlayerCharacter()
     {
         // Player character
-        PlayerCharacterPrefab = (GameObject)Resources.Load("PipelinePrefabs/PlayerCharacterPrefab");
+        GameObject PlayerCharacterPrefab = (GameObject)Resources.Load("PipelinePrefabs/PlayerCharacterPrefab");
         PlayerCharacterInstance = (GameObject)GameObject.Instantiate(PlayerCharacterPrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
         CharController CharControllerScript = PlayerCharacterInstance.GetComponent<CharController>();
@@ -144,6 +147,12 @@ public class MasterGen : MonoBehaviour
 
         CharMouseCam CharMouseCamScript = PlayerCharacterInstance.GetComponentInChildren<CharMouseCam>();
         CharMouseCamScript.Init(charm_sensetivity, charm_smoothing, charm_frustDist, charm_frustSegments, charm_circleRadius, charm_circleSegments);
+
+        // Bend controller
+        GameObject BendControllerPrefab = (GameObject)Resources.Load("PipelinePrefabs/BendController");
+        BendControllerInstance = (GameObject)GameObject.Instantiate(BendControllerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        BendControllerScript = BendControllerInstance.GetComponent<BendControllerRadial>();
+        BendControllerScript.Init(CharMouseCamScript.GetCameraTransform());
     }
 
     // Start is called before the first frame update

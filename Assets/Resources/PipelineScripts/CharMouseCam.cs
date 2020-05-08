@@ -104,6 +104,11 @@ public class CharMouseCam : MonoBehaviour
         SetupRadialLine(radialLine);
     }
 
+    public Transform GetCameraTransform()
+    {
+        return charCamera.transform;
+    }
+
     // Update is called once per frame
     void Update()
     {
