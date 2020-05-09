@@ -18,6 +18,7 @@ public class MapDatabase : MonoBehaviour
 
     private ModelPlacer ModelPlacerScript;
     private int BlockVertexWidth;
+    private float BiomeVertexWidth;
 
     public void Init(int heightmapBaseN, int biomeDimensions, int biomeHMContentsWidth, int blockVertexWidth)
     {
@@ -34,6 +35,7 @@ public class MapDatabase : MonoBehaviour
 
         ModelPlacerScript = GameObject.FindObjectOfType(typeof(ModelPlacer)) as ModelPlacer;
         BlockVertexWidth = blockVertexWidth;
+        BiomeVertexWidth = BiomeHMContentsWidth * BlockVertexWidth;
     }
 
     public bool IsVacent(int x, int z)
@@ -96,7 +98,12 @@ public class MapDatabase : MonoBehaviour
         Vector3 GetWorldCoordinates(float xIndex, float zIndex) { return new Vector3(xIndex * BlockVertexWidth, 0, zIndex * BlockVertexWidth); }
 
         // Generate water
+        Vector3 waterPoint = GetWorldCoordinates(BiomeCoordinates.Item1, BiomeCoordinates.Item2);
         ModelPlacerScript.PlaceWater(GetWorldCoordinates(BiomeCoordinates.Item1, BiomeCoordinates.Item2));
+
+        // Generate clouds
+        Vector3 cloudPoint = new Vector3(waterPoint.x + ((float)BT.Item2.Item2 / BiomeDimensions) * BiomeVertexWidth, 0f, waterPoint.z + (1f - ((float)BT.Item2.Item1 / BiomeDimensions)) * BiomeVertexWidth);
+        ModelPlacerScript.PlaceClouds(cloudPoint);
 
         //CleanBiome(BiomeCoordinates.Item1 + BiomeHMContentsWidth, BiomeCoordinates.Item2);
         //CleanBiome(BiomeCoordinates.Item1 - BiomeHMContentsWidth, BiomeCoordinates.Item2);

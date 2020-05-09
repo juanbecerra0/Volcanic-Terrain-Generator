@@ -11,6 +11,7 @@ public class ModelPlacer : MonoBehaviour
     private float WaterHeight;
 
     private float cloudHeight;
+    private float cloudRadius;
 
     public void Init(int blockVertexWidth, int heightmapContentWidth, float waterHeight, float volcanoClamp)
     {
@@ -31,6 +32,7 @@ public class ModelPlacer : MonoBehaviour
         };
 
         cloudHeight = volcanoClamp * 1.2f;
+        cloudRadius = blockVertexWidth * 1.75f;
         Vector3 cloudScale = new Vector3(blockVertexWidth / 24f, blockVertexWidth / 24f, blockVertexWidth / 24f);
 
         foreach (GameObject c in CloudModels)
@@ -45,15 +47,21 @@ public class ModelPlacer : MonoBehaviour
         GameObject WaterInstance = GameObject.Instantiate(WaterModel, adjustedPosition, Quaternion.identity);
 
         WaterInstance.transform.parent = transform;
-
-        PlaceClouds(adjustedPosition);
     }
 
-    private void PlaceClouds(Vector3 position)
+    public void PlaceClouds(Vector3 position)
     {
-        Vector3 adjustedPosition = new Vector3(position.x, cloudHeight, position.z);
+        System.Random rand = new System.Random();
+        Vector3 center = new Vector3(position.x, cloudHeight, position.z);
+        Vector3 start = new Vector3(center.x - cloudRadius, center.y, center.z);
+        Vector3 end = new Vector3(center.x + cloudRadius, center.y, center.z);
 
-        GameObject CloudInstance = GameObject.Instantiate(CloudModels[0], adjustedPosition, Quaternion.identity);
-        CloudInstance.transform.parent = transform;
+        for (float o = 0f; o < 2.0f; o += 0.25f)
+        {
+            Vector3 circlePosition = Vector3.SlerpUnclamped(start - center, end - center, o) + center;
+
+            GameObject CloudInstance = GameObject.Instantiate(CloudModels[rand.Next(0, CloudModels.Length)], circlePosition, Quaternion.Euler(new Vector3(0f, -360f * (o / 2), 0f)));
+            CloudInstance.transform.parent = transform;
+        }
     }
 }
