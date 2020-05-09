@@ -54,6 +54,7 @@ public class CharMouseCam : MonoBehaviour
         charCamera = this.GetComponentsInChildren<Camera>()[0];
         overviewCamera = this.GetComponentsInChildren<Camera>()[1];
 
+
         MapDatabaseScript = GameObject.FindObjectOfType(typeof(MapDatabase)) as MapDatabase;
         MasterGenScript = GameObject.FindObjectOfType(typeof(MasterGen)) as MasterGen;
         blockSize = MasterGenScript.block_VertexWidth;

@@ -248,9 +248,9 @@ MonoBehaviour:
   charc_incrementHeight: 20
   charm_sensetivity: 5
   charm_smoothing: 2
-  charm_frustDist: 1000
+  charm_frustDist: 1400
   charm_frustSegments: 0.02
-  charm_circleRadius: 800
+  charm_circleRadius: 1200
   charm_circleSegments: 90
   bend_curvature: 25
   block_Radius: 10
