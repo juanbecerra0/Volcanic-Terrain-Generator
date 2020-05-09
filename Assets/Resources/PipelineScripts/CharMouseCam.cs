@@ -130,6 +130,14 @@ public class CharMouseCam : MonoBehaviour
             mouseLook.y = 0.0f;
         }
 
+        // Limits range of up-down looking
+        if (mouseLook.y > 90f)
+            mouseLook.y = 90f;
+        if (mouseLook.y < -90f)
+            mouseLook.y = -90f;
+
+        Debug.Log(mouseLook);
+
         // x-axis = vec3.right
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
