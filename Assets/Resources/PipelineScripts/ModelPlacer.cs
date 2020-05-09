@@ -9,6 +9,7 @@ public class ModelPlacer : MonoBehaviour
     private GameObject WaterModel;
     private GameObject[] CloudModels;
     private GameObject PalmTreeModel;
+    private GameObject FirTreeModel;
 
     private float WaterOffset;
     private float WaterHeight;
@@ -59,8 +60,12 @@ public class ModelPlacer : MonoBehaviour
         }
 
         // Palm trees
-        PalmTreeModel = (GameObject)Resources.Load("ExternalAssets/PalmTree/Palmtree/Palmtree");
-        PalmTreeModel.transform.localScale = new Vector3(1000f, 1000f, 1000f);
+        PalmTreeModel = (GameObject)Resources.Load("ExternalAssets/Trees/Prefabs/Palm_Tree");
+        PalmTreeModel.transform.localScale = new Vector3(14f, 14f, 14f);
+
+        // Fir trees
+        FirTreeModel = (GameObject)Resources.Load("ExternalAssets/Trees/Prefabs/Fir_Tree");
+        FirTreeModel.transform.localScale = new Vector3(14f, 14f, 14f);
     }
 
     public void PlaceWater(Vector3 position)
@@ -109,16 +114,16 @@ public class ModelPlacer : MonoBehaviour
             if (UnityEngine.Random.Range(0f, 1f) < ModelPlacementChance)
             {
                 selected++;
-                GameObject model;
                 Vector3 position = new Vector3(topLeftCorner.x + (((float)j / BlockVertexCount) * BlockVertexWidth), heightmap[i, j], topLeftCorner.z - (((float)i / BlockVertexCount) * BlockVertexWidth));
 
                 if (subBiome[i, j] == SAND && heightmap[i, j] > WaterHeight)
                 {
-                    model = GameObject.Instantiate(PalmTreeModel, position, Quaternion.Euler(-90f, UnityEngine.Random.Range(0, 360f), 0f));
+                    GameObject model = GameObject.Instantiate(PalmTreeModel, position, Quaternion.Euler(0f, UnityEngine.Random.Range(0, 360f), 0f));
                     model.transform.parent = transform;
                 } else if (subBiome[i, j] == GRASS)
                 {
-
+                    GameObject model = GameObject.Instantiate(FirTreeModel, position, Quaternion.Euler(0f, UnityEngine.Random.Range(0, 360f), 0f));
+                    model.transform.parent = transform;
                 } else if (subBiome[i, j] == MOUNTAIN)
                 {
 
