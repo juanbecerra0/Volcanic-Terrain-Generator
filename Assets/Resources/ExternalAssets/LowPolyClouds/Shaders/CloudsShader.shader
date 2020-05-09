@@ -12,7 +12,18 @@ Shader "RandomGames/CloudsShader" {
 		LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf SimpleFakeSubsurfaceScattering alpha:fade
+		//#pragma surface surf SimpleFakeSubsurfaceScattering alpha:fade
+		#pragma surface surf Lambert vertex:vert addshadow
+		#pragma multi_compile __ HORIZON_WAVES 
+		#pragma multi_compile __ BEND_ON
+
+		// Global properties to be set by BendControllerRadial script
+		uniform half3 _CurveOrigin;
+		uniform fixed3 _ReferenceDirection;
+		uniform half _Curvature;
+		uniform fixed3 _Scale;
+		uniform half _FlatMargin;
+		uniform half _HorizonWaveFrequency;
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -34,6 +45,38 @@ Shader "RandomGames/CloudsShader" {
 		UNITY_INSTANCING_BUFFER_END(Props)
 	
 
+		half4 Bend(half4 v)
+		{
+			half4 wpos = mul(unity_ObjectToWorld, v);
+
+			half2 xzDist = (wpos.xz - _CurveOrigin.xz) / _Scale.xz;
+			half dist = length(xzDist);
+			fixed waveMultiplier = 1;
+
+			#if defined(HORIZON_WAVES)
+			half2 direction = lerp(_ReferenceDirection.xz, xzDist, min(dist, 1));
+
+			half theta = acos(clamp(dot(normalize(direction), _ReferenceDirection.xz), -1, 1));
+
+			waveMultiplier = cos(theta * _HorizonWaveFrequency);
+			#endif
+
+			dist = max(0, dist - _FlatMargin);
+
+			wpos.y -= dist * dist * _Curvature * waveMultiplier;
+
+			wpos = mul(unity_WorldToObject, wpos);
+
+			return wpos;
+		}
+
+		void vert(inout appdata_full v)
+		{
+			#if defined(BEND_ON)
+			v.vertex = Bend(v.vertex);
+			#endif
+		}
+
         half4 LightingSimpleFakeSubsurfaceScattering(SurfaceOutput s, half3 lightDir, half atten) {
             half NdotL = max(dot (s.Normal, lightDir),0);
 			half NdotLInv = max(dot (-s.Normal, lightDir),0);
@@ -50,6 +93,7 @@ Shader "RandomGames/CloudsShader" {
 			// Metallic and smoothness come from slider variables
 			o.Alpha = c.a * _Color.a;
 		}
+
 		ENDCG
 
 		UsePass "Standard/SHADOWCASTER"

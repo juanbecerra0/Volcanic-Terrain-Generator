@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: adbb845018a19c84ab980437a3da2ef0
-timeCreated: 1501727515
+guid: 85d91e401c21cb14ab464f259a807de7
+timeCreated: 1458144398
 licenseType: Store
 ModelImporter:
   serializedVersion: 19
@@ -9,8 +9,9 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: RG_Terrain-Mesh004
-    4300002: RG_Terrain-Mesh-04
+    4300000: PalmTree
+    4300002: palmera low
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -18,11 +19,9 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleCurves: 1
+    resampleRotations: 1
     optimizeGameObjects: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -59,7 +58,6 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -70,12 +68,9 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
-    hasExtraRoot: 0
-    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

@@ -106,7 +106,7 @@ public class MasterGen : MonoBehaviour
         GameObject ModelPlacerPrefab = (GameObject)Resources.Load("PipelinePrefabs/ModelPlacerPrefab");
         ModelPlacerInstance = (GameObject)GameObject.Instantiate(ModelPlacerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         ModelPlacerScript = ModelPlacerInstance.GetComponent<ModelPlacer>();
-        ModelPlacerScript.Init(block_VertexWidth, biome_HeightmapContentWidth, mp_waterHeight);
+        ModelPlacerScript.Init(block_VertexWidth, biome_HeightmapContentWidth, mp_waterHeight, heightmap_deltaClamp);
 
         // Biome gen
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
