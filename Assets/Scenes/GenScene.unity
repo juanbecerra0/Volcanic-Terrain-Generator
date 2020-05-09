@@ -252,9 +252,9 @@ MonoBehaviour:
   charm_frustSegments: 0.02
   charm_circleRadius: 800
   charm_circleSegments: 90
-  bend_curvature: 30
+  bend_curvature: 25
   block_Radius: 10
-  block_VertexWidth: 60
+  block_VertexWidth: 120
   heightmap_PowerN: 5
   heightmap_WaterBase: -5
   heightmap_SandBase: 2
@@ -268,10 +268,10 @@ MonoBehaviour:
   heightmap_SnowDisp: 0.01
   heightmap_displacementScale: 0.5
   heightmap_deltaScale: 720
-  heightmap_deltaClamp: 150
-  biome_HeightmapContentWidth: 20
-  biome_Dimensions: 660
-  biome_SeedSpacing: 60
+  heightmap_deltaClamp: 200
+  biome_HeightmapContentWidth: 10
+  biome_Dimensions: 330
+  biome_SeedSpacing: 30
   biome_DisplacementDiv: 1.5
   biome_Water: 1
   biome_Sand: 2
@@ -279,7 +279,7 @@ MonoBehaviour:
   biome_Mountain: 4
   biome_Snow: 5
   material_Resolution: 128
-  mp_waterHeight: 5
+  mp_waterHeight: 10
 --- !u!4 &1401406874
 Transform:
   m_ObjectHideFlags: 0

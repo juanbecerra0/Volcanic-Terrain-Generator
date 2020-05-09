@@ -136,8 +136,6 @@ public class CharMouseCam : MonoBehaviour
         if (mouseLook.y < -90f)
             mouseLook.y = -90f;
 
-        Debug.Log(mouseLook);
-
         // x-axis = vec3.right
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
         character.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, character.transform.up);
