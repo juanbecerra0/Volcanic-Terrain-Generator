@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +8,7 @@ public class ModelPlacer : MonoBehaviour
 {
     private GameObject WaterModel;
     private GameObject[] CloudModels;
+    private GameObject PalmTreeModel;
 
     private float WaterOffset;
     private float WaterHeight;
@@ -13,8 +16,23 @@ public class ModelPlacer : MonoBehaviour
     private float cloudHeight;
     private float cloudRadius;
 
-    public void Init(int blockVertexWidth, int heightmapContentWidth, float waterHeight, float volcanoClamp)
+    private float BlockVertexWidth;
+    private int BlockVertexCount;
+    private uint SAND, GRASS, MOUNTAIN;
+    private int ModelsPerBlock;
+    private float ModelPlacementChance;
+
+    public void Init(int heightmapBaseN, int blockVertexWidth, int heightmapContentWidth, float waterHeight, float volcanoClamp, Tuple<uint, uint, uint, uint, uint> biomeTuple, int modelsPerBlock, float modelPlacementChance)
     {
+        BlockVertexWidth = blockVertexWidth;
+        BlockVertexCount = (int)Mathf.Pow(2, heightmapBaseN) + 1;
+        SAND = biomeTuple.Item2;
+        GRASS = biomeTuple.Item3;
+        MOUNTAIN = biomeTuple.Item4;
+
+        ModelsPerBlock = modelsPerBlock;
+        ModelPlacementChance = modelPlacementChance;
+
         // Water
         WaterModel = (GameObject)Resources.Load("PipelinePrefabs/Models/WaterModel");
         WaterModel.transform.localScale = new Vector3(blockVertexWidth * 2, blockVertexWidth / 30, blockVertexWidth * 2);
@@ -39,6 +57,10 @@ public class ModelPlacer : MonoBehaviour
         {
             c.transform.localScale = cloudScale;
         }
+
+        // Palm trees
+        PalmTreeModel = (GameObject)Resources.Load("ExternalAssets/PalmTree/Palmtree/Palmtree");
+        PalmTreeModel.transform.localScale = new Vector3(1000f, 1000f, 1000f);
     }
 
     public void PlaceWater(Vector3 position)
@@ -62,6 +84,49 @@ public class ModelPlacer : MonoBehaviour
 
             GameObject CloudInstance = GameObject.Instantiate(CloudModels[rand.Next(0, CloudModels.Length)], circlePosition, Quaternion.Euler(new Vector3(0f, -360f * (o / 2), 0f)));
             CloudInstance.transform.parent = transform;
+        }
+    }
+
+    public void PlacePossibleModels(float[,] heightmap, uint[,] subBiome, Vector3 topLeftCorner)
+    {
+        System.Random rand = new System.Random();
+        int modelCount = rand.Next(0, 4);   // Choose between 0 and 3 models to place on this block
+
+        // Choose modelCount positions on the subBiome to add models
+        int selected = 0, i = 0, j = 0;
+        while (selected < modelCount && !(i == BlockVertexCount - 1 && j == BlockVertexCount - 1))
+        {
+            // increment indicies
+            if(j == BlockVertexCount - 1)
+            {
+                j = 0;
+                i++;
+            } else
+            {
+                j++;
+            }
+
+            if (UnityEngine.Random.Range(0f, 1f) < ModelPlacementChance)
+            {
+                selected++;
+                GameObject model;
+                Vector3 position = new Vector3(topLeftCorner.x + (((float)j / BlockVertexCount) * BlockVertexWidth), heightmap[i, j], topLeftCorner.z - (((float)i / BlockVertexCount) * BlockVertexWidth));
+
+                if (subBiome[i, j] == SAND && heightmap[i, j] > WaterHeight)
+                {
+                    model = GameObject.Instantiate(PalmTreeModel, position, Quaternion.Euler(-90f, UnityEngine.Random.Range(0, 360f), 0f));
+                    model.transform.parent = transform;
+                } else if (subBiome[i, j] == GRASS)
+                {
+
+                } else if (subBiome[i, j] == MOUNTAIN)
+                {
+
+                } else
+                {
+                    selected--;
+                }
+            }
         }
     }
 }

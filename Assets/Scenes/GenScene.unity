@@ -280,6 +280,8 @@ MonoBehaviour:
   biome_Snow: 5
   material_Resolution: 128
   mp_waterHeight: 10
+  mp_modelsPerBlock: 3
+  mp_modelPlacementChance: 0.01
 --- !u!4 &1401406874
 Transform:
   m_ObjectHideFlags: 0

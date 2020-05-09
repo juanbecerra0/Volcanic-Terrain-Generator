@@ -52,6 +52,8 @@ public class MasterGen : MonoBehaviour
     public int material_Resolution = 512;
 
     public float mp_waterHeight = 1000f;
+    public int mp_modelsPerBlock = 3;
+    public float mp_modelPlacementChance = 0.01f;
 
     private Color texture_WaterColor = new Color(0.1f, 0.1f, 0.1f);
     private Color texture_SandColor = new Color(0.827f, 0.781f, 0.635f);
@@ -106,7 +108,7 @@ public class MasterGen : MonoBehaviour
         GameObject ModelPlacerPrefab = (GameObject)Resources.Load("PipelinePrefabs/ModelPlacerPrefab");
         ModelPlacerInstance = (GameObject)GameObject.Instantiate(ModelPlacerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         ModelPlacerScript = ModelPlacerInstance.GetComponent<ModelPlacer>();
-        ModelPlacerScript.Init(block_VertexWidth, biome_HeightmapContentWidth, mp_waterHeight, heightmap_deltaClamp);
+        ModelPlacerScript.Init(heightmap_PowerN, block_VertexWidth, biome_HeightmapContentWidth, mp_waterHeight, heightmap_deltaClamp, BiomeTuple, mp_modelsPerBlock, mp_modelPlacementChance);
 
         // Biome gen
         GameObject BiomeGenPrefab = (GameObject)Resources.Load("PipelinePrefabs/BiomeGenPrefab");
@@ -243,6 +245,10 @@ public class MasterGen : MonoBehaviour
         GameObject ModelGenInstance = (GameObject)GameObject.Instantiate(ModelGenPrefab, GetWorldCoordinates(x, z), Quaternion.identity);
         ModelGen ModelGenScript = ModelGenInstance.GetComponent<ModelGen>();
         ModelGenScript.GenerateMesh(Heightmap, Texture, block_VertexWidth);
+
+        // Place possible models on top of block
+        Vector3 topLeft = new Vector3(ModelGenInstance.transform.position.x, 0f, ModelGenInstance.transform.position.z + block_VertexWidth);
+        ModelPlacerScript.PlacePossibleModels(Heightmap, subBiomeGradient.Item1, topLeft);
 
         // Merge model to master mesh
         ModelGenInstance.transform.parent = MasterTerrainInstance.transform;

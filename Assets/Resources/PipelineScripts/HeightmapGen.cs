@@ -207,8 +207,10 @@ public class HeightmapGen : MonoBehaviour
         {
             for (int j = 0; j < dim; j++)
             {
-                if(heightmap[i, j] == 0)
-                    heightmap[i, j] = GetBiomeVertex(i, j, gradient[i,j]);
+                if (heightmap[i, j] == 0)
+                {
+                    heightmap[i, j] = GetBiomeVertex(i, j, gradient[i, j]);
+                }
             }
         }
     }
