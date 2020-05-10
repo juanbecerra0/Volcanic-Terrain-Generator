@@ -3,22 +3,18 @@ Terrain generator built in Unity. For Boise State CS 497 - Advanced Computer Gra
 
 A Trello task list can be found here: https://trello.com/b/A6eJpKhz/terrain-engine
 
-# Goals
+# Overview
+// TODO – will be adding video and pipeline explanation
 
-The goal of this project is to develop a real-time procedural terrain generator that implements multiple fractal-based techniques, including fractal-noise heightmap generation, hydraulic and thermal erosion, and biome partitioning. The project is developed using Unity to allow for user interaction and dynamic model placement along the procedurally generated terrain.
-
-I believe that achieving these effects will be most effective in parts. This is what I believe my sequence of tasks to handle should include:
-
--	Create prefab pieces of geometry that read in heightmap information to generate vertex positions
--	Procedurally spawn these pieces of geometry based on proximity and viewport
--	Use fractal-based algorithms to generate heightmaps that seamlessly connect to each other
--	Use large, procedurally-generated textures to “partition” regions into biomes (like mountains, fields, and rivers)
--	Blend materials together on geometry based on heightmap deltas and biome regions
--	Use prefab models to place objects on geometry based on biome regions
-
-As I work on this project, my tasks will likely be more complex, but I feel that this is a good set of goals to start off with.
+# Running
+To run this, simply download “Builds” directory (or download the entire repository), select a version, and run the TerrainGen(version) executable file.
 
 # Log
+### 5/15/2020 - Model Placement and v0.1 Release
+![16](Images/16.PNG)
+For the final release of this class project, I have finished implementing procedural model placement. Using information about the peak of each volcano, I’m able to place cloud prefabs in a stylized fashion. In addition, I used information from heightmaps and sub-biomes to add trees and rocks to the surface of blocks. 
+This version also includes release v0.1, a playable version of the simulation! It’s still pretty buggy, but it provides a proof-of-concept needed for the deliverables of this class. In the future, I hope to continue to iterate on this project.
+
 ### 5/08/2020 (part 2) - Texture Mapping and Planet Curve Vertex Shader
 ![15](Images/15.PNG)
 (Decided to do another update this week. What else am I supposed to do during this pandemic?)
