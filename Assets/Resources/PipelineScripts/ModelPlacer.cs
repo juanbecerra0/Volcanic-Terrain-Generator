@@ -10,6 +10,7 @@ public class ModelPlacer : MonoBehaviour
     private GameObject[] CloudModels;
     private GameObject PalmTreeModel;
     private GameObject FirTreeModel;
+    private GameObject[] RockModels;
 
     private float WaterOffset;
     private float WaterHeight;
@@ -66,6 +67,27 @@ public class ModelPlacer : MonoBehaviour
         // Fir trees
         FirTreeModel = (GameObject)Resources.Load("ExternalAssets/Trees/Prefabs/Fir_Tree");
         FirTreeModel.transform.localScale = new Vector3(14f, 14f, 14f);
+
+        // Rocks
+        RockModels = new GameObject[]
+        {
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock1"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock2"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock3"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock4"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock5"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock6"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock7"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock8"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock9"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock10"),
+            (GameObject)Resources.Load("ExternalAssets/LowPoly Rocks/Prefabs/Rock11")
+        };
+
+        foreach (GameObject r in RockModels)
+        {
+            r.transform.localScale = new Vector3(20f, 20f, 20f);
+        }
     }
 
     public void PlaceWater(Vector3 position)
@@ -114,7 +136,7 @@ public class ModelPlacer : MonoBehaviour
             if (UnityEngine.Random.Range(0f, 1f) < ModelPlacementChance)
             {
                 selected++;
-                Vector3 position = new Vector3(topLeftCorner.x + (((float)j / BlockVertexCount) * BlockVertexWidth), heightmap[i, j], topLeftCorner.z - (((float)i / BlockVertexCount) * BlockVertexWidth));
+                Vector3 position = new Vector3(topLeftCorner.x + (((float)j / BlockVertexCount) * BlockVertexWidth), heightmap[i, j] - 20f, topLeftCorner.z - (((float)i / BlockVertexCount) * BlockVertexWidth));
 
                 if (subBiome[i, j] == SAND && heightmap[i, j] > WaterHeight)
                 {
@@ -126,7 +148,8 @@ public class ModelPlacer : MonoBehaviour
                     model.transform.parent = transform;
                 } else if (subBiome[i, j] == MOUNTAIN)
                 {
-
+                    GameObject model = GameObject.Instantiate(RockModels[rand.Next(0, 11)], position, Quaternion.Euler(0f, UnityEngine.Random.Range(0, 360f), 0f));
+                    model.transform.parent = transform;
                 } else
                 {
                     selected--;
